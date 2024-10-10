@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3df34a6f-02f8-414d-bf5a-46812b2bb15b" name="Changes" comment="System.out.println(&quot;Forking Bernardo&quot;);" />
+    <list default="true" id="3df34a6f-02f8-414d-bf5a-46812b2bb15b" name="Changes" comment="prueba">
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -66,7 +68,7 @@
       <workItem from="1728291522840" duration="305000" />
       <workItem from="1728293194142" duration="2361000" />
       <workItem from="1728554842496" duration="252000" />
-      <workItem from="1728556468608" duration="146000" />
+      <workItem from="1728556468608" duration="170000" />
     </task>
     <task id="LOCAL-00001" summary="System.out.println(&quot;Forking Bernardo&quot;);">
       <option name="closed" value="true" />
@@ -84,7 +86,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728556582384</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="prueba">
+      <option name="closed" value="true" />
+      <created>1728556628471</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1728556628471</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -103,6 +113,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="System.out.println(&quot;Forking Bernardo&quot;);" />
-    <option name="LAST_COMMIT_MESSAGE" value="System.out.println(&quot;Forking Bernardo&quot;);" />
+    <MESSAGE value="prueba" />
+    <option name="LAST_COMMIT_MESSAGE" value="prueba" />
   </component>
 </project>
