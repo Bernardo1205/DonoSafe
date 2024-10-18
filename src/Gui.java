@@ -21,6 +21,7 @@ public class Gui extends JFrame {
         panelAbajo.add(windowSOS);
 
 
+
         add(panelAbajo, BorderLayout.SOUTH);
         panelAbajo.setVisible(true);
 
