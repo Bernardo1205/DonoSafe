@@ -1,51 +1,76 @@
-import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.HashMap;
 
 public class ClientHandler implements Runnable {
     private Socket client;
     private BufferedReader in;
     private PrintWriter out;
-    private ArrayList<ClientHandler> clients;
+    private HashMap<String, ClientHandler> clients;
+    private String clientName;
 
-    public ClientHandler(Socket clientSocket, ArrayList<ClientHandler> clients) throws IOException {
+    public ClientHandler(Socket clientSocket, HashMap<String, ClientHandler> clients) {
         this.client = clientSocket;
         this.clients = clients;
-        in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-        out = new PrintWriter(client.getOutputStream(), true);
     }
+
     @Override
-    public void run () {
+    public void run() {
         try {
-            while (true) {
-                String request = in.readLine();
-                if (request.contains("name")) {
-                    out.println(Server.getRandomName());
-                } else if (request.startsWith("say")) {
-                    int firstSpace = request.indexOf(" ");
-                    if (firstSpace != -1) {
-                        outToAll(request.substring(firstSpace+1));
-                    }
-                } else {
-                    out.println("Type 'tell me a name' to get a random name");
+            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            out = new PrintWriter(client.getOutputStream(), true);
+
+            // Read the client's username
+            clientName = in.readLine();
+            clients.put(clientName, this);
+            broadcastUserList();
+
+            String message;
+            while ((message = in.readLine()) != null) {
+                System.out.println(message);
+                if (message.startsWith("@")) { // Private message format: @targetUser message
+                    String targetUser = message.substring(1, message.indexOf(' '));
+                    String privateMessage = message.substring(message.indexOf(' ') + 1);
+                    sendMessageToClient(targetUser, privateMessage);
                 }
             }
+        } catch (SocketException e1) {
+            //
         } catch (IOException e) {
-            System.err.println("IO exception in client handler");
-            System.err.println(e.getStackTrace());
+            e.printStackTrace();
         } finally {
-            out.close();
-            try {
-                in.close();
-            } catch (IOException e) {
-               e.printStackTrace();
-            }
+            closeConnection();
         }
     }
 
-    private void outToAll(String msg) {
-        for (ClientHandler aClient : clients) {
-            aClient.out.println(msg);
+    private void sendMessageToClient(String targetUser, String message) {
+        ClientHandler targetHandler = clients.get(targetUser);
+        if (targetHandler != null) {
+            targetHandler.out.println(clientName + " (private): " + message);
+        } else {
+            System.out.println("Hi");
+        }
+    }
+
+    private void broadcastUserList() {
+        for (ClientHandler clientHandler : clients.values()) {
+            clientHandler.out.println("USERS_LIST:" + String.join(",", clients.keySet()));
+        }
+    }
+
+    private void closeConnection() {
+        try {
+            clients.remove(clientName);
+            broadcastUserList();
+            if (in != null) in.close();
+            if (out != null) out.close();
+            if (client != null) client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
