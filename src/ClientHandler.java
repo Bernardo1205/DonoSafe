@@ -32,7 +32,9 @@ public class ClientHandler implements Runnable {
             String message;
             while ((message = in.readLine()) != null) {
                 System.out.println(message);
-                if (message.startsWith("@")) { // Private message format: @targetUser message
+                if (message.startsWith("[ALERT] ")) { // Alert message format: [ALERT] content
+                    notifyAlertToAll(message);
+                } else if (message.startsWith("@")) { // Private message format: @targetUser message
                     String targetUser = message.substring(1, message.indexOf(' '));
                     String privateMessage = message.substring(message.indexOf(' ') + 1);
                     sendMessageToClient(targetUser, privateMessage);
@@ -47,15 +49,22 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void sendMessageToClient(String targetUser, String message) {
-        ClientHandler targetHandler = clients.get(targetUser);
-        if (targetHandler != null) {
-            targetHandler.out.println(clientName + " (private): " + message);
-        } else {
-            System.out.println("Hi");
+    private void notifyAlertToAll(String alertText) {
+        for (ClientHandler clientHandler : clients.values()) {
+            clientHandler.out.println(alertText);
         }
     }
 
+    private void sendMessageToClient(String targetUser, String message) {
+        ClientHandler targetHandler = clients.get(targetUser);
+        if (targetHandler != null) {
+            targetHandler.out.println(clientName + "(private): " + message);
+        } else {
+            System.out.println("Couldn't find " + targetUser);
+        }
+    }
+
+    // Method to allow clients visualise other connected users
     private void broadcastUserList() {
         for (ClientHandler clientHandler : clients.values()) {
             clientHandler.out.println("USERS_LIST:" + String.join(",", clients.keySet()));

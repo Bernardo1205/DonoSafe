@@ -17,9 +17,15 @@ public class ServerConnection implements Runnable {
     @Override
     public void run() {
         try {
+            // Read new messages received by the server
             String serverResponse;
             while ((serverResponse = in.readLine()) != null) {
-                client.showMessage(serverResponse);
+                System.out.println(serverResponse);
+                if (serverResponse.startsWith("[ALERT] ")) {
+                    client.showAlert(serverResponse);
+                } else {
+                    client.showMessage(serverResponse);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
