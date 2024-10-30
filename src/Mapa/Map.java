@@ -6,7 +6,6 @@ import org.jxmapviewer.input.PanMouseInputListener;
 import org.jxmapviewer.input.ZoomMouseWheelListenerCenter;
 import org.jxmapviewer.painter.CompoundPainter;
 import org.jxmapviewer.viewer.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
