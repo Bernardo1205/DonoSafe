@@ -1,20 +1,31 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class Client {
     private static final String SERVER_IP = "127.0.0.1";
     private static final int SERVER_PORT = 9090;
-    private static final int WIDTH = 400;
-    private static final int HEIGHT = 400;
-    private static JFrame frame;
-    private static CardLayout cardLayout;
-    private static JPanel mainPanel;
-    private static JTextArea alertArea;
-    private static JPanel chatSection;
+    private static final int WIDTH = 350;
+    private static final int HEIGHT = 500;
+    private JFrame frame;
+    private CardLayout cardLayout;
+    private CardLayout chatCardLayout;
+    private JPanel mainPanel;
+    private JTextArea alertArea;
+    private JPanel chatSection;
+    private JPanel userListPanel;
+    private JPanel messagesPanel;
+    private JScrollPane scrollMessages;
+    private JLabel userTalkingTo;
+    private HashMap<String, Boolean> unreadMessages = new HashMap<>();  // Track unread messages per user
     private JPanel chatPanel;
+    private String userName;
     private static Socket socket;
     private static PrintWriter out;
 
@@ -23,6 +34,7 @@ public class Client {
     }
 
     public void openChatWindow(String username) {
+        userName = username;
         setupGUI();
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
@@ -50,6 +62,8 @@ public class Client {
         mainPanel.add(createChatSection(), "Section 2");
         mainPanel.add(createButtonSection(), "Section 3");
 
+        cardLayout.show(mainPanel, "Section 2");
+
         // Add the main panel to the center of the frame
         frame.add(mainPanel, BorderLayout.CENTER);
 
@@ -76,6 +90,7 @@ public class Client {
     }
 
     private JPanel createAlertSection() {
+        // Panel con las alertas enviadas por los clientes
         JPanel alertPanel = new JPanel(new BorderLayout());
         alertArea = new JTextArea();
         alertArea.setEditable(false);
@@ -103,30 +118,26 @@ public class Client {
     }
 
     private JPanel createChatSection() {
-        chatSection = new JPanel(new BorderLayout());
 
-        JPanel userListPanel = new JPanel();
+        chatCardLayout = new CardLayout();
+        chatSection = new JPanel(chatCardLayout);
+
+        // Panel que contiene los usuarios conectados
+        userListPanel = new JPanel();
         userListPanel.setLayout(new BoxLayout(userListPanel, BoxLayout.Y_AXIS));
         JScrollPane userListScroll = new JScrollPane(userListPanel);
 
-        chatSection.add(userListScroll, BorderLayout.WEST);
+        // Panel que se muestra al clickar en un usuario para establecer una conversación
+        chatPanel = new JPanel(new BorderLayout());
 
-        updateUserListPanel(userListPanel);
+        chatSection.add(userListScroll, "Users Section");
+        chatSection.add(chatPanel, "Chat Section");
+        chatSection.revalidate();
+        chatSection.repaint();
+
+        chatCardLayout.show(chatSection, "Users Section");
 
         return chatSection;
-    }
-
-    private void updateUserListPanel(JPanel userListPanel) {
-        userListPanel.removeAll();
-        JButton userButton = new JButton("User 1");
-        userButton.addActionListener(e -> openPrivateChat("User 1"));
-        userListPanel.add(userButton);
-
-        userButton = new JButton("User 2");
-        userButton.addActionListener(e -> openPrivateChat("User 2"));
-        userListPanel.add(userButton);
-        userListPanel.revalidate();
-        userListPanel.repaint();
     }
 
     private JPanel createButtonSection() {
@@ -142,28 +153,72 @@ public class Client {
 
         for (String user : users) {
             JButton userButton = new JButton(user);
-            userButton.addActionListener(e -> openPrivateChat(user));
+            if (unreadMessages.containsKey(user)) {userButton.setBackground(Color.RED);}
+            userButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    openPrivateChat(user);
+                    chatCardLayout.show(chatSection, "Chat Section");
+                }
+            });
             userListPanel.add(userButton);
         }
         userListPanel.revalidate();
         userListPanel.repaint();
     }
 
+    // Añade una alerta
     void showAlert(String alert) {
         SwingUtilities.invokeLater(() -> {
             alertArea.append(alert + "\n");
         });
     }
 
+    // Método para notificar al usuario que tiene mensajes no leídos
+    public void receiveMessage(String fromUser, String message) {
+        if (!unreadMessages.containsKey(fromUser)) {
+            unreadMessages.put(fromUser, true);
+            updateUserList(fromUser);
+        }
+    }
+
+    private void updateUserList(String user) {
+        JLabel userLabel = new JLabel(user);
+        userLabel.setOpaque(true);
+        userLabel.setBackground(unreadMessages.getOrDefault(user, false) ? Color.ORANGE : Color.WHITE);
+        userLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                unreadMessages.put(user, false);
+                userLabel.setBackground(Color.WHITE);  // Reset color on open
+                openPrivateChat(user);
+                chatCardLayout.show(chatSection, "Chat Section");
+            }
+        });
+
+        userListPanel.add(userLabel);
+        userListPanel.revalidate();
+        userListPanel.repaint();
+    }
+
     private void openPrivateChat(String targetUser) {
 
-        chatPanel = new JPanel();
-        chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
-        JScrollPane scrollPane = new JScrollPane(chatPanel);
-        chatSection.add(scrollPane, BorderLayout.CENTER);
+        chatPanel.removeAll();
 
-        JLabel title = new JLabel(targetUser);
-        chatPanel.add(title, BorderLayout.NORTH);
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        userTalkingTo = new JLabel(targetUser);
+        JButton exitChatButton = new JButton("<--");
+        exitChatButton.addActionListener(e -> {
+            chatCardLayout.show(chatSection, "Users Section");
+        });
+        headerPanel.add(exitChatButton, BorderLayout.WEST);
+        headerPanel.add(userTalkingTo, BorderLayout.CENTER);
+
+        chatPanel.add(headerPanel, BorderLayout.NORTH);
+
+        messagesPanel = new JPanel();
+        messagesPanel.setLayout(new BoxLayout(messagesPanel, BoxLayout.Y_AXIS));
+        scrollMessages = new JScrollPane(messagesPanel);
+        chatPanel.add(scrollMessages, BorderLayout.CENTER);
 
         JTextField messageField = new JTextField();
         messageField.addActionListener(e -> {
@@ -172,8 +227,9 @@ public class Client {
             addMessage(chatPanel, "You: " + message);
             messageField.setText("");
         });
-        chatSection.add(messageField, BorderLayout.SOUTH);
-        frame.setVisible(true);
+        chatPanel.add(messageField, BorderLayout.SOUTH);
+        chatPanel.revalidate();
+        chatPanel.repaint();
     }
 
     private void addMessage(JPanel chatPanel, String message) {
@@ -181,20 +237,54 @@ public class Client {
             return;
         }
         SwingUtilities.invokeLater(() -> {
-            chatPanel.add(new JButton(message));
-            chatPanel.revalidate();       // Revalidate to refresh the layout
-            chatPanel.repaint();          // Repaint to ensure the new message is displayed
+            // Verifica si el scroll está en el extremo inferior
+            boolean isAtBottom = scrollMessages.getVerticalScrollBar().getValue() +
+                    scrollMessages.getVerticalScrollBar().getVisibleAmount() ==
+                    scrollMessages.getVerticalScrollBar().getMaximum();
+            messagesPanel.add(new JLabel(message));
+            messagesPanel.revalidate();       // Revalidate to refresh the layout
+            messagesPanel.repaint();          // Repaint to ensure the new message is displayed
+            // Si el scroll estaba abajo, desplazarse automáticamente al final
+            if (isAtBottom) {
+                SwingUtilities.invokeLater(() -> {
+                    scrollMessages.getVerticalScrollBar().setValue(
+                            scrollMessages.getVerticalScrollBar().getMaximum());
+                });
+            }
         });
+    }
+
+    public String getDisplayedChat() {
+        try {
+            String s = this.userTalkingTo.getText();
+            return s;
+        } catch (NullPointerException e) {
+            return "";
+        }
     }
 
     public void showMessage(String message) {
         if (message.startsWith("USERS_LIST:")) {
+            if (message.contains("," + userName + ",")) {
+                message = message.replace("," + userName + ",", ",");
+            } else {
+                message = message.replaceFirst(",?" + userName + ",?", "");
+            }
             String[] users = message.substring(11).split(",");
-            updateUsersList(users);
+            if (!users[0].isEmpty()) {
+                System.out.println(users[0]);
+                System.out.println(Arrays.toString(users));
+                updateUsersList(users);
+            }
         } else if (message.contains("(private)")) {
             addMessage(chatPanel, message.replaceFirst("[(]private[)]", ""));
-        } else {
-            System.out.println(message);
+        } else if (message.contains("(DM)")) {
+            String user = message.substring(0, message.indexOf("(DM)"));
+            String msg = message.substring(message.indexOf("(DM):")+5);
+            receiveMessage(user, msg);
+        }
+        else {
+            System.out.println("WOW" + message);
         }
     }
 

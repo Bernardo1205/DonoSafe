@@ -23,6 +23,10 @@ public class ServerConnection implements Runnable {
                 System.out.println(serverResponse);
                 if (serverResponse.startsWith("[ALERT] ")) {
                     client.showAlert(serverResponse);
+                } else if (!client.getDisplayedChat().equals(serverResponse.substring(0, 1))) {
+                    client.showMessage(serverResponse.replaceFirst("private", "DM"));
+                } else if (serverResponse.startsWith("[OFFLINE] ")) {
+                    //
                 } else {
                     client.showMessage(serverResponse);
                 }

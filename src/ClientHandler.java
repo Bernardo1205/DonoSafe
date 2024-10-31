@@ -16,6 +16,7 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Socket clientSocket, HashMap<String, ClientHandler> clients) {
         this.client = clientSocket;
         this.clients = clients;
+        broadcastUserList();
     }
 
     @Override
@@ -37,7 +38,10 @@ public class ClientHandler implements Runnable {
                 } else if (message.startsWith("@")) { // Private message format: @targetUser message
                     String targetUser = message.substring(1, message.indexOf(' '));
                     String privateMessage = message.substring(message.indexOf(' ') + 1);
-                    sendMessageToClient(targetUser, privateMessage);
+//                    if (clients.get(targetUser))
+                    sendMessageToClient(targetUser, "(private): " + privateMessage);
+                } else {
+                    System.out.println("Unknown type" + message);
                 }
             }
         } catch (SocketException e1) {
@@ -58,8 +62,9 @@ public class ClientHandler implements Runnable {
     private void sendMessageToClient(String targetUser, String message) {
         ClientHandler targetHandler = clients.get(targetUser);
         if (targetHandler != null) {
-            targetHandler.out.println(clientName + "(private): " + message);
+            targetHandler.out.println(clientName + message);
         } else {
+            out.println("[OFFLINE] " + targetUser);
             System.out.println("Couldn't find " + targetUser);
         }
     }
