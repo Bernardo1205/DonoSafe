@@ -16,9 +16,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Map extends JXMapViewer{
-    private Set<Waypoint> setWaipoints = new HashSet<>(); //Set para almacenar WayPoints
+    private  Set<MyWaypoint> setWaipoints = new HashSet<>(); //Set para almacenar WayPoints
     private  WaypointPainter waypointPainter; //Render de los Waipoints
-    private boolean runnig = true;
+    private CompoundPainter compoundPainter ;
 
     public Map(){
 
@@ -53,75 +53,40 @@ public class Map extends JXMapViewer{
         /* Hacer zoom con el raton */
         addMouseWheelListener(new ZoomMouseWheelListenerCenter(this));
 
+
         /* Iniciar render de los Waypoints */
-        waypointPainter = new WaypointPainter<>();
+        this.waypointPainter =new WaypointPainter<>();
+
+        /* Añadimos nuestro render personalizado para visualizar los waypoints */
+        this.waypointPainter.setRenderer(new MyWaipontRender());
 
         /* Pasar el set de waypoints al render */
-        waypointPainter.setWaypoints(setWaipoints);
+        this.waypointPainter.setWaypoints(setWaipoints);
 
        /* Esta clase sirve para facilitar el renderizado de multiplipes Pointers de distintos tipos.
         Por ejemplo, podrías tener waypoints y rutas sobre el mapa, y el CompoundPainter facilita que
         ambos se muestren sin sobreescribir o interferir entre ellos. */
 
-        CompoundPainter compoundPainter = new CompoundPainter<>();
+        this.compoundPainter = new CompoundPainter<>();
         compoundPainter.setPainters(waypointPainter);
 
+
+
+
+    }
+    public void añadirWaypoint(Set setWaipoints){
+
+        /* Actualizar los waypoints en el painter y redibujar el mapa */
+        waypointPainter.setWaypoints(new HashSet<>(setWaipoints));
+
         /* Cuando el mapa se redibuja todos los painters que estab en el compondPainter se renderizaran en el mapa */
+        compoundPainter.setPainters(waypointPainter);
         setOverlayPainter(compoundPainter);
 
-        /* Añadir MouseListener para que cuando le des doble click añada un Waypoint en la ubicacion deseada */
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount()==2){
-                    Point point = e.getPoint();
-                    GeoPosition geoPosition = getTileFactory().pixelToGeo(point,getZoom());
-                    System.out.println(geoPosition);
-                    Waypoint waypoint = new Waypoint() {
-                        @Override
-                        public GeoPosition getPosition() {
-                            return geoPosition;
-                        }
-                    };
-                    setWaipoints.add(waypoint);
-
-                    /* Actualizar los waypoints en el painter y redibujar el mapa */
-                    System.out.println(setWaipoints);
-                    waypointPainter.setWaypoints(new HashSet<>(setWaipoints));
-                    compoundPainter.setPainters(waypointPainter);
-                    setOverlayPainter(compoundPainter);
-                    repaint();
-
-                }
-            }
-        });
-
-
-
-
-
 
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("JXMapviewer2 Example 1");
-        JPanel mainPanel = new JPanel(new BorderLayout());
-
-        Map map = new Map();
-        mainPanel.add(map,BorderLayout.CENTER);
-        mainPanel.add(new Label("Textooooooooooooo"),BorderLayout.SOUTH);
-
-        //todo poner mouse action listener en main panel y hacer render set Waypoints
-//
-//        compoundPainter.setPainters(waypointPainter);
-//        map.setOverlayPainter(compoundPainter);
-//        map.repaint();
-
-        frame.add(mainPanel);
-        frame.setSize(800, 600);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-
+    public Set<MyWaypoint> getSetWaipoints() {
+        return setWaipoints;
     }
-
 }

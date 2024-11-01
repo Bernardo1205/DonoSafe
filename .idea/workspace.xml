@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3df34a6f-02f8-414d-bf5a-46812b2bb15b" name="Changes" comment="Mapp added and jxmaviewers.Jar files implemented" />
+    <list default="true" id="3df34a6f-02f8-414d-bf5a-46812b2bb15b" name="Changes" comment="Mapp added and jxmaviewers.Jar files implemented">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/Map.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -40,7 +43,12 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.MainClass.executor&quot;: &quot;Run&quot;,
+    &quot;Application.MainJFrame.executor&quot;: &quot;Run&quot;,
     &quot;Application.Map.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Map2.executor&quot;: &quot;Run&quot;,
+    &quot;Application.MyWaypoint.executor&quot;: &quot;Run&quot;,
+    &quot;Application.VentanaAgregarWaypoint.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;mapaBernardo&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -89,6 +97,18 @@
       <workItem from="1730279225843" duration="1890000" />
       <workItem from="1730281885241" duration="2022000" />
       <workItem from="1730285366363" duration="492000" />
+      <workItem from="1730285871390" duration="1489000" />
+      <workItem from="1730287382082" duration="2563000" />
+      <workItem from="1730372510078" duration="5916000" />
+      <workItem from="1730393121803" duration="2468000" />
+      <workItem from="1730395773420" duration="8193000" />
+      <workItem from="1730404437206" duration="1746000" />
+      <workItem from="1730410441480" duration="8000" />
+      <workItem from="1730410475654" duration="367000" />
+      <workItem from="1730411728907" duration="176000" />
+      <workItem from="1730411927191" duration="87000" />
+      <workItem from="1730412023791" duration="4831000" />
+      <workItem from="1730494328009" duration="637000" />
     </task>
     <task id="LOCAL-00001" summary="first">
       <option name="closed" value="true" />
@@ -114,7 +134,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730285551943</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Mapp added and jxmaviewers.Jar files implemented">
+      <option name="closed" value="true" />
+      <created>1730286174062</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1730286174062</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
