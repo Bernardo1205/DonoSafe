@@ -14,7 +14,19 @@ public class MyWaipontRender implements WaypointRenderer<MyWaypoint> {
         Point2D point2D = jxMapViewer.getTileFactory().geoToPixel(waypoint.getPosition(),jxMapViewer.getZoom());
         int x = (int) point2D.getX();
         int y = (int) point2D.getY();
-        graphics2D.setColor(Color.RED);
-        graphics2D.fillOval(x - 5, y - 5, 10, 10);
+        int radio =8;
+
+        //Guardar estado transparencia
+        Composite composite = graphics2D.getComposite();
+
+        /* Definir color y opacidad  del reyeno de la circunferencia*/
+        graphics2D.setColor(new Color(255,0,9,80));
+        graphics2D.fillOval(x-radio,y-radio,radio*2,radio*2);
+
+        /* Restaurar el color ya que usaremos otro tono de rojo y dibujar contorno circunferencia */
+       graphics2D.setComposite(composite);
+       graphics2D.setColor(Color.RED);
+       graphics2D.setStroke(new BasicStroke(2));
+       graphics2D.drawOval(x-radio,y-radio,radio*2,radio*2);
     }
 }

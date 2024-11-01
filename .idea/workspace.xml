@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3df34a6f-02f8-414d-bf5a-46812b2bb15b" name="Changes" comment="Mapp added and jxmaviewers.Jar files implemented">
+    <list default="true" id="3df34a6f-02f8-414d-bf5a-46812b2bb15b" name="Changes" comment="-Main Panel added with functions: Add new wayPoint and See Infor Waypoint&#10;-Creation of User class&#10;-Ceration of Ventana Agregar waypoint &#10;-Creation of Ventana Innfo Waypoint&#10;-Creation Waypoint render">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Mapa/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/Map.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/MyWaipontRender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/MyWaipontRender.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +108,7 @@
       <workItem from="1730411728907" duration="176000" />
       <workItem from="1730411927191" duration="87000" />
       <workItem from="1730412023791" duration="4831000" />
-      <workItem from="1730494328009" duration="637000" />
+      <workItem from="1730494328009" duration="2533000" />
     </task>
     <task id="LOCAL-00001" summary="first">
       <option name="closed" value="true" />
@@ -142,7 +142,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730286174062</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="-Main Panel added with functions: Add new wayPoint and See Infor Waypoint&#10;-Creation of User class&#10;-Ceration of Ventana Agregar waypoint &#10;-Creation of Ventana Innfo Waypoint&#10;-Creation Waypoint render">
+      <option name="closed" value="true" />
+      <created>1730496373207</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1730496373207</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -193,6 +201,7 @@
     <MESSAGE value="second" />
     <MESSAGE value="Mapa+.Jar" />
     <MESSAGE value="Mapp added and jxmaviewers.Jar files implemented" />
-    <option name="LAST_COMMIT_MESSAGE" value="Mapp added and jxmaviewers.Jar files implemented" />
+    <MESSAGE value="-Main Panel added with functions: Add new wayPoint and See Infor Waypoint&#10;-Creation of User class&#10;-Ceration of Ventana Agregar waypoint &#10;-Creation of Ventana Innfo Waypoint&#10;-Creation Waypoint render" />
+    <option name="LAST_COMMIT_MESSAGE" value="-Main Panel added with functions: Add new wayPoint and See Infor Waypoint&#10;-Creation of User class&#10;-Ceration of Ventana Agregar waypoint &#10;-Creation of Ventana Innfo Waypoint&#10;-Creation Waypoint render" />
   </component>
 </project>
