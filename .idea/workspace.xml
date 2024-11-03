@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3df34a6f-02f8-414d-bf5a-46812b2bb15b" name="Changes" comment="New navigation panel to switch between sections. Alert, chats and help section added">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ClientLogin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientLogin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerConnection.java" afterDir="false" />
+
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,27 +19,14 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;history&quot;: [
-    {
-      &quot;state&quot;: &quot;OPEN&quot;,
-      &quot;reviewState&quot;: &quot;AWAITING_REVIEW&quot;
-    }
-  ],
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;reviewState&quot;: &quot;AWAITING_REVIEW&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">
-    <option name="selectedUrlAndAccountId">
-      <UrlAndAccount>
-        <option name="accountId" value="39c3a1eb-dae0-42fd-96ad-64f53c7196da" />
-        <option name="url" value="https://github.com/Bernardo1205/DonoSafe.git" />
-      </UrlAndAccount>
-    </option>
+
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
@@ -60,75 +41,13 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;Application.Client (1).executor&quot;: &quot;Run&quot;,
-    &quot;Application.Client (2).executor&quot;: &quot;Run&quot;,
-    &quot;Application.Client (3).executor&quot;: &quot;Run&quot;,
-    &quot;Application.Client (4).executor&quot;: &quot;Run&quot;,
-    &quot;Application.Client.executor&quot;: &quot;Run&quot;,
-    &quot;Application.ClientSide.executor&quot;: &quot;Run&quot;,
-    &quot;Application.DataServer.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Gui.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Server.executor&quot;: &quot;Run&quot;,
-    &quot;Application.ServerSide.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/daniel.sanchez.r/IdeaProjects/DonoSafe&quot;,
+
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
-  }
-}</component>
-  <component name="RunManager" selected="Application.Client">
-    <configuration name="Client (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Client" />
-      <module name="DonoSafe" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Client (2)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Client" />
-      <module name="DonoSafe" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Client (3)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Client" />
-      <module name="DonoSafe" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Client (4)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Client" />
-      <module name="DonoSafe" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Client" />
-      <module name="DonoSafe" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Application.Client" />
-        <item itemvalue="Application.Client (1)" />
-        <item itemvalue="Application.Client (3)" />
-        <item itemvalue="Application.Client (2)" />
-        <item itemvalue="Application.Client (4)" />
-      </list>
-    </recent_temporary>
-  </component>
+
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -145,87 +64,28 @@
       <option name="presentableId" value="Default" />
       <updated>1728291521849</updated>
       <workItem from="1728291522840" duration="305000" />
-      <workItem from="1728293194142" duration="2361000" />
-      <workItem from="1728554842496" duration="252000" />
-      <workItem from="1728556468608" duration="170000" />
-      <workItem from="1729161579195" duration="48000" />
-      <workItem from="1729241094486" duration="3253000" />
-      <workItem from="1729259387210" duration="4914000" />
-      <workItem from="1729271606904" duration="3168000" />
-      <workItem from="1729342073951" duration="28000" />
-      <workItem from="1729345392743" duration="2796000" />
-      <workItem from="1729766001001" duration="651000" />
-      <workItem from="1729777199411" duration="1218000" />
-      <workItem from="1730120854675" duration="2439000" />
-      <workItem from="1730285593131" duration="5357000" />
-      <workItem from="1730300030017" duration="14703000" />
-      <workItem from="1730320270613" duration="593000" />
-      <workItem from="1730370418159" duration="10686000" />
-      <workItem from="1730387214933" duration="233000" />
-    </task>
-    <task id="LOCAL-00001" summary="System.out.println(&quot;Forking Bernardo&quot;);">
-      <option name="closed" value="true" />
-      <created>1728293350114</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1728293350115</updated>
-    </task>
-    <task id="LOCAL-00002" summary="System.out.println(&quot;Forking Bernardo&quot;);">
-      <option name="closed" value="true" />
-      <created>1728556582384</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1728556582384</updated>
-    </task>
-    <task id="LOCAL-00003" summary="prueba">
-      <option name="closed" value="true" />
-      <created>1728556628471</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1728556628471</updated>
-    </task>
-    <task id="LOCAL-00004" summary="SocketUpdates">
-      <option name="closed" value="true" />
-      <created>1729244554443</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1729244554444</updated>
-    </task>
-    <task id="LOCAL-00005" summary="SocketUpdates">
-      <option name="closed" value="true" />
-      <created>1729264195944</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1729264195944</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Private Chats added. Server-Client connection improved. New funcionalities">
-      <option name="closed" value="true" />
-      <created>1730121380000</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1730121380000</updated>
-    </task>
-    <task id="LOCAL-00007" summary="New navigation panel to switch between sections. Alert, chats and help section added">
-      <option name="closed" value="true" />
-      <created>1730286884004</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1730286884004</updated>
-    </task>
-    <option name="localTasksCounter" value="8" />
+
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/master" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
@@ -233,11 +93,7 @@
             <State>
               <option name="FILTERS">
                 <map>
-                  <entry key="date">
-                    <value>
-                      <list>
-                        <option value="1730199589046" />
-                        <option value="" />
+
                       </list>
                     </value>
                   </entry>
@@ -250,11 +106,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="System.out.println(&quot;Forking Bernardo&quot;);" />
-    <MESSAGE value="prueba" />
-    <MESSAGE value="SocketUpdates" />
-    <MESSAGE value="Private Chats added. Server-Client connection improved. New funcionalities" />
-    <MESSAGE value="New navigation panel to switch between sections. Alert, chats and help section added" />
-    <option name="LAST_COMMIT_MESSAGE" value="New navigation panel to switch between sections. Alert, chats and help section added" />
+
   </component>
 </project>
