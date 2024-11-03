@@ -22,6 +22,7 @@ public class MainJFrame extends JFrame {
     private String textoWaypoint;
     private VentanaAgregarWaypoint ventanaAgregarWaypoint;
 
+
     public MainJFrame(){
         JFrame frame = new JFrame("DonoSafe");
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -58,7 +59,7 @@ public class MainJFrame extends JFrame {
                     Point point = e.getPoint();
                     GeoPosition geoPosition = map.convertPointToGeoPosition(point);
                     MyWaypoint myWaypoint = ponerwaypoint(geoPosition,textoWaypoint);
-
+                    myWaypoint.setPeligrosidad(ventanaAgregarWaypoint.getPeligrosidad());
 
                     Set setMywaypoints = map.getSetWaipoints();
                     setMywaypoints.add(myWaypoint);

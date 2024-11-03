@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class MyWaypoint implements Waypoint {
+    private String peligrosidad;
     private String text;
     private LocalDateTime date;
     private User user;
@@ -50,6 +51,14 @@ public class MyWaypoint implements Waypoint {
         return this.date.format(formatoHora);
     }
 
+    public String getPeligrosidad() {
+        return peligrosidad;
+    }
+
+    public void setPeligrosidad(String peligrosidad) {
+        this.peligrosidad = peligrosidad;
+    }
+
     @Override
     public String toString() {
         return "MyWaypoint{" +
@@ -58,12 +67,5 @@ public class MyWaypoint implements Waypoint {
                 ", user=" + user +
                 ", geoPosition=" + geoPosition +
                 '}';
-    }
-    public void infoFrame(){
-        JFrame jFrame = new JFrame();
-
-
-
-
     }
 }
