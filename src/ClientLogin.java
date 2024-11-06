@@ -1,10 +1,14 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 public class ClientLogin {
     private static HashMap<String, String> registeredUsers = new HashMap<>();
+    private static Font font = new Font(Font.DIALOG, Font.PLAIN, 14);
+    private static final int WIDTH = 350;
+    private static final int HEIGHT = 500;
     private JFrame frame;
     private JTextField usernameField;
     private JPasswordField passwordField;
@@ -18,12 +22,12 @@ public class ClientLogin {
         }
 
         frame = new JFrame("Log In");
-        frame.setSize(300, 200);
+        frame.setSize(WIDTH, HEIGHT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
         JPanel panel = new JPanel();
-        frame.add(panel);
+        frame.add(panel, BorderLayout.CENTER);
         placeComponents(panel);
         frame.setVisible(true);
     }
@@ -31,28 +35,37 @@ public class ClientLogin {
     private void placeComponents(JPanel panel) {
         panel.setLayout(null);
 
+        JLabel fraseBienvenida = new JLabel("Bienvenido a Aloro");
+        fraseBienvenida.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+        fraseBienvenida.setBounds(WIDTH/4-fraseBienvenida.getText().length(), 20, WIDTH, 30);
+        panel.add(fraseBienvenida);
+
         JLabel userLabel = new JLabel("Username:");
-        userLabel.setBounds(10, 20, 80, 25);
+        userLabel.setFont(font);
+        userLabel.setBounds(10, 70, 80, 25);
         panel.add(userLabel);
 
         usernameField = new JTextField(20);
-        usernameField.setBounds(100, 20, 165, 25);
+        usernameField.setFont(font);
+        usernameField.setBounds(100, 70, 165, 25);
         panel.add(usernameField);
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds(10, 50, 80, 25);
+        passwordLabel.setFont(font);
+        passwordLabel.setBounds(10, 100, 80, 25);
         panel.add(passwordLabel);
 
         passwordField = new JPasswordField(20);
-        passwordField.setBounds(100, 50, 165, 25);
+        passwordField.setBounds(100, 100, 165, 25);
         panel.add(passwordField);
 
         JButton loginButton = new JButton("Login");
-        loginButton.setBounds(100, 80, 80, 25);
+        loginButton.setFont(font);
+        loginButton.setBounds(100, 160, 80, 25);
         panel.add(loginButton);
 
         JLabel statusLabel = new JLabel("");
-        statusLabel.setBounds(10, 110, 250, 25);
+        statusLabel.setBounds(10, 170, 250, 25);
         panel.add(statusLabel);
 
         loginButton.addActionListener(new ActionListener() {

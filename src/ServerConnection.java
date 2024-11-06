@@ -25,6 +25,12 @@ public class ServerConnection implements Runnable {
                     client.showAlert(serverResponse);
                 } else if (!client.getDisplayedChat().equals(serverResponse.substring(0, 1))) {
                     client.showMessage(serverResponse.replaceFirst("private", "DM"));
+                } else if (serverResponse.startsWith("GROUP ")) {
+                    client.showMessage(serverResponse);
+                } else if (serverResponse.startsWith("[NEW_GROUP] ")) {
+                    int ind = serverResponse.indexOf(":");
+                    client.addGroup(serverResponse.substring(12, ind), serverResponse.substring(serverResponse.indexOf(" "), ind).split(";"));
+                    client.updateGroupsList(client.getGroups());
                 } else if (serverResponse.startsWith("[OFFLINE] ")) {
                     //
                 } else {
