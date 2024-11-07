@@ -1,0 +1,129 @@
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class ClientRegister extends JFrame {
+
+    public ClientRegister() {
+        // Configuración de la ventana
+        setTitle("Creación de Cuenta");
+        setSize(350, 550);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        // Fuente y color
+        Font labelFont = new Font("Arial", Font.BOLD, 14);
+        Font inputFont = new Font("Arial", Font.PLAIN, 12);
+        Color backgroundColor = new Color(240, 248, 255);
+        Color buttonColor = new Color(0, 120, 215);
+        Color buttonTextColor = Color.WHITE;
+
+        // Panel principal
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(null);
+        mainPanel.setBackground(backgroundColor);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margen superior
+        add(mainPanel);
+
+        // Título
+        TitledBorder title = BorderFactory.createTitledBorder("Crear cuenta");
+        title.setTitleJustification(TitledBorder.CENTER);
+        mainPanel.setBorder(title);
+
+        // Correo
+        JLabel emailLabel = new JLabel("Correo Gmail:");
+        emailLabel.setFont(labelFont);
+        emailLabel.setBounds(10, 40, 120, 25);
+        mainPanel.add(emailLabel);
+
+        JTextField emailField = new JTextField(20);
+        emailField.setFont(inputFont);
+        emailField.setBounds(170, 40, 150, 25);
+        mainPanel.add(emailField);
+
+        // Nombre
+        JLabel nameLabel = new JLabel("Nombre:");
+        nameLabel.setFont(labelFont);
+        nameLabel.setBounds(10, 90, 120, 25);
+        mainPanel.add(nameLabel);
+
+        JTextField nameField = new JTextField(20);
+        nameField.setFont(inputFont);
+        nameField.setBounds(170, 90, 150, 25);
+        mainPanel.add(nameField);
+
+        // Contraseña
+        JLabel passwordLabel = new JLabel("Contraseña:");
+        passwordLabel.setFont(labelFont);
+        passwordLabel.setBounds(10, 140, 120, 25);
+        mainPanel.add(passwordLabel);
+
+        JPasswordField passwordField = new JPasswordField(20);
+        passwordField.setFont(inputFont);
+        passwordField.setBounds(170, 140, 150, 25);
+        mainPanel.add(passwordField);
+
+        // Repita Contraseña
+        JLabel passwordLabel2 = new JLabel("Repita la contraseña:");
+        passwordLabel2.setFont(labelFont);
+        passwordLabel2.setBounds(10, 190, 150, 25);
+        mainPanel.add(passwordLabel2);
+
+        JPasswordField passwordField2 = new JPasswordField(20);
+        passwordField2.setFont(inputFont);
+        passwordField2.setBounds(170, 190, 150, 25);
+        mainPanel.add(passwordField2);
+
+        // Botón de creación de cuenta
+        JButton createAccountButton = new JButton("Crear Cuenta");
+        createAccountButton.setFont(new Font("Arial", Font.BOLD, 14));
+        createAccountButton.setBackground(buttonColor);
+        createAccountButton.setForeground(buttonTextColor);
+        createAccountButton.setBounds(75, 250, 200, 40);  // Hacer el botón más ancho
+        mainPanel.add(createAccountButton);
+
+        // Etiqueta para mostrar mensajes de estado
+        JLabel statusLabel = new JLabel("");
+        statusLabel.setFont(labelFont);
+        statusLabel.setBounds(10, 310, 320, 50);
+        statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        mainPanel.add(statusLabel);
+
+
+        // Acción del botón
+        createAccountButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String email = emailField.getText();
+                String password = new String(passwordField.getPassword());
+                String password2 = new String(passwordField2.getPassword());
+
+                // Validación de datos introducidos
+                if (!email.endsWith("@gmail.com")) {
+                    statusLabel.setForeground(Color.RED);
+                    statusLabel.setText("Por favor ingrese un correo válido.");
+                } else if (!password.equals(password2)) {
+                    statusLabel.setForeground(Color.RED);
+                    statusLabel.setText("Las contraseñas deben ser iguales.");
+                }else if (password.length()<6 ||  password2.length() <6) {
+                    statusLabel.setForeground(Color.RED);
+                    statusLabel.setText("<html>La contraseña debe tener al menos 6 <br>caracteres.</html>");
+                } else {
+                    statusLabel.setForeground(Color.GREEN);
+                    statusLabel.setText("Cuenta creada exitosamente.");
+                }
+            }
+        });
+        getRootPane().setDefaultButton(createAccountButton);//pulsando enter activa boton crear cuenta
+
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            ClientRegister window = new ClientRegister();
+            window.setVisible(true);
+        });
+    }
+}
