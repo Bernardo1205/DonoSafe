@@ -22,7 +22,7 @@ public class MyWaipontRender implements WaypointRenderer<MyWaypoint> {
         /* Definir color y opacidad  del reyeno de la circunferencia*/
         if (waypoint.getPeligrosidad().equals("BAJO")){
             graphics2D.setColor(new Color(26, 255, 0,80));
-        } else if (waypoint.getPeligrosidad().equals("MEDIIO")) {
+        } else if (waypoint.getPeligrosidad().equals("MEDIO")) {
             graphics2D.setColor(new Color(255, 251, 0,80));
         }
         else {
@@ -35,7 +35,7 @@ public class MyWaipontRender implements WaypointRenderer<MyWaypoint> {
        graphics2D.setComposite(composite);
         if (waypoint.getPeligrosidad().equals("BAJO")) {
             graphics2D.setColor(Color.GREEN);
-        } else if (waypoint.getPeligrosidad().equals("MEDIIO")) {
+        } else if (waypoint.getPeligrosidad().equals("MEDIO")) {
             graphics2D.setColor(Color.YELLOW);
         }else {
             graphics2D.setColor(Color.RED);
