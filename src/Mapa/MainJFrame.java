@@ -91,6 +91,8 @@ public class MainJFrame extends JFrame {
             }
         });
 
+        mainPanel.add(new AdressAutocomplete(),BorderLayout.NORTH);
+
         mainPanel.add(panelBotones,BorderLayout.SOUTH);
         frame.add(mainPanel);
         frame.setSize(800, 600);
