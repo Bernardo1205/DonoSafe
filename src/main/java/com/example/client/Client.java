@@ -1,4 +1,8 @@
-import javax.print.attribute.standard.DateTimeAtCreation;
+package main.java.com.example.client;
+
+import main.java.com.example.config.ClientConfig;
+import main.java.com.example.config.ServerConfig;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,18 +10,18 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * La clase Client se encarga de renderizar la pantalla del cliente
+ * y de conectarse al servidor para luego mandar y recibir mensajes.
+ *
+ * @see ClientLogin
+ * @see ServerConnection
+ * @author daniel.sanchez.r
+ */
 public class Client {
-    private static final String SERVER_IP = "172.18.32.1"; //127.0.0.1|10.207.61.251|192.168.222.1\172.18.32.1
-    private static final int SERVER_PORT = 9090;
-    private static final int WIDTH = 350;
-    private static final int HEIGHT = 500;
+    private String grupoActual = "";
     private JFrame frame;
     private CardLayout cardLayout;
     private CardLayout chatCardLayout;
@@ -34,32 +38,50 @@ public class Client {
     private JPanel chatPanel;
     private JPanel groupChatPanel;
     private String userName;
-    public HashMap<String, String[]> groups = new HashMap<>();
+    public HashMap<String, String[]> grupos = new HashMap<>();
     private static Socket socket;
     private static PrintWriter out;
 
+    /**
+     * Registrar o ubicar al cliente en la base de datos
+     */
     public Client() {
         new ClientLogin(this);
     }
 
+    /**
+     * Tras haberse registrado correctamente, se renderiza la pantalla del
+     * cliente y se conecta al servidor
+     * @param username
+     * @see ServerConnection
+     */
     public void openChatWindow(String username) {
+
         userName = username;
+
         setupGUI();
         try {
-            socket = new Socket(SERVER_IP, SERVER_PORT);
+            socket = new Socket(ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
+
             ServerConnection serverConn = new ServerConnection(socket, this);
             out = new PrintWriter(socket.getOutputStream(), true);
             out.println(username);
+
             new Thread(serverConn).start();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Crea la ventana principal y añade 3 secciones (alerta, chats, grupos);
+     * cada una de ellas, con sus respectivos botones, áreas de texto, etiquetas...
+     */
     private void setupGUI() {
 
-        frame = new JFrame("Client Application");
-        frame.setSize(WIDTH, HEIGHT);
+        frame = new JFrame("main.java.com.example.client.Client Application");
+        frame.setSize(ClientConfig.WIDTH, ClientConfig.HEIGHT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout(5, 10));
 
@@ -81,7 +103,7 @@ public class Client {
         JPanel navigationPanel = new JPanel(new GridLayout(1, 3));
         JButton section1Button = new JButton("Alerts");
         JButton section2Button = new JButton("Chats");
-        JButton section3Button = new JButton("Button Panel");
+        JButton section3Button = new JButton("Groups");
 
         /* Add action listeners to switch between sections */
         section1Button.addActionListener(e -> cardLayout.show(mainPanel, "Section 1"));
@@ -99,6 +121,14 @@ public class Client {
         frame.setVisible(true);
     }
 
+    /**
+     * Sección de las alertas:
+     * <p>
+     *     Permite visualizar y enviar mensajes que informan a todos los
+     *     usuarios de posibles amenazas
+     * </p>
+     * @return El panel de la sección de alertas
+     */
     private JPanel createAlertSection() {
 
         /* Panel con las alertas enviadas por los clientes */
@@ -128,6 +158,16 @@ public class Client {
         return alertPanel;
     }
 
+    /**
+     * Sección de los chats:
+     * <pre>
+     * Contiene un cardLayout para cambiar entre los siguientes paneles:
+     *      Panel de usuarios: Muestras todos los usuarios conectados
+     *      Panel del chat: Muestra el chat privado con una persona
+     *      Panel del chat de grupo: Muestra el chat al cual tienen acceso los miembros del grupo
+     * </pre>
+     * @return El panel de la sección de chats
+     */
     private JPanel createChatSection() {
 
         chatCardLayout = new CardLayout();
@@ -155,6 +195,12 @@ public class Client {
         return chatSection;
     }
 
+    /**
+     * Sección de los grupos:
+     * <p> Contiene los componentes para crear un grupo nuevo junto con el listado de
+     * grupos creados
+     * @return El panel de la sección de grupos
+     */
     private JPanel createGroupSection() {
         JPanel groupPanel = new JPanel(new BorderLayout(10, 4));
         JPanel inputPanel = new JPanel(new GridLayout(4, 1, 20, 10));
@@ -167,43 +213,28 @@ public class Client {
 
         JLabel labelOrig = new JLabel("Origen");
         JLabel labelDest = new JLabel("Destino");
-        JTextField groupNameField = new JTextField(25);
         JTextField groupOrigField = new JTextField(10);
         JTextField groupDestField = new JTextField(10);
         JComboBox groupHour = new JComboBox(hours);
-        JButton centeredButton = new JButton("Create Group");
+        JButton createGroupButton = new JButton("Create Group");
 
         groupsListPanel = new JPanel();
         groupsListPanel.setLayout(new BoxLayout(groupsListPanel, BoxLayout.Y_AXIS));
 
-        centeredButton.addActionListener(new ActionListener() {
+        createGroupButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String groupName = groupNameField.getText();
-                String groupOrig = groupOrigField.getText();
-                String groupDest = groupDestField.getText();
-
-                JButton bGroup = new JButton(groupName);
-                bGroup.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        openPrivateGroup(groupName);
-                        chatCardLayout.show(chatSection, "Group Section");
-                        cardLayout.show(mainPanel, "Section 2");
-                    }
-                });
-                groupNameField.setText("");
-                String groupInfo = String.join(";", groupOrig, groupDest, (String) groupHour.getSelectedItem());
-                out.println("[NEW_GROUP] " + groupName + ":" + userName + " " + groupInfo);
+                String groupInfo = String.join(";", groupOrigField.getText(),
+                        groupDestField.getText(), (String) groupHour.getSelectedItem());
+                out.println("[NEW_GROUP] " + userName + " " + groupInfo);
             }
         });
-        inputPanel.add(groupNameField);
         inputPanel.add(groupHour);
         inputPanel.add(labelOrig);
         inputPanel.add(groupOrigField);
         inputPanel.add(labelDest);
         inputPanel.add(groupDestField);
-        inputPanel.add(centeredButton);
+        inputPanel.add(createGroupButton);
         groupPanel.add(inputPanel, BorderLayout.NORTH);
         groupPanel.add(groupsListPanel, BorderLayout.CENTER);
         return groupPanel;
@@ -211,8 +242,12 @@ public class Client {
 
     public void updateGroupsList(HashMap<String, String[]> groupNames) {
         groupsListPanel.removeAll();
+
         for (String groupName : groupNames.keySet()) {
             String[] info = groupNames.get(groupName);
+            for (String i : info) {
+                System.out.println(i);
+            }
             JButton groupButton = new JButton(info[0] + "-" + info[1]);
             groupButton.addActionListener(e -> joinGroupChat(groupName));
             groupsListPanel.add(groupButton);
@@ -221,14 +256,24 @@ public class Client {
         groupsListPanel.repaint();
     }
 
-    private void joinGroupChat(String groupName) {
-        out.println("JOIN_GROUP " + this.userName + " TO " + groupName);
-        openPrivateGroup(groupName);
+    /**
+     * Envía un mensaje al servidor mostrando el usuario y el grupo al
+     * que quiere acceder.
+     *
+     * @param groupId
+     */
+    private void joinGroupChat(String groupId) {
+        out.println("JOIN_GROUP " + this.userName + " TO " + groupId);
+        openPrivateGroup(groupId);
         chatCardLayout.show(chatSection, "Group Section");
         cardLayout.show(mainPanel, "Section 2");
     }
 
-    private void updateUsersList(String[] users) {
+    /**
+     * Actualiza el panel con el listado de usuarios conectados
+     * @param users
+     */
+    public void updateUsersList(String[] users) {
         userListPanel.removeAll();
 
         for (String user : users) {
@@ -249,25 +294,44 @@ public class Client {
         userListPanel.repaint();
     }
 
-    // Añade una alerta
+    /**
+     * Añade una alerta
+     * @param alert
+     */
     void showAlert(String alert) {
         SwingUtilities.invokeLater(() -> {
             alertArea.append(alert + "\n");
         });
     }
 
-    // Método para notificar al usuario que tiene mensajes no leídos
+    /**
+     * Añade el mensaje a {@link #unreadMessages} y llama a {@link #updateUserList(String, String)}
+     *
+     * @param fromUser
+     * @param message
+     */
     public void receiveMessage(String fromUser, String message) {
         unreadMessages.put(fromUser, true);
         updateUserList(fromUser, message);
     }
 
+    /**
+     * Cambia la vista del {@link #cardLayout} a la del panel con el
+     * listado de usuarios conectados
+     */
     private void showUsersList() {
         if (userTalkingTo != null) {userTalkingTo.setText("");};
         if (groupTalkingTo != null) {groupTalkingTo.setText("");};
         chatCardLayout.show(chatSection, "Users Section");
     }
 
+    /**
+     * Cambia el color del fondo y el texto de aquel boton que contenga
+     * el chat del usuario para hacerle saber que esa persona quiere
+     * hablar con él/ella
+     * @param user
+     * @param message
+     */
     private void updateUserList(String user, String message) {
         if (userListPanel.getComponents() != null) {
             for (Component b : userListPanel.getComponents()) {
@@ -280,14 +344,22 @@ public class Client {
         }
     }
 
+    /**
+     * Abre el panel del chat de grupo indicado
+     * @param group
+     */
     private void openPrivateGroup(String group) {
         groupChatPanel.removeAll();
 
-        System.out.println(groups);
+        String[] groupInfo = grupos.get(group);
+
+        grupoActual = group;
+
         JPanel headerPanel = new JPanel(new BorderLayout());
-        groupTalkingTo = new JLabel(group);
+        groupTalkingTo = new JLabel(groupInfo[0] + " - " + groupInfo[1]);
         JButton exitChatButton = new JButton("<--");
         exitChatButton.addActionListener(e -> {
+            grupoActual = "";
             showUsersList();
         });
         headerPanel.add(exitChatButton, BorderLayout.WEST);
@@ -342,10 +414,10 @@ public class Client {
         chatPanel.repaint();
     }
 
-    private void addMessage(JPanel chatPanel, String message) {
-        if (chatPanel==null || scrollMessages==null) {
-            return;
-        }
+    public void addMessage(JPanel chatPanel, String message) {
+//        if (chatPanel==null || scrollMessages==null) {
+//            return;
+//        }
         SwingUtilities.invokeLater(() -> {
             // Verifica si el scroll está en el extremo inferior
             boolean isAtBottom = scrollMessages.getVerticalScrollBar().getValue() +
@@ -364,58 +436,32 @@ public class Client {
         });
     }
 
-    public String getDisplayedChat() {
+    public String getDisplayedChat(int option) {
         try {
-            String s = this.userTalkingTo.getText();
-            return s;
+            return (option==0) ? this.userTalkingTo.getText() : grupoActual;
         } catch (NullPointerException e) {
             return "";
         }
     }
 
-    public void addGroup(String groupName, String[] groupInfo) {
-        groups.put(groupName, groupInfo);
+    public void addGroup(String groupId, String[] groupInfo) {
+        grupos.put(groupId, groupInfo);
     }
 
-    public HashMap<String, String[]> getGroups() {
-        return groups;
+    public JPanel getChatPanel(int option) {
+        return (option==0) ? chatPanel : groupChatPanel;
     }
 
-    public void showMessage(String message) {
-        if (message.startsWith("USERS_LIST:")) {
-            if (message.contains("," + userName + ",")) {
-                message = message.replace("," + userName + ",", ",");
-            } else {
-                message = message.replaceFirst(",?" + userName + ",?", "");
-            }
-            String[] users = message.substring(11).split(",");
-            if (!users[0].isEmpty()) {
-                updateUsersList(users);
-            }
-        } else if (message.contains("(private)")) {
-            addMessage(chatPanel, message.replaceFirst("[(]private[)]", ""));
-        } else if (message.contains("(DM)")) {
-            String user = message.substring(0, message.indexOf("(DM)"));
-            String msg = message.substring(message.indexOf("(DM):")+5);
-            receiveMessage(user, msg);
-        } else if (message.startsWith("GROUP ")) {
-            String group = message.substring(6, message.indexOf(":"));
-            String sender = message.substring(message.indexOf(":")+1, message.indexOf("]"));
-            String msg = message.substring(message.indexOf("]")+2);
-            if (sender.equals(this.userName)) {
-                addMessage(groupChatPanel, "You: " + msg);
-            } else if (groupTalkingTo != null) {
-                if (groupTalkingTo.getText().equals(group)) {
-                    addMessage(groupChatPanel, sender + ": " + msg);
-                }
-            }
-        } else if (message.startsWith("[NEW_GROUP] ")) {
-            int ind = message.indexOf(":");
-            groups.put(message.substring(message.indexOf(" ")+1, ind), message.substring(message.indexOf(" ", ind)).split(";"));
-            updateGroupsList(getGroups());
-        } else {
-            System.out.println("WOW" + message);
-        }
+    public String getUserame() {
+        return this.userName;
+    }
+
+    public String getGrupoActual() {
+        return this.grupoActual;
+    }
+
+    public HashMap<String, String[]> getGrupos() {
+        return grupos;
     }
 
     public static void main(String[] args) {

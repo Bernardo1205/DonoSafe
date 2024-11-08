@@ -1,3 +1,5 @@
+package main.java.com.example.client;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -35,7 +37,7 @@ public class ClientLogin {
     private void placeComponents(JPanel panel) {
         panel.setLayout(null);
 
-        JLabel fraseBienvenida = new JLabel("Bienvenido a Aloro");
+        JLabel fraseBienvenida = new JLabel("Bienvenido a Donosafe");
         fraseBienvenida.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
         fraseBienvenida.setBounds(WIDTH/4-fraseBienvenida.getText().length(), 20, WIDTH, 30);
         panel.add(fraseBienvenida);

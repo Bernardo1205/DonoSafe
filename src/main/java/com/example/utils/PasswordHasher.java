@@ -1,11 +1,15 @@
+package main.java.com.example.utils;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class PasswordHasher {
-    // Algorithm used to hash the password
+    /** Algorithm used to hash the password */
     protected final static String ALGORITHM = "SHA-256";
 
-    // Method to hash a password using SHA-256
+    /**
+     * Method to hash a password using SHA-256
+     */
     public static String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance(PasswordHasher.ALGORITHM);

@@ -1,14 +1,17 @@
+package main.java.com.example.server;
+
+import main.java.com.example.config.ServerConfig;
+
 import java.io.*;
 import java.net.*;
 import java.util.HashMap;
 
 
 public class Server {
-    private static final int PORT = 9090;
     private static HashMap<String, ClientHandler> clients = new HashMap<>();
 
     public Server () throws IOException {
-        ServerSocket listener = new ServerSocket(PORT);
+        ServerSocket listener = new ServerSocket(ServerConfig.SERVER_PORT);
 
         while (true) {
             System.out.println("[SERVER] Waiting for client connection...");
@@ -22,7 +25,7 @@ public class Server {
     }
 
     public String toString() {
-        return "Server running in PORT=" + PORT + "\nNº of clients connected: " + clients.size();
+        return "main.java.com.example.server.Server running in PORT=" + ServerConfig.SERVER_PORT + "\nNº of clients connected: " + clients.size();
     }
 
     public static void main(String[] args) throws IOException {
