@@ -124,7 +124,6 @@ public class ClientRegister extends JFrame {
             System.err.println("Error al guardar la información: " + e.getMessage());
         }
     }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             ClientRegister window = new ClientRegister();

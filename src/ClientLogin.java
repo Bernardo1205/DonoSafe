@@ -12,7 +12,6 @@ public class ClientLogin {
 
     public ClientLogin(Client client) {
         this.client = client;
-
         // Simulación de usuarios registrados
         for (int i = 1; i < 10; i++) {
             registeredUsers.put(String.valueOf(i), String.valueOf(i));
