@@ -12,13 +12,14 @@ public class ClientLogin {
 
     public ClientLogin(Client client) {
         this.client = client;
-        for (int i=1; i<10; i++) {
+
+        // Simulación de usuarios registrados
+        for (int i = 1; i < 10; i++) {
             registeredUsers.put(String.valueOf(i), String.valueOf(i));
-            //FIXME: registeredUsers should contain the userName and hashed password read from the database
         }
 
         frame = new JFrame("Log In");
-        frame.setSize(300, 200);
+        frame.setSize(300, 250);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
@@ -48,13 +49,18 @@ public class ClientLogin {
         panel.add(passwordField);
 
         JButton loginButton = new JButton("Login");
-        loginButton.setBounds(100, 80, 80, 25);
+        loginButton.setBounds(50, 90, 80, 25);
         panel.add(loginButton);
 
+        JButton registerButton = new JButton("Crear cuenta");
+        registerButton.setBounds(140, 90, 125, 25);
+        panel.add(registerButton);
+
         JLabel statusLabel = new JLabel("");
-        statusLabel.setBounds(10, 110, 250, 25);
+        statusLabel.setBounds(10, 130, 250, 25);
         panel.add(statusLabel);
 
+        // Acción del botón de login
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -69,9 +75,18 @@ public class ClientLogin {
                 }
             }
         });
-    }
 
-    private boolean validateLogin(String username, String password) {
+        // Acción del botón de registro
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ClientRegister registerWindow = new ClientRegister(); // Crea la instancia
+                registerWindow.setVisible(true);  // Asegúrate de que la ventana de registro sea visible
+                frame.dispose();  // Cierra la ventana de login
+            }
+        });
+    }
+    private boolean validateLogin(String username, String password){
         return registeredUsers.containsKey(username) && registeredUsers.get(username).equals(password);
     }
 }
