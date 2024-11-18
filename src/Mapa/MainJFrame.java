@@ -14,13 +14,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 public class MainJFrame extends JFrame {
+
     private boolean esperarClick;
     private String textoWaypoint;
     private VentanaAgregarWaypoint ventanaAgregarWaypoint;
+
 
 
     public MainJFrame(){
@@ -91,7 +94,6 @@ public class MainJFrame extends JFrame {
             }
         });
 
-        mainPanel.add(new AdressAutocomplete(),BorderLayout.NORTH);
 
         mainPanel.add(panelBotones,BorderLayout.SOUTH);
         frame.add(mainPanel);
@@ -106,6 +108,7 @@ public class MainJFrame extends JFrame {
         return waypoint;
 
     }
+
 
     public static void main(String[] args) {
         MainJFrame mainJFrame = new MainJFrame();

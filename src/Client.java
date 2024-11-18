@@ -9,7 +9,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class Client {
-    private static final String SERVER_IP = "127.0.0.1";
+
+    private static final String SERVER_IP = "10.207.61.251";
     private static final int SERVER_PORT = 9090;
     private static final int WIDTH = 350;
     private static final int HEIGHT = 500;

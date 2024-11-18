@@ -83,9 +83,7 @@ public class Map extends JXMapViewer{
         compoundPainter.setPainters(waypointPainter);
         setOverlayPainter(compoundPainter);
 
-
     }
-
     public Set<MyWaypoint> getSetWaipoints() {
         return setWaipoints;
     }

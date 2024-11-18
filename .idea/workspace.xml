@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-
+    <list default="true" id="973b7b07-c9a0-43d3-b3d8-5209e75d3468" name="Changes" comment="Incorporacion del autocomplete para provarlo en el main frame">
+      <change afterPath="$PROJECT_DIR$/src/Mapa/VentanaCrearGrupo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DonoSafe.iml" beforeDir="false" afterPath="$PROJECT_DIR$/DonoSafe.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/MainJFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/MainJFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/Map.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/ValidatorLocalizacion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/ValidatorLocalizacion.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,93 +27,151 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="master" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-
-  </component>
   <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 0
 }</component>
-  <component name="ProjectId" id="2n6RQI6WHi6FO9jvvIoQJw1EoZ8" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectId" id="2oQLQ1ICUoKFysOLAb9DygZHxIO" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-
+    &quot;Application.AddressAutocompleteSwingExample.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Client.executor&quot;: &quot;Run&quot;,
+    &quot;Application.MainJFrame.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Server.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ValidatorLocalizacion.executor&quot;: &quot;Run&quot;,
+    &quot;Application.VentanaCrearGrupo.executor&quot;: &quot;Run&quot;,
+    &quot;Application.c.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;mapaBernardo&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/beni7/Downloads/proyectos_programacion/LlataBernardo2/ExamenIntermedio&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="jdk-20.0.2-corretto-20.0.2.1-4caba194b151-5bc9ecd2" />
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.17011.79" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.17011.79" />
       </set>
     </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="3df34a6f-02f8-414d-bf5a-46812b2bb15b" name="Changes" comment="" />
-      <created>1728291521849</created>
+      <changelist id="973b7b07-c9a0-43d3-b3d8-5209e75d3468" name="Changes" comment="commit resolver colison" />
+      <created>1730796834828</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1728291521849</updated>
-      <workItem from="1728291522840" duration="305000" />
-
+      <updated>1730796834828</updated>
+      <workItem from="1730796837530" duration="743000" />
+      <workItem from="1730797603147" duration="3502000" />
+      <workItem from="1730884332992" duration="3848000" />
+      <workItem from="1730977320034" duration="5720000" />
+      <workItem from="1730985932206" duration="2150000" />
+      <workItem from="1731056656177" duration="2463000" />
+      <workItem from="1731064034666" duration="2125000" />
+      <workItem from="1731067124961" duration="2793000" />
+      <workItem from="1731072437415" duration="756000" />
+      <workItem from="1731082677874" duration="1956000" />
+      <workItem from="1731085090265" duration="6522000" />
+      <workItem from="1731315892437" duration="5493000" />
+      <workItem from="1731343507002" duration="81000" />
+      <workItem from="1731353522151" duration="20000" />
+      <workItem from="1731353605788" duration="13000" />
+      <workItem from="1731404644414" duration="2201000" />
+      <workItem from="1731428051206" duration="44000" />
+      <workItem from="1731428582154" duration="34000" />
+      <workItem from="1731428640452" duration="11000" />
+      <workItem from="1731435702403" duration="25000" />
+      <workItem from="1731490719184" duration="26000" />
+      <workItem from="1731519962524" duration="226000" />
+      <workItem from="1731520606877" duration="6000" />
+      <workItem from="1731589068532" duration="11000" />
+      <workItem from="1731599979240" duration="691000" />
+      <workItem from="1731600688539" duration="157000" />
+      <workItem from="1731600860238" duration="665000" />
+      <workItem from="1731697563510" duration="2168000" />
+      <workItem from="1731700018019" duration="5007000" />
+      <workItem from="1731914411799" duration="1567000" />
+    </task>
+    <task id="LOCAL-00001" summary="modificacion del render para que cuando se selccione un tipo de peligrosidad añada un color u otro en funcion de eso">
+      <option name="closed" value="true" />
+      <created>1731072590033</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1731072590033</updated>
+    </task>
+    <task id="LOCAL-00002" summary="clase que extiende de JtextField la cual incorpora una autocomplete de sugestiones de localizaciones">
+      <option name="closed" value="true" />
+      <created>1731072706625</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1731072706625</updated>
+    </task>
+    <task id="LOCAL-00003" summary="JSlide añadido para indicar peligrosidad del waypoint">
+      <option name="closed" value="true" />
+      <created>1731072752965</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1731072752965</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Incorporacion del autocomplete para provarlo en el main frame">
+      <option name="closed" value="true" />
+      <created>1731072945895</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1731072945895</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Incorporacion del autocomplete para provarlo en el main frame">
+      <option name="closed" value="true" />
+      <created>1731092305342</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1731092305342</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
-    <option name="RECENT_FILTERS">
-      <map>
-        <entry key="Branch">
-          <value>
-            <list>
-              <RecentGroup>
-                <option name="FILTER_VALUES">
-                  <option value="origin/master" />
-                </option>
-              </RecentGroup>
-            </list>
-          </value>
-        </entry>
-      </map>
-    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-
+    <MESSAGE value="commit resolver colison" />
+    <MESSAGE value="modificacion del render para que cuando se selccione un tipo de peligrosidad añada un color u otro en funcion de eso" />
+    <MESSAGE value="clase que extiende de JtextField la cual incorpora una autocomplete de sugestiones de localizaciones" />
+    <MESSAGE value="JSlide añadido para indicar peligrosidad del waypoint" />
+    <MESSAGE value="Incorporacion del autocomplete para provarlo en el main frame" />
+    <option name="LAST_COMMIT_MESSAGE" value="Incorporacion del autocomplete para provarlo en el main frame" />
   </component>
 </project>
