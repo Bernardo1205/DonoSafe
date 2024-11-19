@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.function.Consumer;
 
 /**
  * Establece una conexión entre el cliente y el servidor. Dependiendo
@@ -26,6 +27,7 @@ public class ServerConnection implements Runnable {
     private Socket server;
     private BufferedReader in;
     private Client client;
+    private ClientGUI clientGUI;
 
     /**
      * Crea una conexión entre el cliente y el servidor
@@ -37,6 +39,7 @@ public class ServerConnection implements Runnable {
      */
     public ServerConnection(Socket s, Client client) throws IOException {
         this.client = client;
+        this.clientGUI = client.getClientGUI();
         this.server = s;
         this.in = new BufferedReader(new InputStreamReader(server.getInputStream()));
     }
@@ -52,7 +55,7 @@ public class ServerConnection implements Runnable {
                 System.out.println(serverResponse);
                 int ind = serverResponse.indexOf(":");
                 if (serverResponse.startsWith("[ALERT] ")) {
-                    client.showAlert(serverResponse);
+                    clientGUI.showAlert(serverResponse);
                 } else if (serverResponse.startsWith("USERS_LIST:")) {
                     if (serverResponse.contains("," + client.getUserame() + ",")) {
                         serverResponse = serverResponse.replace("," + client.getUserame() + ",", ",");
@@ -61,31 +64,16 @@ public class ServerConnection implements Runnable {
                     }
                     String[] users = serverResponse.substring(11).split(",");
                     if (!users[0].isEmpty()) {
-                        client.updateUsersList(users);
+                        clientGUI.updateUsersList(users);
                     }
                 } else if (serverResponse.contains("(private)")) {
-                    if (!client.getDisplayedChat(0).equals(serverResponse.substring(0, serverResponse.indexOf("(")))) {
-                        String user = serverResponse.substring(0, serverResponse.indexOf("(private)"));
-                        String msg = serverResponse.substring(ind+2);
-                        client.receiveMessage(user, msg);
-                    } else {
-                        client.addMessage(client.getChatPanel(1), serverResponse.replaceFirst("[(]private[)]", ""));
-                    }
+                    showPrivateMessage(serverResponse);
                 } else if (serverResponse.startsWith("GROUP ")) {
-                    String group = serverResponse.substring(6, ind);
-                    String sender = serverResponse.substring(ind+1, serverResponse.indexOf("]"));
-                    String msg = serverResponse.substring(serverResponse.indexOf("]")+2);
-
-                    if (sender.equals(client.getUserame())) {
-                        client.addMessage(client.getChatPanel(1), "You: " + msg);
-                    } else if (client.getGrupoActual().equals(group)) {
-                        client.addMessage(client.getChatPanel(1), sender + ": " + msg);
-                    }
+                    showGroupMessage(serverResponse);
                 } else if (serverResponse.startsWith("[NEW_GROUP] ")) {
                     String groupId = serverResponse.substring(12, ind);
                     String[] groupInfo = serverResponse.substring(serverResponse.lastIndexOf(" ")+1).split(";");
                     client.addGroup(groupId, groupInfo);
-                    client.updateGroupsList(client.getGrupos());
                 } else {
                     System.out.println("[ERROR] Unknown message format");
                 }
@@ -94,6 +82,34 @@ public class ServerConnection implements Runnable {
             e.printStackTrace();
         } finally {
             closeConnection();
+        }
+    }
+
+    /**
+     * Muestra un mensaje privado entre dos personas
+     */
+    private void showPrivateMessage(String s) {
+        if (!clientGUI.getUserTalkingTo().equals(s.substring(0, s.indexOf("(")))) {
+            String user = s.substring(0, s.indexOf("(private)"));
+            String msg = s.substring(s.indexOf(":")+2);
+            clientGUI.receiveMessage(user, msg);
+        } else {
+            clientGUI.addPrivateMessage(s.replaceFirst("[(]private[)]", ""));
+        }
+    }
+
+    /**
+     * Muestra un mensaje de grupo
+     */
+    private void showGroupMessage(String s) {
+        String group = s.substring(6, s.indexOf(":"));
+        String sender = s.substring(s.indexOf(":")+1, s.indexOf("]"));
+        String msg = s.substring(s.indexOf("]")+2);
+
+        if (sender.equals(client.getUserame())) {
+            clientGUI.addGroupMessage("You: " + msg);
+        } else if (clientGUI.getGrupoActual().equals(group)) {
+            clientGUI.addGroupMessage(sender + ": " + msg);
         }
     }
 

@@ -9,12 +9,26 @@ import java.net.SocketException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Maneja el hilo de un cliente, recibe mensajes de este y los parsea
+ * para elegir qué acción hacer en cada momento. En los mensajes es
+ * probable que aparezca el nombre de un usuario haciendo referencia
+ * a un hilo. Para saber a qué cliente está dirigido dicho mensaje, es
+ * necesario almacenar el nombre de usuario de cada cliente en la variable
+ * clients, esto se hará nada más el cliente inicie sesión - es decir,
+ * cuando se introduzcan los datos correctos se enviará el nombre del
+ * usuario recién registrado al servidor y este se encargará de actualizar
+ * el nombre de usuario con el que se referenciará a cada hilo.
+ *
+ * @see Server
+ * @see main.java.com.example.client.Client
+ */
 public class ClientHandler implements Runnable {
     private Socket client;
     private BufferedReader in;
     private PrintWriter out;
     private static HashMap<String, Grupo> mapGrupos = new HashMap<>();
-    public HashMap<String, ClientHandler> clients;
+    public static HashMap<String, ClientHandler> clients;
     private String clientName;
 
     public ClientHandler(Socket clientSocket, HashMap<String, ClientHandler> clients) {
@@ -29,7 +43,7 @@ public class ClientHandler implements Runnable {
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             out = new PrintWriter(client.getOutputStream(), true);
 
-            /* Read the client's username */
+            /* Recibe el nombre de usuario con el que se referenciará a este hilo en los mensajes */
             clientName = in.readLine();
             clients.put(clientName, this);
             broadcastUserList();
@@ -43,7 +57,7 @@ public class ClientHandler implements Runnable {
                 } else if (message.startsWith("@")) { /* Private message format: @targetUser message */
                     String targetUser = message.substring(1, message.indexOf(" "));
                     String privateMessage = message.substring(message.indexOf(" ") + 1);
-                    sendMessageToClient(targetUser, "(private): " + privateMessage);
+                    sendMessageToClient(targetUser, this.clientName + "(private): " + privateMessage);
                 } else if (message.startsWith("GROUP ")) {
                     String targerGroup = message.substring(message.indexOf(" ")+1, ind).strip();
                     String sender = message.substring(ind+1, message.indexOf("]"));
@@ -75,34 +89,44 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Crea un grupo y notifica a todos los clientes conectados
+     */
     private void createGroup(String creator, String orig, String dest) {
         Grupo nuevoGrupo = new Grupo(clients.get(creator), orig, dest, LocalDateTime.now());
         mapGrupos.putIfAbsent(nuevoGrupo.getId(), nuevoGrupo);
         sendMessageToAll("[NEW_GROUP] " + nuevoGrupo.getId() + ":" + creator + " " + String.join(";", orig, dest));
     }
 
+    /**
+     * Añade un cliente al grupo
+     */
     private void joinGroup(String groupId, ClientHandler client) {
         if (!mapGrupos.get(groupId).containsUsuario(client)) {
             mapGrupos.get(groupId).añadirUsuario(client);
         }
     }
 
-    public PrintWriter getOut() {
-        return this.out;
-    }
-
     public String getClientName() {
         return this.clientName;
     }
 
-    /* Manda un mensaje privado a un cliente en específico */
-    private void sendMessageToClient(String targetUser, String message) {
+    /**
+     * Manda un mensaje privado a un cliente en específico
+     */
+    public void sendMessageToClient(String targetUser, String message) {
         ClientHandler targetHandler = clients.get(targetUser);
         if (targetHandler != null) {
-            targetHandler.out.println(clientName + message);
+            targetHandler.out.println(message);
         } else {
             targetHandler.closeConnection();
             System.out.println("Couldn't find " + targetUser);
+        }
+    }
+
+    public void sendMessageToClient(ClientHandler clientHandler, String message) {
+        if (clientHandler != null) {
+            clientHandler.out.println(message);
         }
     }
 

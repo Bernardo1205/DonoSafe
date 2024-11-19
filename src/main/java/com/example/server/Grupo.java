@@ -2,6 +2,7 @@ package main.java.com.example.server;
 
 import main.java.com.example.server.ClientHandler;
 
+import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -49,7 +50,7 @@ public class Grupo {
      */
     public void sendMessage(String sender, String message) {
         for (ClientHandler clientHandler : clientes) {
-            clientHandler.getOut().println("GROUP " + this.id + ":" + sender + "] " + message);
+            clientHandler.sendMessageToClient(clientHandler.getClientName(), "GROUP " + this.id + ":" + sender + "] " + message) ;
         }
     }
 
