@@ -11,6 +11,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class ValidatorLocalizacion {
     private final String url ="https://api.geoapify.com/v1/geocode/search?text=%s&apiKey=%s";
@@ -21,7 +23,9 @@ public class ValidatorLocalizacion {
     }
     public GeoPosition validateAdress(String adress) throws IOException {
 
-        String encodedAdress = adress.replace(" ", "%20");
+        String adressEncoded = URLEncoder.encode(adress, StandardCharsets.UTF_8.toString());
+
+        String encodedAdress = adressEncoded.replace(" ", "%20");
         String formatoUrl = String.format(url,encodedAdress,apiKey);
 
         System.out.println(formatoUrl);
@@ -30,7 +34,7 @@ public class ValidatorLocalizacion {
         httpURLConnection.setRequestMethod("GET");
 
 
-        //Leer la respuesta y ponerla como un StringBuilder
+        /* Leer la respuesta y ponerla como un StringBuilder */
         BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
         StringBuilder respuesta = new StringBuilder();
         String lineaRespuesta;
@@ -43,8 +47,8 @@ public class ValidatorLocalizacion {
         JsonObject jsonObject = JsonParser.parseString(respuesta.toString()).getAsJsonObject();
         JsonArray jsonArray = jsonObject.getAsJsonArray("features");
 
-        //Comprobar si no tiene valores en el json array es porque el codigo postal introducido es incorrecto
-        if (jsonArray.size()==0){
+        /* Comprobar si no tiene valores en el json array es porque el codigo postal introducido es incorrecto */
+        if (jsonArray == null ||jsonArray.size()==0){
             return null;
         }
         JsonObject features = jsonArray.get(2).getAsJsonObject();

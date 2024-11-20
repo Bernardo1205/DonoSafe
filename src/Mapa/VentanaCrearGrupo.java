@@ -39,6 +39,8 @@ public class VentanaCrearGrupo extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     localizacionOrigen= filtrarInputUser(origen);
+                    System.out.println(localizacionOrigen.getAdress());
+                    System.out.println(localizacionOrigen.getGeoPosition());
                 } catch (IOException ex) {
 
                     throw new RuntimeException(ex);
@@ -111,6 +113,7 @@ public class VentanaCrearGrupo extends JFrame {
                 return null;
             }
             Localizacion localizacion = new Localizacion();
+            localizacion.setAdress(inputAdress);
             localizacion.setGeoPosition(geoPosition);
             adressAutocomplete.setMap(new HashMap<>());
             return localizacion;

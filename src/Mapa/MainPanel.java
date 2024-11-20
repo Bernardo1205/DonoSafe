@@ -1,74 +1,45 @@
 package Mapa;
 
-import org.jxmapviewer.JXMapViewer;
-import org.jxmapviewer.painter.CompoundPainter;
 import org.jxmapviewer.viewer.GeoPosition;
-import org.jxmapviewer.viewer.Waypoint;
-import org.jxmapviewer.viewer.WaypointPainter;
 
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
-public class MainJFrame extends JFrame {
+public class MainPanel extends JPanel {
 
     private boolean esperarClick;
     private String textoWaypoint;
-    private VentanaAgregarWaypoint ventanaAgregarWaypoint;
+    private String peligrosidad;
+    private Map map;
 
 
+    public MainPanel(JFrame jFrame){
+        setLayout(new BorderLayout());
 
-    public MainJFrame(){
-        JFrame frame = new JFrame("DonoSafe");
-        JPanel mainPanel = new JPanel(new BorderLayout());
-
-        Map map = new Map();
-        mainPanel.add(map,BorderLayout.CENTER);
-
-        ventanaAgregarWaypoint = new VentanaAgregarWaypoint(this);
-
-
-        JButton añadirWaypoint = new JButton("+");
-
-        añadirWaypoint.addActionListener(e -> {
-
-            ventanaAgregarWaypoint.setVisible(true);
-            textoWaypoint = ventanaAgregarWaypoint.getTextWaypoint();
-
-            if(textoWaypoint!=null&&!textoWaypoint.isEmpty()){
-                esperarClick=true;
-                JOptionPane.showMessageDialog(this,"Haz click en el mapa para colocar el waypoint");
-
-            }
-
-        });
-        JPanel panelBotones = new JPanel(new GridLayout(1,4));
-        panelBotones.add(añadirWaypoint);
-
+        map = new Map();
+        add(map,BorderLayout.CENTER);
 
         map.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (esperarClick){
+                if (isEsperarClick()){
 
                     Point point = e.getPoint();
                     GeoPosition geoPosition = map.convertPointToGeoPosition(point);
                     MyWaypoint myWaypoint = ponerwaypoint(geoPosition,textoWaypoint);
-                    myWaypoint.setPeligrosidad(ventanaAgregarWaypoint.getPeligrosidad());
+                    myWaypoint.setPeligrosidad(getPeligrosidad());
 
                     Set setMywaypoints = map.getSetWaipoints();
                     setMywaypoints.add(myWaypoint);
                     map.añadirWaypoint(setMywaypoints);
 
-                    esperarClick = false;
+                    setEsperarClick(false);
+
 
                 }
 
@@ -94,12 +65,38 @@ public class MainJFrame extends JFrame {
             }
         });
 
+    }
 
-        mainPanel.add(panelBotones,BorderLayout.SOUTH);
-        frame.add(mainPanel);
-        frame.setSize(800, 600);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    public Map getMap() {
+        return map;
+    }
+
+    public String getPeligrosidad() {
+        return peligrosidad;
+    }
+
+    public void setPeligrosidad(String peligrosidad) {
+        this.peligrosidad = peligrosidad;
+    }
+
+    public boolean isEsperarClick() {
+        return esperarClick;
+    }
+
+    public void setEsperarClick(boolean esperarClick) {
+        this.esperarClick = esperarClick;
+    }
+
+    public String getTextoWaypoint() {
+        return textoWaypoint;
+    }
+
+    public void setTextoWaypoint(String textoWaypoint) {
+        this.textoWaypoint = textoWaypoint;
     }
 
     public MyWaypoint ponerwaypoint(GeoPosition geoPosition, String text){
@@ -110,7 +107,4 @@ public class MainJFrame extends JFrame {
     }
 
 
-    public static void main(String[] args) {
-        MainJFrame mainJFrame = new MainJFrame();
-    }
 }

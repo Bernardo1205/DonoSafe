@@ -44,9 +44,10 @@ public class AdressAutocomplete extends JTextField {
 
     }
     private List<String> getSugestions(String input) throws IOException {
-        List<String> listaSugestiones = new ArrayList<>();
 
-        String request = String.format("%s?text=%s&apiKey=%s" , geoapify_url, input,apiKey);
+        String encodedInput = URLEncoder.encode(input, "UTF-8");
+        List<String> listaSugestiones = new ArrayList<>();
+        String request = String.format("%s?text=%s&apiKey=%s" , geoapify_url, encodedInput,apiKey);
 
         /* Abrir conexion con servidor y hacer un get del input */
         URL url = new URL(request);

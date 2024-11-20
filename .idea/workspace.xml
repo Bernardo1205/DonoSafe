@@ -4,15 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="973b7b07-c9a0-43d3-b3d8-5209e75d3468" name="Changes" comment="Incorporacion del autocomplete para provarlo en el main frame">
-      <change afterPath="$PROJECT_DIR$/src/Mapa/VentanaCrearGrupo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+    <list default="true" id="973b7b07-c9a0-43d3-b3d8-5209e75d3468" name="Changes" comment="Incorporacion :&#10;-Incorporacion Ventana para crear grupos usa LableAutocomplete y ValidatorLocalizacion para comprobar que es correcta dicha ubicacion y crear grupo con origen / destino .&#10;&#10;&#10;-clase para comprobar si el adress es correcto y si lo es coger geolocalizacion(Validator Localizacion)">
+      <change afterPath="$PROJECT_DIR$/src/App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DonoSafe.iml" beforeDir="false" afterPath="$PROJECT_DIR$/DonoSafe.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Mapa/MainJFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/MainJFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/AdressAutocomplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/AdressAutocomplete.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/MainJFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/MainPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Mapa/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/Map.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Mapa/ValidatorLocalizacion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/ValidatorLocalizacion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/VentanaAgregarWaypoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/VentanaAgregarWaypoint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/VentanaCrearGrupo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/VentanaCrearGrupo.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,30 +38,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.AddressAutocompleteSwingExample.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Client.executor&quot;: &quot;Run&quot;,
-    &quot;Application.MainJFrame.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Server.executor&quot;: &quot;Run&quot;,
-    &quot;Application.ValidatorLocalizacion.executor&quot;: &quot;Run&quot;,
-    &quot;Application.VentanaCrearGrupo.executor&quot;: &quot;Run&quot;,
-    &quot;Application.c.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;mapaBernardo&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/beni7/Downloads/proyectos_programacion/LlataBernardo2/ExamenIntermedio&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.AddressAutocompleteSwingExample.executor": "Run",
+    "Application.App.executor": "Run",
+    "Application.Client.executor": "Run",
+    "Application.MainJFrame.executor": "Run",
+    "Application.Server.executor": "Run",
+    "Application.ValidatorLocalizacion.executor": "Run",
+    "Application.VentanaCrearGrupo.executor": "Run",
+    "Application.c.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "mapaBernardo",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/beni7/Downloads/proyectos_programacion/LlataBernardo2/ExamenIntermedio",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -108,6 +109,10 @@
       <workItem from="1731697563510" duration="2168000" />
       <workItem from="1731700018019" duration="5007000" />
       <workItem from="1731914411799" duration="1567000" />
+      <workItem from="1731920953279" duration="872000" />
+      <workItem from="1731922175158" duration="2824000" />
+      <workItem from="1732122458733" duration="233000" />
+      <workItem from="1732122702891" duration="6820000" />
     </task>
     <task id="LOCAL-00001" summary="modificacion del render para que cuando se selccione un tipo de peligrosidad añada un color u otro en funcion de eso">
       <option name="closed" value="true" />
@@ -149,7 +154,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731092305342</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Incorporacion :&#10;-Incorporacion Ventana para crear grupos usa LableAutocomplete y ValidatorLocalizacion para comprobar que es correcta dicha ubicacion y crear grupo con origen / destino .&#10;&#10;&#10;-clase para comprobar si el adress es correcto y si lo es coger geolocalizacion(Validator Localizacion)">
+      <option name="closed" value="true" />
+      <created>1731921399632</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1731921399632</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -172,6 +185,7 @@
     <MESSAGE value="clase que extiende de JtextField la cual incorpora una autocomplete de sugestiones de localizaciones" />
     <MESSAGE value="JSlide añadido para indicar peligrosidad del waypoint" />
     <MESSAGE value="Incorporacion del autocomplete para provarlo en el main frame" />
-    <option name="LAST_COMMIT_MESSAGE" value="Incorporacion del autocomplete para provarlo en el main frame" />
+    <MESSAGE value="Incorporacion :&#10;-Incorporacion Ventana para crear grupos usa LableAutocomplete y ValidatorLocalizacion para comprobar que es correcta dicha ubicacion y crear grupo con origen / destino .&#10;&#10;&#10;-clase para comprobar si el adress es correcto y si lo es coger geolocalizacion(Validator Localizacion)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Incorporacion :&#10;-Incorporacion Ventana para crear grupos usa LableAutocomplete y ValidatorLocalizacion para comprobar que es correcta dicha ubicacion y crear grupo con origen / destino .&#10;&#10;&#10;-clase para comprobar si el adress es correcto y si lo es coger geolocalizacion(Validator Localizacion)" />
   </component>
 </project>
