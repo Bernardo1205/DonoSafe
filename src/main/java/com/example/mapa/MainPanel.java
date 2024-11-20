@@ -1,4 +1,4 @@
-package Mapa;
+package main.java.com.example.mapa;
 
 import org.jxmapviewer.viewer.GeoPosition;
 
@@ -14,8 +14,20 @@ public class MainPanel extends JPanel {
 
     private boolean esperarClick;
     private String textoWaypoint;
+<<<<<<<< HEAD:src/main/java/com/example/mapa/MainPanel.java
     private String peligrosidad;
     private Map map;
+========
+    private VentanaAgregarWaypoint ventanaAgregarWaypoint;
+
+    public MainJFrame(){
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        Map map = new Map();
+        mainPanel.add(map,BorderLayout.CENTER);
+
+        ventanaAgregarWaypoint = new VentanaAgregarWaypoint(this);
+>>>>>>>> refs/heads/server-client:src/main/java/com/example/mapa/MainJFrame.java
 
 
     public MainPanel(JFrame jFrame){
@@ -65,6 +77,7 @@ public class MainPanel extends JPanel {
             }
         });
 
+<<<<<<<< HEAD:src/main/java/com/example/mapa/MainPanel.java
     }
 
     public void setMap(Map map) {
@@ -97,6 +110,13 @@ public class MainPanel extends JPanel {
 
     public void setTextoWaypoint(String textoWaypoint) {
         this.textoWaypoint = textoWaypoint;
+========
+        mainPanel.add(panelBotones,BorderLayout.SOUTH);
+        add(mainPanel);
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+>>>>>>>> refs/heads/server-client:src/main/java/com/example/mapa/MainJFrame.java
     }
 
     public MyWaypoint ponerwaypoint(GeoPosition geoPosition, String text){

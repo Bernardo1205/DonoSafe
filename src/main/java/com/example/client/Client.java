@@ -1,0 +1,114 @@
+package main.java.com.example.client;
+
+import main.java.com.example.config.ClientConfig;
+import main.java.com.example.config.ServerConfig;
+import main.java.com.example.mapa.*;
+import org.jxmapviewer.viewer.GeoPosition;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ConnectException;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Set;
+
+/**
+ * La clase Client se encarga de renderizar la pantalla del cliente
+ * y de conectarse al servidor para luego mandar y recibir mensajes.
+ *
+ *
+ * @see ClientLogin
+ * @see ClientGUI
+ * @see ServerConnection
+ * @author daniel.sanchez.r
+ */
+public class Client {
+    private String userName;
+    public ClientGUI clientGUI;
+    public HashMap<String, String[]> grupos = new HashMap<>();
+    private static Socket socket;
+    private static PrintWriter out;
+
+    /**
+     * Registrar o ubicar al cliente en la base de datos
+     */
+    public Client() {
+        new ClientLogin(this);
+    }
+
+    /**
+     * Tras haberse registrado correctamente, se renderiza la pantalla del
+     * cliente y se conecta al servidor
+     * @param username
+     * @see ServerConnection
+     */
+    public void openChatWindow(String username) {
+
+        userName = username;
+
+        this.clientGUI = new ClientGUI(Client.this);
+
+        try {
+            socket = new Socket(ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
+
+            ServerConnection serverConn = new ServerConnection(socket, this);
+            out = new PrintWriter(socket.getOutputStream(), true);
+            /* Informar al servidor del nombre de usuario para que este pueda manejar el
+            * hilo de cada cliente, permitiéndole saber a quien enviar cada mensaje */
+            out.println(username);
+
+            new Thread(serverConn).start();
+
+        } catch (ConnectException ex1) {
+            System.out.format("Servidor en %s/%s no encontrado", ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
+            System.exit(0);
+        } catch (IOException ex2) {
+            ex2.printStackTrace();
+        }
+    }
+
+    /**
+     * Envía un mensaje al servidor mostrando el usuario y el grupo al
+     * que quiere acceder.
+     *
+     * @param groupId
+     */
+    public void joinGroupChat(String groupId) {
+        sendMessageToServer("JOIN_GROUP " + this.userName + " TO " + groupId);
+        clientGUI.openPrivateGroup(groupId);
+    }
+
+    public ClientGUI getClientGUI() {
+        return this.clientGUI;
+    }
+
+    public void sendMessageToServer(String message) {
+        out.println(message);
+    }
+
+    public void addGroup(String groupId, String[] groupInfo) {
+        grupos.put(groupId, groupInfo);
+        clientGUI.updateGroupsList(grupos);
+    }
+
+    public String getUserame() {
+        return this.userName;
+    }
+
+    public HashMap<String, String[]> getGrupos() {
+        return grupos;
+    }
+
+    public static void main(String[] args) {
+        new Client();
+    }
+}

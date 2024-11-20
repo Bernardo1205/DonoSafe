@@ -1,4 +1,4 @@
-package Mapa;
+package main.java.com.example.mapa;
 
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
