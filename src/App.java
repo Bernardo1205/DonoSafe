@@ -1,6 +1,6 @@
-import Client;
 import Mapa.MainPanel;
 import Mapa.VentanaAgregarWaypoint;
+
 
 import javax.swing.*;
 import java.awt.*;

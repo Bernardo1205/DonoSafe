@@ -5,14 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="973b7b07-c9a0-43d3-b3d8-5209e75d3468" name="Changes" comment="Incorporacion :&#10;-Incorporacion Ventana para crear grupos usa LableAutocomplete y ValidatorLocalizacion para comprobar que es correcta dicha ubicacion y crear grupo con origen / destino .&#10;&#10;&#10;-clase para comprobar si el adress es correcto y si lo es coger geolocalizacion(Validator Localizacion)">
-      <change afterPath="$PROJECT_DIR$/src/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Mapa/AdressAutocomplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/AdressAutocomplete.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Mapa/MainJFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/MainPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Mapa/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/Map.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Mapa/ValidatorLocalizacion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/ValidatorLocalizacion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Mapa/VentanaAgregarWaypoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/VentanaAgregarWaypoint.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Mapa/VentanaCrearGrupo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/VentanaCrearGrupo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/client/Client.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/client/ClientGUI.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/client/ClientLogin.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/client/ServerConnection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/config/ClientConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/config/ServerConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/server/ClientHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/server/Grupo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/server/Server.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/utils/PasswordHasher.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/commons-logging-1.1.3.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/gson-2.11.0.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/icons/warning-icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/jxmapviewer2-2.5.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Client.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/AdressAutocomplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/AdressAutocomplete.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/Grupo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/Grupo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/Localizacion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/Localizacion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/MainJFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/MainJFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/MainPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/MainPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/Map.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/MyWaipontRender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/MyWaipontRender.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/MyWaypoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/MyWaypoint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/ValidatorLocalizacion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/ValidatorLocalizacion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/VentanaAgregarWaypoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/VentanaAgregarWaypoint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/VentanaCrearGrupo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/VentanaCrearGrupo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Mapa/VentanaInfoWaypoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mapa/VentanaInfoWaypoint.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +55,9 @@
   &quot;associatedIndex&quot;: 0
 }</component>
   <component name="ProjectId" id="2oQLQ1ICUoKFysOLAb9DygZHxIO" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -49,7 +73,7 @@
     "Application.VentanaCrearGrupo.executor": "Run",
     "Application.c.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "mapaBernardo",
+    "git-widget-placeholder": "Merging mapaBernardo",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/beni7/Downloads/proyectos_programacion/LlataBernardo2/ExamenIntermedio",
     "node.js.detected.package.eslint": "true",
