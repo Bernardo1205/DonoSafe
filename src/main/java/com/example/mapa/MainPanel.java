@@ -1,5 +1,7 @@
 package main.java.com.example.mapa;
 
+import main.java.com.example.client.Client;
+import main.java.com.example.client.ServerConnection;
 import org.jxmapviewer.viewer.GeoPosition;
 
 
@@ -9,28 +11,20 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class MainPanel extends JPanel {
 
     private boolean esperarClick;
     private String textoWaypoint;
-<<<<<<<< HEAD:src/main/java/com/example/mapa/MainPanel.java
     private String peligrosidad;
     private Map map;
-========
-    private VentanaAgregarWaypoint ventanaAgregarWaypoint;
+    public Client client;
 
-    public MainJFrame(){
-        JPanel mainPanel = new JPanel(new BorderLayout());
+    private Consumer<MyWaypoint> onWaypointAdded;/* Listener para pasar waypoints a clase app cuando se creen */
 
-        Map map = new Map();
-        mainPanel.add(map,BorderLayout.CENTER);
-
-        ventanaAgregarWaypoint = new VentanaAgregarWaypoint(this);
->>>>>>>> refs/heads/server-client:src/main/java/com/example/mapa/MainJFrame.java
-
-
-    public MainPanel(JFrame jFrame){
+    public MainPanel(JFrame jFrame,Client client){
+        this.client = client;
         setLayout(new BorderLayout());
 
         map = new Map();
@@ -45,10 +39,15 @@ public class MainPanel extends JPanel {
                     GeoPosition geoPosition = map.convertPointToGeoPosition(point);
                     MyWaypoint myWaypoint = ponerwaypoint(geoPosition,textoWaypoint);
                     myWaypoint.setPeligrosidad(getPeligrosidad());
+                    myWaypoint.setUser(client);
 
                     Set setMywaypoints = map.getSetWaipoints();
                     setMywaypoints.add(myWaypoint);
                     map.añadirWaypoint(setMywaypoints);
+
+                    if (onWaypointAdded != null) {
+                        onWaypointAdded.accept(myWaypoint);
+                    }
 
                     setEsperarClick(false);
 
@@ -77,7 +76,9 @@ public class MainPanel extends JPanel {
             }
         });
 
-<<<<<<<< HEAD:src/main/java/com/example/mapa/MainPanel.java
+    }
+    public void setOnWaypointAdded(Consumer<MyWaypoint> listener) {
+        this.onWaypointAdded = listener;
     }
 
     public void setMap(Map map) {
@@ -109,22 +110,15 @@ public class MainPanel extends JPanel {
     }
 
     public void setTextoWaypoint(String textoWaypoint) {
-        this.textoWaypoint = textoWaypoint;
-========
-        mainPanel.add(panelBotones,BorderLayout.SOUTH);
-        add(mainPanel);
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
->>>>>>>> refs/heads/server-client:src/main/java/com/example/mapa/MainJFrame.java
-    }
+        this.textoWaypoint = textoWaypoint;}
 
     public MyWaypoint ponerwaypoint(GeoPosition geoPosition, String text){
         MyWaypoint waypoint = new MyWaypoint(geoPosition);
         waypoint.setText(text);
         return waypoint;
-
     }
+
+
 
 
 }

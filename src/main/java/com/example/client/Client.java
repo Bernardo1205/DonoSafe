@@ -33,7 +33,7 @@ import java.util.Set;
  */
 public class Client {
     private String userName;
-    public ClientGUI clientGUI;
+    public App clientGUI;
     public HashMap<String, String[]> grupos = new HashMap<>();
     private static Socket socket;
     private static PrintWriter out;
@@ -55,7 +55,7 @@ public class Client {
 
         userName = username;
 
-        this.clientGUI = new ClientGUI(Client.this);
+        this.clientGUI = new App(Client.this);
 
         try {
             socket = new Socket(ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
@@ -87,7 +87,16 @@ public class Client {
         clientGUI.openPrivateGroup(groupId);
     }
 
-    public ClientGUI getClientGUI() {
+    /**
+     * Envía un mensaje al servidor con el mensaje que se quiere enviar
+     * al grupo.
+     *
+     * @param groupId
+     * @param message
+     */
+
+
+    public App getClientGUI() {
         return this.clientGUI;
     }
 

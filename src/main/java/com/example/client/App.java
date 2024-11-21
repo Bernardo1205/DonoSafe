@@ -1,12 +1,25 @@
-import Mapa.MainPanel;
-import Mapa.VentanaAgregarWaypoint;
+package main.java.com.example.client;
 
+import mapa.AdressAutocomplete;
+import main.java.com.example.mapa.MainPanel;
+
+
+import main.java.com.example.mapa.Map;
+import main.java.com.example.mapa.MyWaypoint;
+
+import main.java.com.example.mapa.User;
+
+import main.java.com.example.mapa.VentanaAgregarWaypoint;
+import main.java.com.example.mapa.VentanaInfoWaypoint;
+import mapa.VentanaCrearGrupo;
+import org.jxmapviewer.viewer.Waypoint;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Set;
 
 public class App extends JFrame {
     private JPanel panelPrincipal;
@@ -34,24 +47,40 @@ public class App extends JFrame {
     public HashMap<String, String[]> grupos = new HashMap<>();
 
 
+    public App(Client client){
+        this.client = client;
 
-    public App(){
-        panelPrincipal = new JPanel(new CardLayout());
+        cardLayout = new CardLayout();
+        panelPrincipal = new JPanel(cardLayout);
 
+
+        JPanel chat = createChatSection();
 
         panelPrincipal.add(createMapSection(),"MainPanel");
-        panelPrincipal.add(createChatSection(),"ChatSection");
+        panelPrincipal.add(chat,"ChatSection");
         panelPrincipal.add(createGroupSection(),"GroupSection");
 
 
         JPanel panelBotones = new JPanel(new GridLayout(1,3));
-        JButton jButton = new JButton("Alerta");
-        jButton.addActionListener(e -> {
-            /* Todo manejar cliente handler para avisar a los usuarios que hay nueva alerta para ello vamos
-                actualizando el hashmap con todos los waypoints de todos los usuarios que se encuentra en la clase Map */
+        JButton jButtonAlerta = new JButton("Alerta");
+        JButton jButtonChats = new JButton("Chats");
+        JButton jButtonGroups = new JButton("Groups");
+
+        jButtonAlerta.addActionListener(e -> {
+            cardLayout.show(panelPrincipal,"MainPanel");
             agregarAlerta();
+
         });
-        panelBotones.add(jButton);
+        jButtonGroups.addActionListener(e -> {
+            cardLayout.show(panelPrincipal,"GroupSection");
+        });
+        jButtonChats.addActionListener(e -> {
+            cardLayout.show(panelPrincipal,"ChatSection");
+        });
+
+        panelBotones.add(jButtonAlerta);
+        panelBotones.add(jButtonChats);
+        panelBotones.add(jButtonGroups);
 
 
         setLayout(new BorderLayout());
@@ -84,11 +113,23 @@ public class App extends JFrame {
             JOptionPane.showMessageDialog(this,"Haz click en el mapa para colocar el waypoint");
         }
     }
+
     private JPanel createMapSection() {
         JPanel mapPanel = new JPanel(new BorderLayout());
-        panelMapa = new MainPanel(this);
+        panelMapa = new MainPanel(this,client);
+        panelMapa.setOnWaypointAdded(this::waypointAdded);
         mapPanel.add(panelMapa, BorderLayout.CENTER);
         return mapPanel;
+    }
+
+    private void waypointAdded(MyWaypoint waypoint){
+        client.sendMessageToServer("[New Waypoint] "+ "," +String.valueOf(waypoint.getPosition().getLongitude())+","+ String.valueOf(waypoint.getPosition().getLatitude())+","+waypoint.getPeligrosidad() +","+waypoint.getStringDate()+','+waypoint.getUser().getUserame()+','+waypoint.getText());
+    }
+    public void updateWaypoints(MyWaypoint myWaypoint){
+       Set<MyWaypoint> set = panelMapa.getMap().getSetWaipoints();
+       set.add(myWaypoint);
+       panelMapa.getMap().añadirWaypoint(set);
+       System.out.println("Waypoint añadido");
     }
 
 
@@ -137,6 +178,7 @@ public class App extends JFrame {
      */
     private JPanel createChatSection() {
 
+        JPanel panel = new JPanel(new BorderLayout());
         chatCardLayout = new CardLayout();
         chatSection = new JPanel(chatCardLayout);
 
@@ -158,9 +200,9 @@ public class App extends JFrame {
         chatSection.repaint();
 
         chatCardLayout.show(chatSection, "Users Section");
-
         return chatSection;
     }
+
 
     /**
      * Sección de los grupos:
@@ -169,41 +211,17 @@ public class App extends JFrame {
      * @return El panel de la sección de grupos
      */
     private JPanel createGroupSection() {
-        JPanel groupPanel = new JPanel(new BorderLayout(10, 4));
-        JPanel inputPanel = new JPanel(new GridLayout(4, 1, 10, 5));
-        String[] hours = new String[24];
-        for (int i = 0; i < 24; i++) {
-            hours[i] = String.format("%02d:00", i);
-        }
+        JPanel groupPanel = new JPanel(new BorderLayout());
+        JPanel centerPanel = new JPanel(new GridLayout(1,2,0,5));
 
-        JLabel labelOrig = new JLabel("Origen");
-        JLabel labelDest = new JLabel("Destino");
-        JTextField groupOrigField = new JTextField(10);
-        JTextField groupDestField = new JTextField(10);
-        JComboBox groupHour = new JComboBox(hours);
-        JButton createGroupButton = new JButton("Create Group");
         groupsListPanel = new JPanel();
         groupsListPanel.setLayout(new BoxLayout(groupsListPanel, BoxLayout.Y_AXIS));
+        JScrollPane groupsListScroll = new JScrollPane(groupsListPanel);
 
-        createGroupButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!groupOrigField.getText().isEmpty() || !groupDestField.getText().isEmpty()) {
-                    String groupInfo = String.join(";", groupOrigField.getText(), groupDestField.getText(), (String) groupHour.getSelectedItem());
-                    client.sendMessageToServer("[NEW_GROUP] " + client.getUserame() + " " + groupInfo);
-                }
-            }
+        centerPanel.add(groupsListScroll);
+        centerPanel.add(new VentanaCrearGrupo(client));
+        groupPanel.add(centerPanel, BorderLayout.CENTER);
 
-        });
-
-        inputPanel.add(groupHour);
-        inputPanel.add(labelOrig);
-        inputPanel.add(groupOrigField);
-        inputPanel.add(labelDest);
-        inputPanel.add(groupDestField);
-        inputPanel.add(createGroupButton);
-        groupPanel.add(inputPanel, BorderLayout.NORTH);
-        groupPanel.add(groupsListPanel, BorderLayout.CENTER);
         return groupPanel;
     }
 
@@ -427,7 +445,8 @@ public class App extends JFrame {
     public HashMap<String, String[]> getGrupos() {
         return grupos;
     }
+
     public static void main(String[] args) {
-        new App();
+        new App(new Client());
     }
 }

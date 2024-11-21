@@ -1,5 +1,4 @@
-package Mapa;
-
+package mapa;
 import org.jxmapviewer.viewer.GeoPosition;
 
 public class Localizacion {

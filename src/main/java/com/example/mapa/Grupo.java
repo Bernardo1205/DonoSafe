@@ -1,31 +1,33 @@
-package Mapa;
+package mapa;
+
+import main.java.com.example.mapa.User;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class Grupo {
     private HashSet<User> groupUsers;
-    private Localizacion origen;
-    private Localizacion destino;
+    private mapa.Localizacion origen;
+    private mapa.Localizacion destino;
     private User creatorGroup;
 
     public Grupo(){
         this.groupUsers = new HashSet<>();
     }
 
-    public Localizacion getOrigen() {
+    public mapa.Localizacion getOrigen() {
         return origen;
     }
 
-    public void setOrigen(Localizacion origen) {
+    public void setOrigen(mapa.Localizacion origen) {
         this.origen = origen;
     }
 
-    public Localizacion getDestino() {
+    public mapa.Localizacion getDestino() {
         return destino;
     }
 
-    public void setDestino(Localizacion destino) {
+    public void setDestino(mapa.Localizacion destino) {
         this.destino = destino;
     }
     public void addUser(User user){

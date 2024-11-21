@@ -52,6 +52,10 @@ public class ClientHandler implements Runnable {
             while ((message = in.readLine()) != null) {
                 System.out.println(message);
                 int ind = message.indexOf(":");
+                if (message.startsWith("[New Waypoint] ")){
+
+                    sendWaypointstoAll(message);
+                }
                 if (message.startsWith("[ALERT] ")) { /* Alert message format: [ALERT] content */
                     sendMessageToAll(message);
                 } else if (message.startsWith("@")) { /* Private message format: @targetUser message */
@@ -80,6 +84,11 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
         } finally {
             closeConnection();
+        }
+    }
+    public void sendWaypointstoAll(String message){
+        for (ClientHandler clientHandler : clients.values()) {
+            clientHandler.out.println(message);
         }
     }
 

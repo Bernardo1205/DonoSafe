@@ -1,6 +1,5 @@
-package Mapa;
 
-import org.jxmapviewer.viewer.GeoPosition;
+package mapa;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,29 +9,69 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 
-public class VentanaCrearGrupo extends JFrame {
-    private Localizacion localizacionOrigen;
-    private Localizacion localizacionDestino;
+import main.java.com.example.client.Client;
+import mapa.AdressAutocomplete;
+import mapa.Localizacion;
+import mapa.ValidatorLocalizacion;
+import org.jxmapviewer.viewer.GeoPosition;
+
+public class VentanaCrearGrupo extends JPanel {
+    private mapa.Localizacion localizacionOrigen;
+    private mapa.Localizacion localizacionDestino;
     private Date fecha;
     private Date hora;
 
 
-    public VentanaCrearGrupo(){
+    public VentanaCrearGrupo(Client client){
         JLabel lable = new JLabel("Crear nuevo grupo");
-        lable.setFont(new Font("Arial",Font.BOLD,24));
+        lable.setFont(new Font("Arial",Font.BOLD,20));
+        lable.setVerticalAlignment(SwingConstants.CENTER);
+        lable.setHorizontalAlignment(SwingConstants.CENTER);
 
+        setLayout(new BorderLayout());
         JPanel mainPanel = new JPanel(new BorderLayout());
-        JPanel centerPanel = new JPanel(new GridLayout(2,1,5,5));
+
+        JPanel centerPanel = new JPanel(new GridLayout(3,1,0,5));
         JPanel centerPanel_origen = new JPanel(new GridLayout(2,1));
         JPanel centerPanel_destino = new JPanel(new GridLayout(2,1));
 
-        JLabel lableOrigen = new JLabel("Origen: ");
-        lable.setFont(new Font("Arial",Font.BOLD,18));
-        JLabel lableDestino = new JLabel("Destino: ");
-        lable.setFont(new Font("Arial",Font.BOLD,18));
+        JLabel lableOrigen = new JLabel("Origen ");
+        lableOrigen.setFont(new Font("Arial",Font.BOLD,14));
+        lableOrigen.setHorizontalAlignment(SwingConstants.CENTER);
+        lableOrigen.setVerticalAlignment(SwingConstants.CENTER);
 
+        JLabel lableDestino = new JLabel("Destino ");
+        lableDestino.setFont(new Font("Arial",Font.BOLD,14));
+        lableDestino.setHorizontalAlignment(SwingConstants.CENTER);
+        lableDestino.setVerticalAlignment(SwingConstants.CENTER);
+
+
+        JPanel flowLayoutOrigen = new JPanel(new FlowLayout(FlowLayout.CENTER));
         AdressAutocomplete origen = new AdressAutocomplete();
+        origen.setPreferredSize(new Dimension(200,25));
+        flowLayoutOrigen.add(origen);
+
+        JPanel flowLayoutDestino = new JPanel(new FlowLayout(FlowLayout.CENTER));
         AdressAutocomplete destino = new AdressAutocomplete();
+        destino.setPreferredSize(new Dimension(200,25));
+        flowLayoutDestino.add(destino);
+
+        String[] hours = new String[24];
+        for (int i = 0; i < 24; i++) {
+            hours[i] = String.format("%02d:00", i);
+        }
+        JComboBox groupHour = new JComboBox(hours);
+        groupHour.setPreferredSize(new Dimension(200,25));
+        JPanel groupHourPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        groupHourPanel.add(groupHour);
+
+        groupHour.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                hora = new Date();
+                hora.setHours(groupHour.getSelectedIndex());
+            }
+        });
 
         origen.addActionListener(new ActionListener() {
             @Override
@@ -64,9 +103,11 @@ public class VentanaCrearGrupo extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (localizacionOrigen != null && localizacionDestino != null){
-                    Grupo grupo = new Grupo();
+                    mapa.Grupo grupo = new mapa.Grupo();
                     grupo.setDestino(localizacionDestino);
                     grupo.setOrigen(localizacionOrigen);
+                    String groupInfo = String.join(";", origen.getText(), destino.getText(), (String) groupHour.getSelectedItem());
+                    client.sendMessageToServer("[NEW_GROUP] " + client.getUserame() + " " + groupInfo);
                 }
                 else {
                     JOptionPane.showMessageDialog(VentanaCrearGrupo.this,"Introduce todos los campos correctamente");
@@ -74,23 +115,23 @@ public class VentanaCrearGrupo extends JFrame {
             }
         });
 
-        mainPanel.add(jButton,BorderLayout.SOUTH);
+
         centerPanel_origen.add(lableOrigen);
-        centerPanel_origen.add(origen);
+        centerPanel_origen.add(flowLayoutOrigen);
+
         centerPanel_destino.add(lableDestino);
-        centerPanel_destino.add(destino);
+        centerPanel_destino.add(flowLayoutDestino);
+
         centerPanel.add(centerPanel_origen);
         centerPanel.add(centerPanel_destino);
+        centerPanel.add(groupHourPanel);
 
 
+        mainPanel.add(jButton,BorderLayout.SOUTH);
         mainPanel.add(centerPanel,BorderLayout.CENTER);
         mainPanel.add(lable ,BorderLayout.NORTH);
-        add(mainPanel);
-        setSize(400, 400);
+        add(mainPanel, BorderLayout.CENTER);
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
-        setVisible(true);
     }
 
     public Localizacion filtrarInputUser(AdressAutocomplete adressAutocomplete) throws IOException {
@@ -119,9 +160,5 @@ public class VentanaCrearGrupo extends JFrame {
             return localizacion;
 
         }
-    }
-
-    public static void main(String[] args) {
-        VentanaCrearGrupo ventanaCrearGrupo = new VentanaCrearGrupo();
     }
 }
