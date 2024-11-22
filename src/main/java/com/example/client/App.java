@@ -15,11 +15,16 @@ import mapa.VentanaCrearGrupo;
 import org.jxmapviewer.viewer.Waypoint;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.Vector;
 
 public class App extends JFrame {
     private JPanel panelPrincipal;
@@ -45,6 +50,7 @@ public class App extends JFrame {
     private JLabel groupTalkingTo;
     private HashMap<String, Boolean> unreadMessages = new HashMap<>();
     public HashMap<String, String[]> grupos = new HashMap<>();
+    private DefaultTableModel modeloGrupos;
 
 
     public App(Client client){
@@ -129,7 +135,6 @@ public class App extends JFrame {
        Set<MyWaypoint> set = panelMapa.getMap().getSetWaipoints();
        set.add(myWaypoint);
        panelMapa.getMap().añadirWaypoint(set);
-       System.out.println("Waypoint añadido");
     }
 
 
@@ -216,9 +221,42 @@ public class App extends JFrame {
 
         groupsListPanel = new JPanel();
         groupsListPanel.setLayout(new BoxLayout(groupsListPanel, BoxLayout.Y_AXIS));
-        JScrollPane groupsListScroll = new JScrollPane(groupsListPanel);
 
-        centerPanel.add(groupsListScroll);
+        //Todo falatta añadir hora
+        Vector<String> cabeceraGrupos = new Vector<String>(Arrays.asList("ID", "Origen", "Destino"));
+        //todo Bloquea la edición de las columnas ID y Personajes en la tabla de Comics para que no puedan modificarse.
+
+        modeloGrupos = new DefaultTableModel(new Vector<Vector<Object>>(), cabeceraGrupos){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        JTable tablaGrupos = new JTable(modeloGrupos);
+
+        // Ocultar la columna del ID del grupo
+        tablaGrupos.getColumnModel().getColumn(0).setMinWidth(0);
+        tablaGrupos.getColumnModel().getColumn(0).setMaxWidth(0);
+        tablaGrupos.getColumnModel().getColumn(0).setWidth(0);
+
+        tablaGrupos.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int fila = tablaGrupos.rowAtPoint(e.getPoint());
+                if (fila!=-1){
+
+                    String idGrupo = (String) modeloGrupos.getValueAt(fila,0);
+                    System.out.println("ID grupo = " + idGrupo);
+                    client.joinGroupChat(idGrupo);
+                }
+            }
+        });
+        JScrollPane groupsListScroll = new JScrollPane(tablaGrupos);
+
+        groupsListPanel.add(groupsListScroll, BorderLayout.WEST);
+
+        centerPanel.add(groupsListPanel);
         centerPanel.add(new VentanaCrearGrupo(client));
         groupPanel.add(centerPanel, BorderLayout.CENTER);
 
@@ -226,13 +264,14 @@ public class App extends JFrame {
     }
 
     public void updateGroupsList(HashMap<String, String[]> groups) {
-        groupsListPanel.removeAll();
+        modeloGrupos.setRowCount(0);
 
         for (String groupId : groups.keySet()) {
             String[] info = groups.get(groupId);
-            JButton groupButton = new JButton(info[0] + " - " + info[1]);
-            groupButton.addActionListener(e -> client.joinGroupChat(groupId));
-            groupsListPanel.add(groupButton);
+            modeloGrupos.addRow(new Object[]{groupId, info[0], info[1]});
+
+//            groupButton.addActionListener(e -> client.joinGroupChat(groupId));
+//            groupsListPanel.add(groupButton);
         }
         groupsListPanel.revalidate();
         groupsListPanel.repaint();
@@ -320,8 +359,8 @@ public class App extends JFrame {
      * @param group
      */
     public void openPrivateGroup(String group) {
+        cardLayout.show(panelPrincipal, "ChatSection");
         chatCardLayout.show(chatSection, "Group Section");
-        cardLayout.show(mainPanel, "Section 2");
         groupChatPanel.removeAll();
 
         String[] groupInfo = client.getGrupos().get(group);

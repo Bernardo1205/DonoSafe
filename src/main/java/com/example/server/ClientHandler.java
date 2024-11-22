@@ -31,6 +31,11 @@ public class ClientHandler implements Runnable {
     public static HashMap<String, ClientHandler> clients;
     private String clientName;
 
+    /**
+     * Crea un hilo para un cliente y le envía la lista de usuarios conectados
+     * @param clientSocket
+     * @param clients
+     */
     public ClientHandler(Socket clientSocket, HashMap<String, ClientHandler> clients) {
         this.client = clientSocket;
         this.clients = clients;
@@ -53,8 +58,7 @@ public class ClientHandler implements Runnable {
                 System.out.println(message);
                 int ind = message.indexOf(":");
                 if (message.startsWith("[New Waypoint] ")){
-
-                    sendWaypointstoAll(message);
+                    sendMessageToAll(message);
                 }
                 if (message.startsWith("[ALERT] ")) { /* Alert message format: [ALERT] content */
                     sendMessageToAll(message);
@@ -86,11 +90,7 @@ public class ClientHandler implements Runnable {
             closeConnection();
         }
     }
-    public void sendWaypointstoAll(String message){
-        for (ClientHandler clientHandler : clients.values()) {
-            clientHandler.out.println(message);
-        }
-    }
+
 
     public void sendMessageToAll(String mensaje) {
         for (ClientHandler clientHandler : clients.values()) {

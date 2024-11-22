@@ -94,8 +94,6 @@ public class Client {
      * @param groupId
      * @param message
      */
-
-
     public App getClientGUI() {
         return this.clientGUI;
     }

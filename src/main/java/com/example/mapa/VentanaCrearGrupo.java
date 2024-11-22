@@ -78,8 +78,7 @@ public class VentanaCrearGrupo extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     localizacionOrigen= filtrarInputUser(origen);
-                    System.out.println(localizacionOrigen.getAdress());
-                    System.out.println(localizacionOrigen.getGeoPosition());
+                    System.out.println("bien origen");
                 } catch (IOException ex) {
 
                     throw new RuntimeException(ex);
@@ -92,6 +91,8 @@ public class VentanaCrearGrupo extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     localizacionDestino = filtrarInputUser(destino);
+                    System.out.println("bien destino");
+
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
