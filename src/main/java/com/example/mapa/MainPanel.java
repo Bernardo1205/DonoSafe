@@ -1,70 +1,56 @@
 package main.java.com.example.mapa;
 
-import org.jxmapviewer.JXMapViewer;
-import org.jxmapviewer.painter.CompoundPainter;
+import main.java.com.example.client.Client;
+import main.java.com.example.client.ServerConnection;
 import org.jxmapviewer.viewer.GeoPosition;
-import org.jxmapviewer.viewer.Waypoint;
-import org.jxmapviewer.viewer.WaypointPainter;
 
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
-public class MainJFrame extends JFrame {
+public class MainPanel extends JPanel {
+
     private boolean esperarClick;
     private String textoWaypoint;
-    private VentanaAgregarWaypoint ventanaAgregarWaypoint;
+    private String peligrosidad;
+    private Map map;
+    public Client client;
 
+    private Consumer<MyWaypoint> onWaypointAdded;/* Listener para pasar waypoints a clase app cuando se creen */
 
-    public MainJFrame(){
-        JPanel mainPanel = new JPanel(new BorderLayout());
+    public MainPanel(JFrame jFrame,Client client){
+        this.client = client;
+        setLayout(new BorderLayout());
 
-        Map map = new Map();
-        mainPanel.add(map,BorderLayout.CENTER);
-
-        ventanaAgregarWaypoint = new VentanaAgregarWaypoint(this);
-
-
-        JButton añadirWaypoint = new JButton("+");
-
-        añadirWaypoint.addActionListener(e -> {
-
-            ventanaAgregarWaypoint.setVisible(true);
-            textoWaypoint = ventanaAgregarWaypoint.getTextWaypoint();
-
-            if(textoWaypoint!=null&&!textoWaypoint.isEmpty()){
-                esperarClick=true;
-                JOptionPane.showMessageDialog(this,"Haz click en el mapa para colocar el waypoint");
-
-            }
-
-        });
-        JPanel panelBotones = new JPanel(new GridLayout(1,4));
-        panelBotones.add(añadirWaypoint);
-
+        map = new Map();
+        add(map,BorderLayout.CENTER);
 
         map.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (esperarClick){
+                if (isEsperarClick()){
 
                     Point point = e.getPoint();
                     GeoPosition geoPosition = map.convertPointToGeoPosition(point);
                     MyWaypoint myWaypoint = ponerwaypoint(geoPosition,textoWaypoint);
-                    myWaypoint.setPeligrosidad(ventanaAgregarWaypoint.getPeligrosidad());
+                    myWaypoint.setPeligrosidad(getPeligrosidad());
+                    myWaypoint.setUser(client);
 
                     Set setMywaypoints = map.getSetWaipoints();
                     setMywaypoints.add(myWaypoint);
                     map.añadirWaypoint(setMywaypoints);
 
-                    esperarClick = false;
+                    if (onWaypointAdded != null) {
+                        onWaypointAdded.accept(myWaypoint);
+                    }
+
+                    setEsperarClick(false);
+
 
                 }
 
@@ -90,21 +76,49 @@ public class MainJFrame extends JFrame {
             }
         });
 
-        mainPanel.add(panelBotones,BorderLayout.SOUTH);
-        add(mainPanel);
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
     }
+    public void setOnWaypointAdded(Consumer<MyWaypoint> listener) {
+        this.onWaypointAdded = listener;
+    }
+
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    public Map getMap() {
+        return map;
+    }
+
+    public String getPeligrosidad() {
+        return peligrosidad;
+    }
+
+    public void setPeligrosidad(String peligrosidad) {
+        this.peligrosidad = peligrosidad;
+    }
+
+    public boolean isEsperarClick() {
+        return esperarClick;
+    }
+
+    public void setEsperarClick(boolean esperarClick) {
+        this.esperarClick = esperarClick;
+    }
+
+    public String getTextoWaypoint() {
+        return textoWaypoint;
+    }
+
+    public void setTextoWaypoint(String textoWaypoint) {
+        this.textoWaypoint = textoWaypoint;}
 
     public MyWaypoint ponerwaypoint(GeoPosition geoPosition, String text){
         MyWaypoint waypoint = new MyWaypoint(geoPosition);
         waypoint.setText(text);
         return waypoint;
-
     }
 
-    public static void main(String[] args) {
-        MainJFrame mainJFrame = new MainJFrame();
-    }
+
+
+
 }

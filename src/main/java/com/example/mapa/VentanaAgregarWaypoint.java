@@ -18,9 +18,8 @@ public class VentanaAgregarWaypoint extends JDialog {
     public VentanaAgregarWaypoint(JFrame parent){
         super(parent,"Agregar waypoint",true);
 
-
         JPanel mainPanel = new JPanel(new BorderLayout());
-        JLabel lable = new JLabel("Agregar Texto");
+        JLabel lable = new JLabel("Crear nueva alerta");
         lable.setFont(new Font("Arial",Font.BOLD,24));
         lable.setHorizontalAlignment(SwingConstants.CENTER);
         mainPanel.add(lable,BorderLayout.NORTH);

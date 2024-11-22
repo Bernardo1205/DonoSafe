@@ -34,7 +34,7 @@ public class Map extends JXMapViewer{
         /* Numero de threads que se usaran para cargar los tiles de forma paralala */
         tileFactory.setThreadPoolSize(8);
 
-        /* Geolocalizacion donosti */
+        /* Geolocalizacion sanse */
         GeoPosition sanSebastian = new GeoPosition(43.2918100, -1.9885100);
         setZoom(6);
         setAddressLocation(sanSebastian);
@@ -83,9 +83,7 @@ public class Map extends JXMapViewer{
         compoundPainter.setPainters(waypointPainter);
         setOverlayPainter(compoundPainter);
 
-
     }
-
     public Set<MyWaypoint> getSetWaipoints() {
         return setWaipoints;
     }

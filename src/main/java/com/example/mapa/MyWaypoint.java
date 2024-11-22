@@ -1,5 +1,6 @@
 package main.java.com.example.mapa;
 
+import main.java.com.example.client.Client;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.Waypoint;
 
@@ -13,7 +14,7 @@ public class MyWaypoint implements Waypoint {
     private String peligrosidad;
     private String text;
     private LocalDateTime date;
-    private User user;
+    private Client user;
     private GeoPosition geoPosition;
 
 
@@ -30,12 +31,16 @@ public class MyWaypoint implements Waypoint {
         return text;
     }
 
-    public User getUser() {
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public Client getUser() {
         return user;
     }
 
 
-    public void setUser(User user) {
+    public void setUser(Client user) {
         this.user = user;
     }
 
