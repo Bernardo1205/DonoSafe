@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -12,49 +14,78 @@ public class ClientLogin {
 
     public ClientLogin(Client client) {
         this.client = client;
-        for (int i=1; i<10; i++) {
+
+        // Simulación de usuarios registrados
+        for (int i = 1; i < 10; i++) {
             registeredUsers.put(String.valueOf(i), String.valueOf(i));
-            //FIXME: registeredUsers should contain the userName and hashed password read from the database
         }
 
-        frame = new JFrame("Log In");
-        frame.setSize(300, 200);
+        frame = new JFrame("Iniciar Sesión");
+        frame.setSize(350, 550);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel();
-        frame.add(panel);
-        placeComponents(panel);
-        frame.setVisible(true);
-    }
 
-    private void placeComponents(JPanel panel) {
+        Font labelFont = new Font("Arial", Font.BOLD, 14);
+        Font inputFont = new Font("Arial", Font.PLAIN, 12);
+        Color backgroundColor = new Color(240, 248, 255);
+        Color buttonColor = new Color(0, 120, 215);
+        Color buttonTextColor = Color.WHITE;
+
+        JPanel panel = new JPanel();
         panel.setLayout(null);
+        panel.setBackground(backgroundColor);
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        TitledBorder title = BorderFactory.createTitledBorder("Iniciar sesión");
+        title.setTitleJustification(TitledBorder.CENTER);
+        panel.setBorder(title);
+
+        frame.add(panel);
+
 
         JLabel userLabel = new JLabel("Username:");
-        userLabel.setBounds(10, 20, 80, 25);
+        userLabel.setFont(labelFont);
+        userLabel.setBounds(10, 40, 120, 25);
         panel.add(userLabel);
 
         usernameField = new JTextField(20);
-        usernameField.setBounds(100, 20, 165, 25);
+        usernameField.setFont(inputFont);
+        usernameField.setBounds(170, 40, 150, 25);
         panel.add(usernameField);
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds(10, 50, 80, 25);
+        passwordLabel.setFont(labelFont);
+        passwordLabel.setBounds(10, 90, 120, 25);
         panel.add(passwordLabel);
 
         passwordField = new JPasswordField(20);
-        passwordField.setBounds(100, 50, 165, 25);
+        passwordField.setFont(inputFont);
+        passwordField.setBounds(170, 90, 150, 25);
         panel.add(passwordField);
 
-        JButton loginButton = new JButton("Login");
-        loginButton.setBounds(100, 80, 80, 25);
+        // Botones de login y registro
+        JButton loginButton = new JButton("Iniciar Sesión");
+        loginButton.setFont(new Font("Arial", Font.BOLD, 14));
+        loginButton.setBackground(buttonColor);
+        loginButton.setForeground(buttonTextColor);
+        loginButton.setBounds(75, 150, 200, 40);
         panel.add(loginButton);
 
+        JButton registerButton = new JButton("Crear cuenta");
+        registerButton.setFont(new Font("Arial", Font.BOLD, 14));
+        registerButton.setBackground(buttonColor);
+        registerButton.setForeground(buttonTextColor);
+        registerButton.setBounds(75, 210, 200, 40);
+        panel.add(registerButton);
+
         JLabel statusLabel = new JLabel("");
-        statusLabel.setBounds(10, 110, 250, 25);
+        statusLabel.setFont(labelFont);
+        statusLabel.setBounds(10, 280, 320, 50);
+        statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(statusLabel);
 
+        // Acción del botón de login
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -65,10 +96,24 @@ public class ClientLogin {
                     client.openChatWindow(username);
                     frame.dispose();
                 } else {
-                    statusLabel.setText("Invalid username or password.");
+                    statusLabel.setForeground(Color.RED);
+                    statusLabel.setText("Username o contraseña incorrectos.");
                 }
             }
         });
+
+        // Acción del botón de registro
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ClientRegister registerWindow = new ClientRegister();
+                registerWindow.setVisible(true);
+                frame.dispose();
+            }
+        });
+
+        frame.getRootPane().setDefaultButton(loginButton);
+        frame.setVisible(true);
     }
 
     private boolean validateLogin(String username, String password) {
