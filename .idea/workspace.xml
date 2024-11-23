@@ -5,8 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3df34a6f-02f8-414d-bf5a-46812b2bb15b" name="Changes" comment="System.out.println(&quot;Forking Bernardo&quot;);">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/sqlite_jdbc_3_47_0_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/models/BaseDatos.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/models/ConectarBaseDatos.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/models/EjemploBD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/basedatos.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/basedatos.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DonoSafe.iml" beforeDir="false" afterPath="$PROJECT_DIR$/DonoSafe.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basedatos.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/basedatos.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +47,7 @@
 }</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/src/Mapa/MainJFrame.java" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/src/database.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/basedatos.java" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
@@ -50,24 +60,31 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.BaseDatos.executor": "Run",
     "Application.Client.executor": "Run",
     "Application.Main.executor": "Run",
     "Application.MainJFrame.executor": "Run",
+    "Application.Run.executor": "Run",
     "Application.basedatos.executor": "Run",
+    "Application.run.executor": "Run",
+    "Database Script.consola.executor": "Run",
+    "Database Script.console.executor": "Run",
     "Database Script.console.sql.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "database.data.extractors.current.export.id": "Comma-separated (CSV)_id",
+    "database.data.extractors.current.id": "Comma-separated (CSV)_id",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/lucas.stille/jxmapviewer2-2.8.jar",
+    "last_opened_file_path": "C:/Users/lucas.stille/IdeaProjects/DonoSafe/src/models/conectarBaseDatos.java",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
+    "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
+    "project.structure.side.proportion": "0.1816092",
     "settings.editor.selected.configurable": "database.query.execution",
     "vue.rearranger.settings.migration": "true"
   },
@@ -78,17 +95,35 @@
       "sqlite"
     ],
     "RunConfigurationTargetLRU": [
-      "390a7946-b4aa-4a50-b428-c860520fcfb9"
+      "6a188629-4afc-4da4-b818-f8b62ec10ea0",
+      "6a188629-4afc-4da4-b818-f8b62ec10ea0/schema/\"main\"",
+      "7e2c2d9b-8800-4f23-a7b0-021e75f45f4c/schema/\"main\"",
+      "f072e9c6-7672-4b36-92f2-4b9774d62752/schema/\"main\"",
+      "f072e9c6-7672-4b36-92f2-4b9774d62752"
     ]
   }
 }]]></component>
   <component name="RunManager">
-    <configuration name="console.sql" type="DatabaseScript" editBeforeRun="true" nameIsGenerated="true">
-      <script-file value="$APPLICATION_CONFIG_DIR$/consoles/db/390a7946-b4aa-4a50-b428-c860520fcfb9/console.sql" />
+    <configuration name="Run" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="openjdk-23" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="DonoSafe" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="console.sql" type="DatabaseScript">
+      <script-file value="$PROJECT_DIR$/src/models/basedatos.java" />
+      <script-file value="$PROJECT_DIR$/src/models/conectarBaseDatos.java" />
       <script-mode>FILE</script-mode>
-      <data-source id="390a7946-b4aa-4a50-b428-c860520fcfb9" />
+      <data-source id="f072e9c6-7672-4b36-92f2-4b9774d62752" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Application.Run" />
+      <item itemvalue="Database Script.console.sql" />
+    </list>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -111,7 +146,15 @@
       <workItem from="1728554842496" duration="252000" />
       <workItem from="1731161092036" duration="4068000" />
       <workItem from="1731166364109" duration="8000" />
-      <workItem from="1731166473601" duration="5670000" />
+      <workItem from="1731166473601" duration="12001000" />
+      <workItem from="1731424125041" duration="14000" />
+      <workItem from="1731424150078" duration="47000" />
+      <workItem from="1731922563744" duration="14000" />
+      <workItem from="1732186955662" duration="9592000" />
+      <workItem from="1732210662178" duration="8084000" />
+      <workItem from="1732358783845" duration="192000" />
+      <workItem from="1732359562745" duration="98000" />
+      <workItem from="1732359947533" duration="2934000" />
     </task>
     <task id="LOCAL-00001" summary="System.out.println(&quot;Forking Bernardo&quot;);">
       <option name="closed" value="true" />
@@ -137,7 +180,23 @@
       <option name="project" value="LOCAL" />
       <updated>1731314465324</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="System.out.println(&quot;Forking Bernardo&quot;);">
+      <option name="closed" value="true" />
+      <created>1731314482814</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1731314482814</updated>
+    </task>
+    <task id="LOCAL-00005" summary="System.out.println(&quot;Forking Bernardo&quot;);">
+      <option name="closed" value="true" />
+      <created>1731314489230</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1731314489230</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
