@@ -15,6 +15,35 @@ import mapa.VentanaCrearGrupo;
 import org.jxmapviewer.viewer.Waypoint;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.Vector;
+
+
+import mapa.AdressAutocomplete;
+import main.java.com.example.mapa.MainPanel;
+
+
+import main.java.com.example.mapa.Map;
+import main.java.com.example.mapa.MyWaypoint;
+
+import main.java.com.example.mapa.User;
+
+import main.java.com.example.mapa.VentanaAgregarWaypoint;
+import main.java.com.example.mapa.VentanaInfoWaypoint;
+import mapa.VentanaCrearGrupo;
+import org.jxmapviewer.viewer.Waypoint;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -27,12 +56,11 @@ import java.util.Set;
 import java.util.Vector;
 
 public class App extends JFrame {
-    private JPanel panelPrincipal;
+    private JPanel panelPrincipal           ;
     private boolean esperarClick;
     private String textoWaypoint;
     private VentanaAgregarWaypoint ventanaAgregarWaypoint;
     private MainPanel panelMapa;
-
     private Client client;
     private String grupoActual = "";
     private CardLayout cardLayout;
@@ -51,6 +79,8 @@ public class App extends JFrame {
     private HashMap<String, Boolean> unreadMessages = new HashMap<>();
     public HashMap<String, String[]> grupos = new HashMap<>();
     private DefaultTableModel modeloGrupos;
+    private DefaultTableModel modeloUsers;
+    private JTable tablaUsers;
 
 
     public App(Client client){
@@ -132,9 +162,9 @@ public class App extends JFrame {
         client.sendMessageToServer("[New Waypoint] "+ "," +String.valueOf(waypoint.getPosition().getLongitude())+","+ String.valueOf(waypoint.getPosition().getLatitude())+","+waypoint.getPeligrosidad() +","+waypoint.getStringDate()+','+waypoint.getUser().getUserame()+','+waypoint.getText());
     }
     public void updateWaypoints(MyWaypoint myWaypoint){
-       Set<MyWaypoint> set = panelMapa.getMap().getSetWaipoints();
-       set.add(myWaypoint);
-       panelMapa.getMap().añadirWaypoint(set);
+        Set<MyWaypoint> set = panelMapa.getMap().getSetWaipoints();
+        set.add(myWaypoint);
+        panelMapa.getMap().añadirWaypoint(set);
     }
 
 
@@ -190,7 +220,83 @@ public class App extends JFrame {
         /* Panel que contiene los usuarios conectados */
         userListPanel = new JPanel();
         userListPanel.setLayout(new BoxLayout(userListPanel, BoxLayout.Y_AXIS));
-        JScrollPane userListScroll = new JScrollPane(userListPanel);
+
+        modeloUsers = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        modeloUsers.setColumnCount(3);
+
+        DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer(){
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel c = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                /* Todo pillar de la base de datos usuarios activos y los que no esten activos poner icono rojo habra que crear
+                    funcion que compare lista users del server con los de la base de datos para determinar cuales estan activos */
+
+                String id = (String) modeloUsers.getValueAt(row,0);
+                if (unreadMessages.containsKey(id)){
+                    c.setBackground(Color.ORANGE);
+                }
+                else{
+                    c.setBackground(Color.WHITE);
+                }
+                if ( column == 2 && true) {
+                    ImageIcon icon = new ImageIcon("src/main/resources/icons/boton.png");
+                    Image scaledImage = icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+                    c.setIcon(new ImageIcon(scaledImage));
+                    c.setHorizontalAlignment(SwingConstants.CENTER);
+                    c.setVerticalAlignment(SwingConstants.CENTER);
+                }
+                else {
+                    c.setIcon(null);
+                }
+//                if (isSelected){
+//                    c.setBackground(table.getSelectionBackground());;
+//                }
+                c.setOpaque(column != 2);
+                tablaUsers.setRowHeight(20);
+
+                return c;
+            }
+
+        };
+
+        tablaUsers = new JTable(modeloUsers);
+
+        tablaUsers.setTableHeader(null);
+        tablaUsers.getColumnModel().getColumn(0).setMinWidth(0);
+        tablaUsers.getColumnModel().getColumn(0).setMaxWidth(0);
+        tablaUsers.getColumnModel().getColumn(0).setWidth(0);
+//
+//        tablaUsers.setRowSelectionAllowed(true);
+//        tablaUsers.setColumnSelectionAllowed(false);
+        tablaUsers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        tablaUsers.setDefaultRenderer(Object.class, defaultTableCellRenderer);
+
+        tablaUsers.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int fila = tablaUsers.rowAtPoint(e.getPoint());
+                if (fila!=-1){
+                    String idUser = (String) modeloUsers.getValueAt(fila,0);
+                    if (unreadMessages.containsKey(idUser)) {
+                        unreadMessages.remove(idUser);
+                        modeloUsers.setValueAt(idUser, fila, 1);
+                        tablaUsers.repaint();
+                        tablaUsers.revalidate();
+                    }
+                    openPrivateChat(idUser);
+                    chatCardLayout.show(chatSection, "Chat Section");
+                }
+            }
+        });
+
+        userListPanel.add(new JScrollPane(tablaUsers));
 
         /* Panel que se muestra al clickar en un usuario para mantener una conversación */
         chatPanel = new JPanel(new BorderLayout());
@@ -198,7 +304,7 @@ public class App extends JFrame {
         /* Panel que se muestra al clickar en un grupo para mantener una conversación */
         groupChatPanel = new JPanel(new BorderLayout());
 
-        chatSection.add(userListScroll, "Users Section");
+        chatSection.add(userListPanel, "Users Section");
         chatSection.add(chatPanel, "Chat Section");
         chatSection.add(groupChatPanel, "Group Section");
         chatSection.revalidate();
@@ -208,6 +314,14 @@ public class App extends JFrame {
         return chatSection;
     }
 
+    private int getRowByValue(String value) {
+        for (int i = 0; i < modeloUsers.getRowCount(); i++) {
+            if (modeloUsers.getValueAt(i, 0).equals(value)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     /**
      * Sección de los grupos:
@@ -224,7 +338,6 @@ public class App extends JFrame {
 
         //Todo falatta añadir hora
         Vector<String> cabeceraGrupos = new Vector<String>(Arrays.asList("ID", "Origen", "Destino"));
-        //todo Bloquea la edición de las columnas ID y Personajes en la tabla de Comics para que no puedan modificarse.
 
         modeloGrupos = new DefaultTableModel(new Vector<Vector<Object>>(), cabeceraGrupos){
             @Override
@@ -247,7 +360,6 @@ public class App extends JFrame {
                 if (fila!=-1){
 
                     String idGrupo = (String) modeloGrupos.getValueAt(fila,0);
-                    System.out.println("ID grupo = " + idGrupo);
                     client.joinGroupChat(idGrupo);
                 }
             }
@@ -269,9 +381,6 @@ public class App extends JFrame {
         for (String groupId : groups.keySet()) {
             String[] info = groups.get(groupId);
             modeloGrupos.addRow(new Object[]{groupId, info[0], info[1]});
-
-//            groupButton.addActionListener(e -> client.joinGroupChat(groupId));
-//            groupsListPanel.add(groupButton);
         }
         groupsListPanel.revalidate();
         groupsListPanel.repaint();
@@ -282,21 +391,12 @@ public class App extends JFrame {
      * @param users
      */
     public void updateUsersList(String[] users) {
-        userListPanel.removeAll();
-
+        modeloUsers.setRowCount(0);
+        /* userListPanel.removeAll(); */
         for (String user : users) {
-            JButton userButton = new JButton(user);
-            userButton.setName(user);
-            if (unreadMessages.containsKey(user)) {userButton.setBackground(Color.ORANGE);}
-            userButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    userButton.setBackground(Color.WHITE);
-                    openPrivateChat(user);
-                    chatCardLayout.show(chatSection, "Chat Section");
-                }
-            });
-            userListPanel.add(userButton);
+            if (!user.equals(client.getUserame())) {
+                modeloUsers.addRow(new Object[]{user,user, ""});
+            }
         }
         userListPanel.revalidate();
         userListPanel.repaint();
@@ -310,15 +410,14 @@ public class App extends JFrame {
      * @param message
      */
     public void updateUserList(String user, String message) {
-        if (userListPanel.getComponents() != null) {
-            for (Component b : userListPanel.getComponents()) {
-                if (b.getName().equals(user)) {
-                    JButton button = (JButton) b;
-                    button.setBackground(Color.ORANGE);
-                    button.setText(String.format(button.getName() + "%-20s" + message, ""));
-                }
-            }
+        int row = getRowByValue(user);
+        if (row != -1) {
+            //todo aádir como en la otra columna una celada fantasma para id users
+            modeloUsers.setValueAt(String.format(user+"  ||  Unread Message:" + "%-10s" + message, ""), row, 1);
+
         }
+        tablaUsers.revalidate();
+        tablaUsers.repaint();
     }
 
     /**
@@ -485,7 +584,7 @@ public class App extends JFrame {
         return grupos;
     }
 
-    public static void main(String[] args) {
-        new App(new Client());
-    }
+//    public static void main(String[] args) {
+//        new App(new Client());
+//    }
 }
