@@ -4,12 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3df34a6f-02f8-414d-bf5a-46812b2bb15b" name="Changes" comment="System.out.println(&quot;Forking Bernardo&quot;);">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="3df34a6f-02f8-414d-bf5a-46812b2bb15b" name="Changes" comment="Integracion Base Datos en Branch MapaBernardo">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/commons_logging_1_1_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/gson_2_11_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/jxmapviewer2_2_5.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/BaseDatos/BaseDatos.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/BaseDatos/ConectarBaseDatos.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Mapa/MyWaypoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/MyWaypoint.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Mapa/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Mapa/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/BaseDatos.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/BaseDatos.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DonoSafe.iml" beforeDir="false" afterPath="$PROJECT_DIR$/DonoSafe.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/BaseDatos.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/ConectarBaseDatos.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/EjemploBD.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +30,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="mapaBernardo" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -53,51 +64,51 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.BaseDatos.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Client.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Application.MainJFrame.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Run.executor&quot;: &quot;Run&quot;,
-    &quot;Application.basedatos.executor&quot;: &quot;Run&quot;,
-    &quot;Application.run.executor&quot;: &quot;Run&quot;,
-    &quot;Database Script.consola.executor&quot;: &quot;Run&quot;,
-    &quot;Database Script.console.executor&quot;: &quot;Run&quot;,
-    &quot;Database Script.console.sql.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;database.data.extractors.current.export.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
-    &quot;database.data.extractors.current.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/lucas.stille/IdeaProjects/DonoSafe/src/models/conectarBaseDatos.java&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.1816092&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;database.query.execution&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.BaseDatos.executor": "Run",
+    "Application.Client.executor": "Run",
+    "Application.Main.executor": "Run",
+    "Application.MainJFrame.executor": "Run",
+    "Application.Run.executor": "Run",
+    "Application.basedatos.executor": "Run",
+    "Application.run.executor": "Run",
+    "Database Script.consola.executor": "Run",
+    "Database Script.console.executor": "Run",
+    "Database Script.console.sql.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "database.data.extractors.current.export.id": "Comma-separated (CSV)_id",
+    "database.data.extractors.current.id": "Comma-separated (CSV)_id",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/lucas.stille/IdeaProjects/DonoSafe/src/models/conectarBaseDatos.java",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.1816092",
+    "settings.editor.selected.configurable": "database.query.execution",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql_aurora&quot;,
-      &quot;mysql&quot;,
-      &quot;sqlite&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql_aurora",
+      "mysql",
+      "sqlite"
     ],
-    &quot;RunConfigurationTargetLRU&quot;: [
-      &quot;6a188629-4afc-4da4-b818-f8b62ec10ea0&quot;,
-      &quot;6a188629-4afc-4da4-b818-f8b62ec10ea0/schema/\&quot;main\&quot;&quot;,
-      &quot;7e2c2d9b-8800-4f23-a7b0-021e75f45f4c/schema/\&quot;main\&quot;&quot;,
-      &quot;f072e9c6-7672-4b36-92f2-4b9774d62752/schema/\&quot;main\&quot;&quot;,
-      &quot;f072e9c6-7672-4b36-92f2-4b9774d62752&quot;
+    "RunConfigurationTargetLRU": [
+      "6a188629-4afc-4da4-b818-f8b62ec10ea0",
+      "6a188629-4afc-4da4-b818-f8b62ec10ea0/schema/\"main\"",
+      "7e2c2d9b-8800-4f23-a7b0-021e75f45f4c/schema/\"main\"",
+      "f072e9c6-7672-4b36-92f2-4b9774d62752/schema/\"main\"",
+      "f072e9c6-7672-4b36-92f2-4b9774d62752"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Application.Run">
     <configuration name="Run" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="openjdk-23" />
@@ -191,7 +202,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731314489230</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Integracion Base Datos en Branch MapaBernardo">
+      <option name="closed" value="true" />
+      <created>1732466572836</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1732466572836</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -226,7 +245,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="System.out.println(&quot;Forking Bernardo&quot;);" />
-    <option name="LAST_COMMIT_MESSAGE" value="System.out.println(&quot;Forking Bernardo&quot;);" />
+    <MESSAGE value="Integracion Base Datos en Branch MapaBernardo" />
+    <option name="LAST_COMMIT_MESSAGE" value="Integracion Base Datos en Branch MapaBernardo" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
