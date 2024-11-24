@@ -18,7 +18,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -32,16 +35,31 @@ import java.util.Set;
  * @author daniel.sanchez.r
  */
 public class Client {
+
     private String userName;
     public App clientGUI;
     public HashMap<String, String[]> grupos = new HashMap<>();
     private static Socket socket;
     private static PrintWriter out;
 
+    private int edad;
+    private String sexo;
+    private String mail;
+    private String password;
+
+    private ArrayList<String> review;
+    private LocalDateTime reg_date;
+    private String decrp;
+    private Set<MyWaypoint> list_waypoints;
+
     /**
      * Registrar o ubicar al cliente en la base de datos
      */
     public Client() {
+
+        this.reg_date = LocalDateTime.now();
+        this.review = new ArrayList<>();
+        this.list_waypoints = new HashSet<>();
         new ClientLogin(this);
     }
 
@@ -113,6 +131,78 @@ public class Client {
 
     public HashMap<String, String[]> getGrupos() {
         return grupos;
+    }
+
+    public String getDecrp() {
+        return decrp;
+    }
+
+    public void setDecrp(String decrp) {
+        this.decrp = decrp;
+    }
+
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public LocalDateTime getReg_date() {
+        return reg_date;
+    }
+
+    public void setReg_date(LocalDateTime reg_date) {
+        this.reg_date = reg_date;
+    }
+
+    public ArrayList<String> getReview() {
+        return review;
+    }
+
+    public void setReview(ArrayList<String> review) {
+        this.review = review;
+    }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
+    public static Socket getSocket() {
+        return socket;
+    }
+
+    public static void setSocket(Socket socket) {
+        Client.socket = socket;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public static void main(String[] args) {
