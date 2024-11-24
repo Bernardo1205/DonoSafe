@@ -1,5 +1,6 @@
 package Mapa;
 
+import java.sql.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,8 +10,9 @@ public class User {
     private String name;
     private String user_name;
     private String sexo;
-    private String id;
+    private int id;
     private String mail;
+    private int edad;
     private String password;
     private ArrayList<String> review;
     private LocalDateTime reg_date;
@@ -29,8 +31,8 @@ public class User {
         this.list_waypoints.add(waypoint);
     }
 
-    public ArrayList<String> getReview() {
-        return review;
+    public Array getReview() {
+        return (Array) review;
     }
 
     public Set<MyWaypoint> getList_waypoints() {
@@ -61,11 +63,17 @@ public class User {
         this.sexo = sexo;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {this.edad = edad;}
+
+    public void setId(int id) {
         this.id = id;
     }
 
