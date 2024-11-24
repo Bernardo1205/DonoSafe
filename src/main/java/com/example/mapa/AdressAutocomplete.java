@@ -39,6 +39,7 @@ public class AdressAutocomplete extends JTextField {
     public AdressAutocomplete() {
         listModel = new DefaultListModel<>();
         jPopupSugestiones = new JPopupMenu();
+        jPopupSugestiones.setFocusable(false);
         dict = new HashMap<>();
         getDocument().addDocumentListener(new sugestionesListener());
 
@@ -164,8 +165,11 @@ public class AdressAutocomplete extends JTextField {
             }
         });
 
+
         jPopupSugestiones.removeAll();
         jPopupSugestiones.add(new JScrollPane(jList));
+        jPopupSugestiones.revalidate();
+        jPopupSugestiones.repaint();
 
         /* Especificar donde queremos que aparezca el JPopUp en este caso debajo del JTextField */
         jPopupSugestiones.show(this,0,getHeight());
