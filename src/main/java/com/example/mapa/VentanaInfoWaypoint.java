@@ -11,7 +11,7 @@ public class VentanaInfoWaypoint extends JFrame {
         JTextArea jTextArea = new JTextArea();
         JScrollPane jScrollPane = new JScrollPane(jTextArea);
 
-        jTextArea.setText(waypoint.getText());
+        jTextArea.setText(waypoint.getDescripcion());
         jTextArea.setEditable(false);
         jPanel.add(jLabel,BorderLayout.NORTH);
         jPanel.add(jScrollPane,BorderLayout.CENTER);

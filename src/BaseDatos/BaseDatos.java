@@ -1,11 +1,14 @@
 package models;
 
-import Mapa.User;
-import Mapa.MyWaypoint;
-import Mapa.Map;
+import main.java.com.example.mapa.User;
+import main.java.com.example.mapa.MyWaypoint;
+import main.java.com.example.server.Grupo;
+
+import main.java.com.example.mapa.Map;
+import main.java.com.example.server.ClientHandler;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.Waypoint;
-
+import main.java.com.example.server.ClientHandler;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -63,19 +66,19 @@ public class BaseDatos{
             pstmt.setString(6, usuario.getPassword());
             pstmt.setArray(7, usuario.getReview());
             LocalDateTime reg_date = usuario.getReg_date();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            String fecha_formateada = reg_date.format(formatter);
+            String fecha_formateada = reg_date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             pstmt.setString(8,
                     fecha_formateada);
             pstmt.setString(9, usuario.getMail());
             pstmt.setString(10, usuario.getDecrp());
-
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
     public void insertarWayPoint(MyWaypoint reporte)  {
         String comandoInsertarUsuario = "INSERT INTO Reporte VALUES (?,?,?,?,?,?,?)";
+        Statement statement = null;
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario,Statement.RETURN_GENERATED_KEYS)){
 
             pstmt.setInt(2, reporte.getUser().getId());
@@ -88,27 +91,78 @@ public class BaseDatos{
             pstmt.setString(4, hora_formateada);
 
 
-            LocalDateTime fecha_reporte_creacion = reporte.getFecha_creacion();
+            LocalDateTime fecha_reporte_creacion = reporte.getHora_creacion();
             String fecha_formateada = fecha_reporte_creacion.format(formatter);
             pstmt.setString(5, fecha_formateada);
 
-            LocalDateTime fecha_reporte_finalizacion = fecha_reporte_creacion.plusDays(2);
+            LocalDateTime fecha_reporte_finalizacion = fecha_reporte_creacion.plusHours(1);
             String fecha_finalizacion_formateada = fecha_reporte_finalizacion.format(formatter);
             pstmt.setString(6,fecha_finalizacion_formateada);
 
             pstmt.setString(7, reporte.getTipoPeligro());
-
+            pstmt.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
+    }
 
+    public void insertarMensaje(String groupId, int id_usuario, String fecha, String contenido){
+        //int grupoId, String username/id, String mensaje, String fecha
+
+        String comandoInsertarMensaje = "INSERT INTO Mensaje VALUES (?,?,?,?)";
+
+        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarMensaje,Statement.RETURN_GENERATED_KEYS)){
+
+            pstmt.setString(1, groupId);
+            pstmt.setInt(2, id_usuario);
+            pstmt.setString(3, fecha);
+            pstmt.setString(4, contenido);
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void insertarGrupo(Grupo grupo) throws SQLException {
+        String comandoInsertarGrupo = "INSERT INTO Grupo VALUES (?,?,?,?,?)";
+        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)){
+            pstmt.setArray(2, grupo.getClientes());
+            pstmt.setString(3, grupo.getDestino());
+            pstmt.setString(4,grupo.getOrigen());
+            LocalDateTime fecha_creacion = grupo.getFecha();
+            String fechaCreacionFormateada = fecha_creacion.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            pstmt.setString(5, fechaCreacionFormateada);
+
+            pstmt.executeUpdate();
+
+        }   catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
 
-    // Método principal para probar la conexión
+    public void insertarReseña(String contenidoReseña, int calificacion, String fecha, int idReseñador, int idUsuario){
+        String comandoInsertarGrupo = "INSERT INTO Reseña VALUES (?,?,?,?,?,?)";
+        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)){
+            pstmt.setString(2, contenidoReseña);
+            pstmt.setInt(3, idReseñador);
+            pstmt.setInt(4,idUsuario);
+            pstmt.setString(5, fecha);
+            pstmt.setInt(6,calificacion);
+
+            pstmt.executeUpdate();
+
+        }   catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public static void main(String[] args) {
         BaseDatos basedatos = new BaseDatos();
 

@@ -47,9 +47,12 @@ public class Client {
     private String mail;
     private String password;
 
+        private int id;
+
     private ArrayList<String> review;
-    private LocalDateTime reg_date;
-    private String decrp;
+    private LocalDateTime fecha_creacion;
+        private LocalDateTime hora_reporte;
+    private String descripcion;
     private Set<MyWaypoint> list_waypoints;
 
     /**
@@ -57,7 +60,7 @@ public class Client {
      */
     public Client() {
 
-        this.reg_date = LocalDateTime.now();
+        this.fecha_creacion = LocalDateTime.now();
         this.review = new ArrayList<>();
         this.list_waypoints = new HashSet<>();
         new ClientLogin(this);
@@ -133,14 +136,6 @@ public class Client {
         return grupos;
     }
 
-    public String getDecrp() {
-        return decrp;
-    }
-
-    public void setDecrp(String decrp) {
-        this.decrp = decrp;
-    }
-
     public int getEdad() {
         return edad;
     }
@@ -165,12 +160,56 @@ public class Client {
         this.password = password;
     }
 
-    public LocalDateTime getReg_date() {
-        return reg_date;
+    public void setClientGUI(App clientGUI) {
+        this.clientGUI = clientGUI;
     }
 
-    public void setReg_date(LocalDateTime reg_date) {
-        this.reg_date = reg_date;
+    public void setGrupos(HashMap<String, String[]> grupos) {
+        this.grupos = grupos;
+    }
+
+    public static void setOut(PrintWriter out) {
+        Client.out = out;
+    }
+
+    public void setFecha_creacion(LocalDateTime fecha_creacion) {
+        this.fecha_creacion = fecha_creacion;
+    }
+
+    public void setHora_reporte(LocalDateTime hora_reporte) {
+        this.hora_reporte = hora_reporte;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public void setList_waypoints(Set<MyWaypoint> list_waypoints) {
+        this.list_waypoints = list_waypoints;
+    }
+
+    public static PrintWriter getOut() {
+        return out;
+    }
+
+    public LocalDateTime getHora_reporte() {
+        return hora_reporte;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public Set<MyWaypoint> getList_waypoints() {
+        return list_waypoints;
+    }
+
+    public LocalDateTime getFecha_creacion() {
+        return fecha_creacion;
+    }
+
+    public void setReg_date(LocalDateTime fecha_creacion) {
+        this.fecha_creacion = fecha_creacion;
     }
 
     public ArrayList<String> getReview() {
@@ -205,6 +244,13 @@ public class Client {
         this.userName = userName;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
     public static void main(String[] args) {
         new Client();
     }

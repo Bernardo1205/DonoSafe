@@ -9,15 +9,18 @@ import java.util.HashMap;
 
 public class Server {
     private static HashMap<String, ClientHandler> clients = new HashMap<>();
+    private static models.BaseDatos bbdd;
 
     public Server () throws IOException {
         ServerSocket listener = new ServerSocket(ServerConfig.SERVER_PORT);
+        bbdd = new models.BaseDatos();
 
         while (true) {
             System.out.println("[SERVER] Waiting for client connection...");
             Socket client = listener.accept();  // Wait for an incoming client connection
             System.out.println("[SERVER] Connected to client!");
 
+            //TODO añadir la bbdd al clienthandler e implementar los métodos
             ClientHandler clientHandler = new ClientHandler(client, clients);
             Thread clientThread = new Thread(clientHandler);
             clientThread.start();
