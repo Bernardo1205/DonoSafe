@@ -1,7 +1,6 @@
 package main.java.com.example.mapa;
 
 import main.java.com.example.client.Client;
-import main.java.com.example.client.ServerConnection;
 import org.jxmapviewer.viewer.GeoPosition;
 
 
@@ -21,7 +20,7 @@ public class MainPanel extends JPanel {
     private Map map;
     public Client client;
 
-    private Consumer<MyWaypoint> onWaypointAdded;/* Listener para pasar waypoints a clase app cuando se creen */
+    private Consumer<Reporte> onWaypointAdded;/* Listener para pasar waypoints a clase app cuando se creen */
 
     public MainPanel(JFrame jFrame,Client client){
         this.client = client;
@@ -37,16 +36,16 @@ public class MainPanel extends JPanel {
 
                     Point point = e.getPoint();
                     GeoPosition geoPosition = map.convertPointToGeoPosition(point);
-                    MyWaypoint myWaypoint = ponerwaypoint(geoPosition,textoWaypoint);
-                    myWaypoint.setPeligrosidad(getPeligrosidad());
-                    myWaypoint.setUser(client);
+                    Reporte reporte = ponerwaypoint(geoPosition,textoWaypoint);
+                    reporte.setPeligrosidad(getPeligrosidad());
+                    reporte.setUser(client);
 
                     Set setMywaypoints = map.getSetWaipoints();
-                    setMywaypoints.add(myWaypoint);
+                    setMywaypoints.add(reporte);
                     map.añadirWaypoint(setMywaypoints);
 
                     if (onWaypointAdded != null) {
-                        onWaypointAdded.accept(myWaypoint);
+                        onWaypointAdded.accept(reporte);
                     }
 
                     setEsperarClick(false);
@@ -61,7 +60,7 @@ public class MainPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Point2D point2D =null;
-                for (MyWaypoint waypoint:map.getSetWaipoints()){
+                for (Reporte waypoint:map.getSetWaipoints()){
                     point2D = map.getTileFactory().geoToPixel(waypoint.getPosition(),map.getZoom());
                     Rectangle rect = map.getViewportBounds();
                     Point converted_pont2D = new Point((int) point2D.getX()-rect.x,
@@ -77,7 +76,7 @@ public class MainPanel extends JPanel {
         });
 
     }
-    public void setOnWaypointAdded(Consumer<MyWaypoint> listener) {
+    public void setOnWaypointAdded(Consumer<Reporte> listener) {
         this.onWaypointAdded = listener;
     }
 
@@ -112,9 +111,9 @@ public class MainPanel extends JPanel {
     public void setTextoWaypoint(String textoWaypoint) {
         this.textoWaypoint = textoWaypoint;}
 
-    public MyWaypoint ponerwaypoint(GeoPosition geoPosition, String text){
-        MyWaypoint waypoint = new MyWaypoint(geoPosition);
-        waypoint.setText(text);
+    public Reporte ponerwaypoint(GeoPosition geoPosition, String text){
+        Reporte waypoint = new Reporte(geoPosition);
+        waypoint.setDescripcion(text);
         return waypoint;
     }
 

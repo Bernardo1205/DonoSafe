@@ -6,17 +6,12 @@ import org.jxmapviewer.input.PanMouseInputListener;
 import org.jxmapviewer.input.ZoomMouseWheelListenerCenter;
 import org.jxmapviewer.painter.CompoundPainter;
 import org.jxmapviewer.viewer.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
 import java.util.HashSet;
 import java.util.Set;
 
 public class Map extends JXMapViewer{
-    private  Set<MyWaypoint> setWaipoints = new HashSet<>(); //Set para almacenar WayPoints
+    private  Set<Reporte> setWaipoints = new HashSet<>(); //Set para almacenar WayPoints
     private  WaypointPainter waypointPainter; //Render de los Waipoints
     private CompoundPainter compoundPainter ;
 
@@ -69,11 +64,8 @@ public class Map extends JXMapViewer{
 
         this.compoundPainter = new CompoundPainter<>();
         compoundPainter.setPainters(waypointPainter);
-
-
-
-
     }
+
     public void añadirWaypoint(Set setWaipoints){
 
         /* Actualizar los waypoints en el painter y redibujar el mapa */
@@ -82,9 +74,9 @@ public class Map extends JXMapViewer{
         /* Cuando el mapa se redibuja todos los painters que estab en el compondPainter se renderizaran en el mapa */
         compoundPainter.setPainters(waypointPainter);
         setOverlayPainter(compoundPainter);
-
     }
-    public Set<MyWaypoint> getSetWaipoints() {
+
+    public Set<Reporte> getSetWaipoints() {
         return setWaipoints;
     }
 }

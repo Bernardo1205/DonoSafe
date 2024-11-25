@@ -4,16 +4,13 @@ import main.java.com.example.client.Client;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.Waypoint;
 
-import javax.swing.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
-public class MyWaypoint implements Waypoint {
+public class Reporte implements Waypoint {
 
     private String peligrosidad;
-    private String text;
+    private String descripcion;
     private LocalDateTime date;
     private Client user;
     private GeoPosition geoPosition;
@@ -24,13 +21,13 @@ public class MyWaypoint implements Waypoint {
         return geoPosition;
     }
 
-    public MyWaypoint(GeoPosition geoPosition){
+    public Reporte(GeoPosition geoPosition){
        this.date = LocalDateTime.now();
        this.geoPosition = geoPosition;
     }
 
-    public String getText() {
-        return text;
+    public String getDescripcion() {
+        return descripcion;
     }
 
     public void setDate(LocalDateTime date) {
@@ -41,13 +38,12 @@ public class MyWaypoint implements Waypoint {
         return user;
     }
 
-
     public void setUser(Client user) {
         this.user = user;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public LocalDateTime getDate() {
@@ -69,8 +65,8 @@ public class MyWaypoint implements Waypoint {
 
     @Override
     public String toString() {
-        return "MyWaypoint{" +
-                "text='" + text + '\'' +
+        return "Reporte{" +
+                "text='" + descripcion + '\'' +
                 ", date=" + date +
                 ", user=" + user +
                 ", geoPosition=" + geoPosition +

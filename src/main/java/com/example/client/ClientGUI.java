@@ -2,7 +2,6 @@ package main.java.com.example.client;
 
 import main.java.com.example.config.ClientConfig;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -180,7 +179,7 @@ public class ClientGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (!groupOrigField.getText().isEmpty() || !groupDestField.getText().isEmpty()) {
                     String groupInfo = String.join(";", groupOrigField.getText(), groupDestField.getText(), (String) groupHour.getSelectedItem());
-                    client.sendMessageToServer("[NEW_GROUP] " + client.getUserame() + " " + groupInfo);
+                    client.sendMessageToServer("[NEW_GROUP] " + client.getUsername() + " " + groupInfo);
                 }
             }
         });
@@ -320,7 +319,7 @@ public class ClientGUI extends JFrame {
         messageField.addActionListener(e -> {
             String message = messageField.getText();
             if (!message.isEmpty()) {
-                client.sendMessageToServer("GROUP " + group + ":" + client.getUserame() + "] " + message);
+                client.sendMessageToServer("GROUP " + group + ":" + client.getUsername() + "] " + message);
                 messageField.setText("");
             }
         });

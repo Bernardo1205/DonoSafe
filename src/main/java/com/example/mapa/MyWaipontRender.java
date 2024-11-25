@@ -1,16 +1,15 @@
 package main.java.com.example.mapa;
 
 import org.jxmapviewer.JXMapViewer;
-import org.jxmapviewer.viewer.WaypointPainter;
 import org.jxmapviewer.viewer.WaypointRenderer;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-public class MyWaipontRender implements WaypointRenderer<MyWaypoint> {
+public class MyWaipontRender implements WaypointRenderer<Reporte> {
 
     @Override
-    public void paintWaypoint(Graphics2D graphics2D, JXMapViewer jxMapViewer, MyWaypoint waypoint) {
+    public void paintWaypoint(Graphics2D graphics2D, JXMapViewer jxMapViewer, Reporte waypoint) {
         Point2D point2D = jxMapViewer.getTileFactory().geoToPixel(waypoint.getPosition(),jxMapViewer.getZoom());
         int x = (int) point2D.getX();
         int y = (int) point2D.getY();
@@ -24,8 +23,7 @@ public class MyWaipontRender implements WaypointRenderer<MyWaypoint> {
             graphics2D.setColor(new Color(26, 255, 0,80));
         } else if (waypoint.getPeligrosidad().equals("MEDIO")) {
             graphics2D.setColor(new Color(255, 251, 0,80));
-        }
-        else {
+        } else {
             graphics2D.setColor(new Color(255,0,9,80));
         }
         
@@ -37,7 +35,7 @@ public class MyWaipontRender implements WaypointRenderer<MyWaypoint> {
             graphics2D.setColor(Color.GREEN);
         } else if (waypoint.getPeligrosidad().equals("MEDIO")) {
             graphics2D.setColor(Color.YELLOW);
-        }else {
+        } else {
             graphics2D.setColor(Color.RED);
         }
        graphics2D.setStroke(new BasicStroke(2));

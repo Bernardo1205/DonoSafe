@@ -1,25 +1,18 @@
 package main.java.com.example.client;
 
-import mapa.AdressAutocomplete;
+import main.java.com.example.config.ClientConfig;
 import main.java.com.example.mapa.MainPanel;
 
 
-import main.java.com.example.mapa.Map;
-import main.java.com.example.mapa.MyWaypoint;
-
-import main.java.com.example.mapa.User;
+import main.java.com.example.mapa.Reporte;
 
 import main.java.com.example.mapa.VentanaAgregarWaypoint;
-import main.java.com.example.mapa.VentanaInfoWaypoint;
-import mapa.VentanaCrearGrupo;
-import org.jxmapviewer.viewer.Waypoint;
+import main.java.com.example.mapa.VentanaCrearGrupo;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -27,39 +20,17 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
 
-
-import mapa.AdressAutocomplete;
-import main.java.com.example.mapa.MainPanel;
-
-
-import main.java.com.example.mapa.Map;
-import main.java.com.example.mapa.MyWaypoint;
-
-import main.java.com.example.mapa.User;
-
-import main.java.com.example.mapa.VentanaAgregarWaypoint;
-import main.java.com.example.mapa.VentanaInfoWaypoint;
-import mapa.VentanaCrearGrupo;
-import org.jxmapviewer.viewer.Waypoint;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.Vector;
-
+/**
+ * Interfaz gráfica del usuario, contiene métodos para abrir, crear o actualizar chats.
+ *
+ * @see Client
+ */
 public class App extends JFrame {
     private JPanel panelPrincipal           ;
     private boolean esperarClick;
     private String textoWaypoint;
     private VentanaAgregarWaypoint ventanaAgregarWaypoint;
+    private JLayeredPane layeredPane;
     private MainPanel panelMapa;
     private Client client;
     private String grupoActual = "";
@@ -84,6 +55,11 @@ public class App extends JFrame {
 
 
     public App(Client client){
+        setTitle("Mapa");
+        setSize(ClientConfig.WIDTH,ClientConfig.HEIGHT);
+        setLayout(new BorderLayout());
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         this.client = client;
 
         cardLayout = new CardLayout();
@@ -104,9 +80,8 @@ public class App extends JFrame {
 
         jButtonAlerta.addActionListener(e -> {
             cardLayout.show(panelPrincipal,"MainPanel");
-            agregarAlerta();
-
         });
+
         jButtonGroups.addActionListener(e -> {
             cardLayout.show(panelPrincipal,"GroupSection");
         });
@@ -118,17 +93,13 @@ public class App extends JFrame {
         panelBotones.add(jButtonChats);
         panelBotones.add(jButtonGroups);
 
-
-        setLayout(new BorderLayout());
         add(panelBotones,BorderLayout.SOUTH);
         add(panelPrincipal,BorderLayout.CENTER);
-        setTitle("Mapa");
-        setSize(800,600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         setVisible(true);
     }
 
-    public  void  cambairPanel(JPanel panel , String panelName){
+    public  void cambiarPanel(JPanel panel , String panelName){
         panelPrincipal.add(panel,panelName);
         CardLayout cardLayout = (CardLayout) panelPrincipal.getLayout();
         cardLayout.show(panelPrincipal,panelName);
@@ -151,19 +122,34 @@ public class App extends JFrame {
     }
 
     private JPanel createMapSection() {
-        JPanel mapPanel = new JPanel(new BorderLayout());
+        JPanel mapPanel = new JPanel();
+        layeredPane = new JLayeredPane();
+        layeredPane.setPreferredSize(new Dimension(800, 600));
+
         panelMapa = new MainPanel(this,client);
         panelMapa.setOnWaypointAdded(this::waypointAdded);
-        mapPanel.add(panelMapa, BorderLayout.CENTER);
+        panelMapa.setBounds(0, 0, 800, 600);
+
+        JButton bAñadirAlerta = new JButton("Crear Alerta");
+        bAñadirAlerta.addActionListener(e -> agregarAlerta());
+        bAñadirAlerta.setBounds(10, 10, 120, 60);
+
+        /* Colocar los componentes en sus respectivas capas */
+        layeredPane.add(panelMapa, Integer.valueOf(0));
+        layeredPane.add(bAñadirAlerta, Integer.valueOf(1));
+
+        mapPanel.add(layeredPane);
+
         return mapPanel;
     }
 
-    private void waypointAdded(MyWaypoint waypoint){
-        client.sendMessageToServer(String.join(",","[New Waypoint] ",String.valueOf(waypoint.getPosition().getLongitude()), String.valueOf(waypoint.getPosition().getLatitude()),waypoint.getPeligrosidad() ,waypoint.getStringDate(),waypoint.getUser().getUserame(),waypoint.getText()));
+    private void waypointAdded(Reporte waypoint){
+        client.sendMessageToServer(String.join(",","[New Waypoint] ",String.valueOf(waypoint.getPosition().getLongitude()), String.valueOf(waypoint.getPosition().getLatitude()),waypoint.getPeligrosidad() ,waypoint.getStringDate(),waypoint.getUser().getUsername(),waypoint.getDescripcion()));
     }
-    public void updateWaypoints(MyWaypoint myWaypoint){
-        Set<MyWaypoint> set = panelMapa.getMap().getSetWaipoints();
-        set.add(myWaypoint);
+
+    public void updateWaypoints(Reporte reporte){
+        Set<Reporte> set = panelMapa.getMap().getSetWaipoints();
+        set.add(reporte);
         panelMapa.getMap().añadirWaypoint(set);
     }
 
@@ -314,6 +300,10 @@ public class App extends JFrame {
         return chatSection;
     }
 
+    public void addGroupRoute(String orig, String dest) {
+        /* TODO mostrar la ruta desde el origen hasta el destino en el mapa */
+    }
+
     private int getRowByValue(String value) {
         for (int i = 0; i < modeloUsers.getRowCount(); i++) {
             if (modeloUsers.getValueAt(i, 0).equals(value)) {
@@ -408,7 +398,7 @@ public class App extends JFrame {
         modeloUsers.setRowCount(0);
         /* userListPanel.removeAll(); */
         for (String user : users) {
-            if (!user.equals(client.getUserame())) {
+            if (!user.equals(client.getUsername())) {
                 modeloUsers.addRow(new Object[]{user,user, ""});
             }
         }
@@ -501,7 +491,7 @@ public class App extends JFrame {
         messageField.addActionListener(e -> {
             String message = messageField.getText();
             if (!message.isEmpty()) {
-                client.sendMessageToServer("GROUP " + group + ":" + client.getUserame() + "] " + message);
+                client.sendMessageToServer("GROUP " + group + ":" + client.getUsername() + "] " + message);
                 messageField.setText("");
             }
         });

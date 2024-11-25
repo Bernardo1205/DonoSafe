@@ -1,10 +1,7 @@
 package main.java.com.example.database;
 
+import main.java.com.example.mapa.Reporte;
 import main.java.com.example.mapa.User;
-import main.java.com.example.mapa.MyWaypoint;
-import main.java.com.example.mapa.Map;
-import org.jxmapviewer.viewer.GeoPosition;
-import org.jxmapviewer.viewer.Waypoint;
 
 
 import java.sql.*;
@@ -74,13 +71,13 @@ public class BaseDatos{
             throw new RuntimeException(e);
         }
     }
-    public void insertarWayPoint(MyWaypoint reporte)  {
+    public void insertarWayPoint(Reporte reporte)  {
         String comandoInsertarUsuario = "INSERT INTO Reporte VALUES (?,?,?,?,?,?,?)";
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario,Statement.RETURN_GENERATED_KEYS)){
 
             pstmt.setInt(2, Integer.parseInt(reporte.getUser().getId()));
 
-            pstmt.setString(3, reporte.getText());
+            pstmt.setString(3, reporte.getDescripcion());
 
             LocalDateTime hora_reporte = reporte.getDate(); // fecha del reporte
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

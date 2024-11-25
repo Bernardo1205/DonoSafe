@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class User {
     private String name;
@@ -17,17 +18,19 @@ public class User {
     private ArrayList<String> review;
     private LocalDateTime reg_date;
     private String decrp;
-    private Set<MyWaypoint> list_waypoints;
+    private Set<Reporte> list_waypoints;
 
     public User(){
+//        this.id = UUID.randomUUID();
         this.reg_date = LocalDateTime.now();
         this.review = new ArrayList<>();
         this.list_waypoints = new HashSet<>();
     }
+
     private void addReview(String review){
         this.review.add(review);
     }
-    private void  addWaypint(MyWaypoint waypoint){
+    private void  addWaypint(Reporte waypoint){
         this.list_waypoints.add(waypoint);
     }
 
@@ -35,7 +38,7 @@ public class User {
         return (Array) review;
     }
 
-    public Set<MyWaypoint> getList_waypoints() {
+    public Set<Reporte> getList_waypoints() {
         return list_waypoints;
     }
 

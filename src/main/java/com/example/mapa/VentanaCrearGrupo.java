@@ -1,5 +1,4 @@
-
-package mapa;
+package main.java.com.example.mapa;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,14 +9,11 @@ import java.util.Date;
 import java.util.HashMap;
 
 import main.java.com.example.client.Client;
-import mapa.AdressAutocomplete;
-import mapa.Localizacion;
-import mapa.ValidatorLocalizacion;
 import org.jxmapviewer.viewer.GeoPosition;
 
 public class VentanaCrearGrupo extends JPanel {
-    private mapa.Localizacion localizacionOrigen;
-    private mapa.Localizacion localizacionDestino;
+    private Localizacion localizacionOrigen;
+    private Localizacion localizacionDestino;
     private Date fecha;
     private Date hora;
 
@@ -78,7 +74,7 @@ public class VentanaCrearGrupo extends JPanel {
         jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String textoOrigen =origen.getText();
+                String textoOrigen = origen.getText();
                 String textoDestino = destino.getText();
 
                 try {
@@ -90,11 +86,11 @@ public class VentanaCrearGrupo extends JPanel {
 
                 if (localizacionOrigen!= null && localizacionDestino != null &&  groupHour.getSelectedItem() != null){
 
-                        mapa.Grupo grupo = new mapa.Grupo();
+                        Grupo grupo = new Grupo();
                         grupo.setDestino(localizacionDestino);
                         grupo.setOrigen(localizacionOrigen);
                         String groupInfo = String.join(";", origen.getText(), destino.getText(), (String) groupHour.getSelectedItem());
-                        client.sendMessageToServer("[NEW_GROUP] " + client.getUserame() + "|" + groupInfo);
+                        client.sendMessageToServer("[NEW_GROUP] " + client.getUsername() + "|" + groupInfo);
 
                         System.out.println(groupInfo);
 

@@ -1,4 +1,4 @@
-package mapa;
+package main.java.com.example.mapa;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

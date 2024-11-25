@@ -1,23 +1,11 @@
 package main.java.com.example.client;
 
-import main.java.com.example.config.ClientConfig;
 import main.java.com.example.config.ServerConfig;
 import main.java.com.example.mapa.*;
-import org.jxmapviewer.viewer.GeoPosition;
 
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ConnectException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -28,18 +16,19 @@ import java.util.*;
  *
  *
  * @see ClientLogin
- * @see ClientGUI
+ * @see App
  * @see ServerConnection
  */
 public class Client {
 
     private final String id;
-    private String userName;
+    private String username;
     public App clientGUI;
     public HashMap<String, String[]> grupos = new HashMap<>();
     private static Socket socket;
     private static PrintWriter out;
 
+    /* TODO implementar la bbdd y dar valor a las siguientes variables */
     private int edad;
     private String sexo;
     private String mail;
@@ -48,7 +37,7 @@ public class Client {
     private ArrayList<String> review;
     private LocalDateTime reg_date;
     private String decrp;
-    private Set<MyWaypoint> list_waypoints;
+    private Set<Reporte> list_waypoints;
 
     /**
      * Registrar o ubicar al cliente en la base de datos
@@ -70,7 +59,7 @@ public class Client {
      */
     public void openChatWindow(String username) {
 
-        userName = username;
+        this.username = username;
 
         this.clientGUI = new App(Client.this);
 
@@ -87,7 +76,7 @@ public class Client {
             new Thread(serverConn).start();
 
         } catch (ConnectException ex1) {
-            System.out.format("Servidor en %s/%s no encontrado", ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
+            System.out.format("Servidor en %s/%s no encontrado\n", ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
             System.exit(0);
         } catch (IOException ex2) {
             ex2.printStackTrace();
@@ -101,7 +90,7 @@ public class Client {
      * @param groupId
      */
     public void joinGroupChat(String groupId) {
-        sendMessageToServer("JOIN_GROUP " + this.userName + " TO " + groupId);
+        sendMessageToServer("JOIN_GROUP " + this.username + " TO " + groupId);
         clientGUI.openPrivateGroup(groupId);
     }
 
@@ -122,6 +111,7 @@ public class Client {
 
     public void addGroup(String groupId, String[] groupInfo) {
         grupos.put(groupId, groupInfo);
+        clientGUI.addGroupRoute(groupInfo[0], groupInfo[1]);
         clientGUI.updateGroupsList(grupos);
     }
 
@@ -129,8 +119,12 @@ public class Client {
         return this.id;
     }
 
-    public String getUserame() {
-        return this.userName;
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public HashMap<String, String[]> getGrupos() {
@@ -191,22 +185,6 @@ public class Client {
 
     public void setSexo(String sexo) {
         this.sexo = sexo;
-    }
-
-    public static Socket getSocket() {
-        return socket;
-    }
-
-    public static void setSocket(Socket socket) {
-        Client.socket = socket;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public static void main(String[] args) {

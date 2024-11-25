@@ -1,12 +1,12 @@
-package mapa;
+package main.java.com.example.mapa;
+
 import org.jxmapviewer.viewer.GeoPosition;
 
 public class Localizacion {
     private String adress;
     private GeoPosition geoPosition;
 
-    public Localizacion(){
-    }
+    public Localizacion() {}
 
     public String getAdress() {
         return adress;
