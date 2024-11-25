@@ -159,7 +159,7 @@ public class App extends JFrame {
     }
 
     private void waypointAdded(MyWaypoint waypoint){
-        client.sendMessageToServer("[New Waypoint] "+ "," +String.valueOf(waypoint.getPosition().getLongitude())+","+ String.valueOf(waypoint.getPosition().getLatitude())+","+waypoint.getPeligrosidad() +","+waypoint.getStringDate()+','+waypoint.getUser().getUserame()+','+waypoint.getText());
+        client.sendMessageToServer(String.join(",","[New Waypoint] ",String.valueOf(waypoint.getPosition().getLongitude()), String.valueOf(waypoint.getPosition().getLatitude()),waypoint.getPeligrosidad() ,waypoint.getStringDate(),waypoint.getUser().getUserame(),waypoint.getText()));
     }
     public void updateWaypoints(MyWaypoint myWaypoint){
         Set<MyWaypoint> set = panelMapa.getMap().getSetWaipoints();
@@ -346,7 +346,20 @@ public class App extends JFrame {
             }
         };
 
+        DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+               JLabel jLabel =(JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+               if (column!=3){
+                   jLabel.setToolTipText(modeloGrupos.getValueAt(row,column).toString());
+               }
+
+               return jLabel;
+            }
+        };
+
         JTable tablaGrupos = new JTable(modeloGrupos);
+        tablaGrupos.setDefaultRenderer(Object.class, defaultTableCellRenderer);
 
         // Ocultar la columna del ID del grupo
         tablaGrupos.getColumnModel().getColumn(0).setMinWidth(0);
@@ -585,7 +598,7 @@ public class App extends JFrame {
         return grupos;
     }
 
-    public static void main(String[] args) {
-        new App(new Client());
-    }
+//    public static void main(String[] args) {
+//        new App(new Client());
+//    }
 }
