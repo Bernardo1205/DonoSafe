@@ -13,8 +13,9 @@ import main.java.com.example.server.ClientHandler;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
-public class BaseDatos{
+public class BaseDatos {
 
     private Connection con = null;
 
@@ -55,10 +56,10 @@ public class BaseDatos{
         }
     }
 
-    public void insertarUsuario(User usuario){
+    public void insertarUsuario(User usuario) {
         String comandoInsertarUsuario = "INSERT INTO Usuario VALUES (?,?,?,?,?,?,?,?,?,?)";
 
-        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario,Statement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(2, usuario.getName());
             pstmt.setString(3, usuario.getUser_name());
             pstmt.setString(4, usuario.getSexo());
@@ -76,10 +77,11 @@ public class BaseDatos{
             throw new RuntimeException(e);
         }
     }
-    public void insertarWayPoint(MyWaypoint reporte)  {
+
+    public void insertarWayPoint(MyWaypoint reporte) {
         String comandoInsertarUsuario = "INSERT INTO Reporte VALUES (?,?,?,?,?,?,?)";
         Statement statement = null;
-        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario,Statement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setInt(2, reporte.getUser().getId());
 
@@ -97,7 +99,7 @@ public class BaseDatos{
 
             LocalDateTime fecha_reporte_finalizacion = fecha_reporte_creacion.plusHours(1);
             String fecha_finalizacion_formateada = fecha_reporte_finalizacion.format(formatter);
-            pstmt.setString(6,fecha_finalizacion_formateada);
+            pstmt.setString(6, fecha_finalizacion_formateada);
 
             pstmt.setString(7, reporte.getTipoPeligro());
             pstmt.executeUpdate();
@@ -108,12 +110,12 @@ public class BaseDatos{
 
     }
 
-    public void insertarMensaje(String groupId, int id_usuario, String fecha, String contenido){
+    public void insertarMensaje(String groupId, int id_usuario, String fecha, String contenido) {
         //int grupoId, String username/id, String mensaje, String fecha
 
         String comandoInsertarMensaje = "INSERT INTO Mensaje VALUES (?,?,?,?)";
 
-        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarMensaje,Statement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarMensaje, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, groupId);
             pstmt.setInt(2, id_usuario);
@@ -129,56 +131,60 @@ public class BaseDatos{
 
     public void insertarGrupo(Grupo grupo) throws SQLException {
         String comandoInsertarGrupo = "INSERT INTO Grupo VALUES (?,?,?,?,?)";
-        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setArray(2, grupo.getClientes());
             pstmt.setString(3, grupo.getDestino());
-            pstmt.setString(4,grupo.getOrigen());
+            pstmt.setString(4, grupo.getOrigen());
             LocalDateTime fecha_creacion = grupo.getFecha();
             String fechaCreacionFormateada = fecha_creacion.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             pstmt.setString(5, fechaCreacionFormateada);
 
             pstmt.executeUpdate();
 
-        }   catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-
-    public void insertarReseña(String contenidoReseña, int calificacion, String fecha, int idReseñador, int idUsuario){
+    public void insertarReseña(String contenidoReseña, int calificacion, String fecha, int idReseñador, int idUsuario) {
         String comandoInsertarGrupo = "INSERT INTO Reseña VALUES (?,?,?,?,?,?)";
-        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(2, contenidoReseña);
             pstmt.setInt(3, idReseñador);
-            pstmt.setInt(4,idUsuario);
+            pstmt.setInt(4, idUsuario);
             pstmt.setString(5, fecha);
-            pstmt.setInt(6,calificacion);
+            pstmt.setInt(6, calificacion);
 
             pstmt.executeUpdate();
 
-        }   catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public ArrayList<String[]> mostarReseñas(int idUsuario) throws SQLException {
 
-    public static void main(String[] args) {
-        BaseDatos basedatos = new BaseDatos();
+        String comandoObtenerReseñas = "SELECT contenido_reseña, calificacion, id_reseñador, fecha FROM Reseña where id_usuario = ?;";
+        ArrayList<String[]> listaReseñas = new ArrayList<>();
+        try (PreparedStatement stmt = con.prepareStatement(comandoObtenerReseñas)) {
 
-        basedatos.ConectarBaseDatos();
-        Connection connection = basedatos.getCon();
-        if (connection != null) {
-            try {
-                Statement statement = connection.createStatement();
-                statement.executeUpdate("CREATE TABLE IF NOT EXISTS prueba(id_prueba INTEGER PRIMARY KEY, nombre_prueba TEXT)");
-                System.out.println("Tabla creada o ya existente.");
-            } catch (SQLException e) {
-                System.err.println("Error al crear la tabla prueba: " + e.getMessage());
-            } finally {
-                basedatos.cerrarCon();
+            // Establecer el parámetro persona_id en la consulta
+            stmt.setInt(1, idUsuario);
+
+            // Ejecutar la consulta
+            try (ResultSet rs = stmt.executeQuery()) {
+                // Recorrer los resultados y almacenar en un array de arrays de strings
+                while (rs.next()) {
+                    String fecha = rs.getString("fecha");
+                    String calificacion = rs.getString("calificacion");
+                    String contenido = rs.getString("contenido");
+
+                    // Agregar al array
+                    listaReseñas.add(new String[]{fecha, calificacion, contenido});
+                }
             }
+        return listaReseñas;
         }
     }
 }
-
