@@ -1,8 +1,8 @@
-package models;
+package main.java.com.example.database;
 
-import Mapa.User;
-import Mapa.MyWaypoint;
-import Mapa.Map;
+import main.java.com.example.mapa.User;
+import main.java.com.example.mapa.MyWaypoint;
+import main.java.com.example.mapa.Map;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.Waypoint;
 
@@ -78,17 +78,17 @@ public class BaseDatos{
         String comandoInsertarUsuario = "INSERT INTO Reporte VALUES (?,?,?,?,?,?,?)";
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario,Statement.RETURN_GENERATED_KEYS)){
 
-            pstmt.setInt(2, reporte.getUser().getId());
+            pstmt.setInt(2, Integer.parseInt(reporte.getUser().getId()));
 
-            pstmt.setString(3, reporte.getDescripcion());
+            pstmt.setString(3, reporte.getText());
 
-            LocalDateTime hora_reporte = reporte.getHora_reporte();
+            LocalDateTime hora_reporte = reporte.getDate(); // fecha del reporte
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String hora_formateada = hora_reporte.format(formatter);
             pstmt.setString(4, hora_formateada);
 
 
-            LocalDateTime fecha_reporte_creacion = reporte.getFecha_creacion();
+            LocalDateTime fecha_reporte_creacion = reporte.getDate(); // fecha creación del reporte
             String fecha_formateada = fecha_reporte_creacion.format(formatter);
             pstmt.setString(5, fecha_formateada);
 
@@ -96,7 +96,7 @@ public class BaseDatos{
             String fecha_finalizacion_formateada = fecha_reporte_finalizacion.format(formatter);
             pstmt.setString(6,fecha_finalizacion_formateada);
 
-            pstmt.setString(7, reporte.getTipoPeligro());
+            pstmt.setString(7, reporte.getPeligrosidad()); // tipo de peligrosidad
 
 
         } catch (SQLException e) {

@@ -23,6 +23,7 @@ public class MyWaypoint implements Waypoint {
     public GeoPosition getPosition() {
         return geoPosition;
     }
+
     public MyWaypoint(GeoPosition geoPosition){
        this.date = LocalDateTime.now();
        this.geoPosition = geoPosition;
@@ -52,6 +53,7 @@ public class MyWaypoint implements Waypoint {
     public LocalDateTime getDate() {
         return date;
     }
+
     public String getStringDate(){
         DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return this.date.format(formatoHora);

@@ -17,12 +17,10 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ConnectException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * La clase Client se encarga de renderizar la pantalla del cliente
@@ -32,10 +30,10 @@ import java.util.Set;
  * @see ClientLogin
  * @see ClientGUI
  * @see ServerConnection
- * @author daniel.sanchez.r
  */
 public class Client {
 
+    private final String id;
     private String userName;
     public App clientGUI;
     public HashMap<String, String[]> grupos = new HashMap<>();
@@ -57,6 +55,7 @@ public class Client {
      */
     public Client() {
 
+        this.id = UUID.randomUUID().toString();
         this.reg_date = LocalDateTime.now();
         this.review = new ArrayList<>();
         this.list_waypoints = new HashSet<>();
@@ -77,6 +76,7 @@ public class Client {
 
         try {
             socket = new Socket(ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
+            System.out.println(String.format("Started client at %s", socket.getLocalSocketAddress()));
 
             ServerConnection serverConn = new ServerConnection(socket, this);
             out = new PrintWriter(socket.getOutputStream(), true);
@@ -123,6 +123,10 @@ public class Client {
     public void addGroup(String groupId, String[] groupInfo) {
         grupos.put(groupId, groupInfo);
         clientGUI.updateGroupsList(grupos);
+    }
+
+    public String getId() {
+        return this.id;
     }
 
     public String getUserame() {
