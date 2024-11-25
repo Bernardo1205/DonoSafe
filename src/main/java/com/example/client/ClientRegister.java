@@ -1,3 +1,5 @@
+package main.java.com.example.client;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -114,6 +116,7 @@ public class ClientRegister extends JFrame {
     }
 
     private void saveDataToFile(String name, String email, String password, String nombreArchivo) {
+        /* FIXME guardar el usuario en la base de datos */
         String contenido = name + "," + email + "," + password;
         System.out.println(contenido);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo, true))) {
