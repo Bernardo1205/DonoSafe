@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class MyWaypoint implements Waypoint {
+
     private String peligrosidad;
     private String text;
     private LocalDateTime date;

@@ -6,7 +6,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -71,9 +74,10 @@ public class ClientHandler implements Runnable {
                     String sender = message.substring(ind+1, message.indexOf("]"));
                     mapGrupos.get(targerGroup).sendMessage(sender, message.substring(message.indexOf("]")+2));
                 } else if (message.startsWith("[NEW_GROUP] ")) { /* New group message format: [NEW_GROUP] groupName:username*/
-                    String groupCreator = message.substring(message.indexOf(" ")+1, message.lastIndexOf(" "));
-                    String[] groupInfo = message.substring(message.lastIndexOf(" ")+1).split(";");
-                    createGroup(groupCreator, groupInfo[0], groupInfo[1]);
+                    String groupCreator = message.substring(message.indexOf(" ")+1, message.lastIndexOf("|"));
+                    String[] groupInfo = message.substring(message.lastIndexOf("|")).split(";");
+                    createGroup(groupCreator, groupInfo[0], groupInfo[1],groupInfo[2]);
+                    System.out.println("----------------------");
                 } else if (message.startsWith("JOIN_GROUP ")) {
                     String userName = message.substring(11, message.indexOf(" TO ")).strip();
                     String groupId = message.substring(message.indexOf(" TO ") + 4);
@@ -101,10 +105,19 @@ public class ClientHandler implements Runnable {
     /**
      * Crea un grupo y notifica a todos los clientes conectados
      */
-    private void createGroup(String creator, String orig, String dest) {
-        Grupo nuevoGrupo = new Grupo(clients.get(creator), orig, dest, LocalDateTime.now());
+    private void createGroup(String creator, String orig, String dest,String hour) {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime time = LocalTime.parse(hour, timeFormatter);
+
+        // Obtener la fecha actual
+        LocalDate currentDate = LocalDate.now();
+
+        // Combinar la fecha actual con el tiempo parseado para obtener LocalDateTime
+        LocalDateTime dateTime = LocalDateTime.of(currentDate, time);
+        Grupo nuevoGrupo = new Grupo(clients.get(creator), orig, dest, dateTime);
+
         mapGrupos.putIfAbsent(nuevoGrupo.getId(), nuevoGrupo);
-        sendMessageToAll("[NEW_GROUP] " + nuevoGrupo.getId() + ":" + creator + " " + String.join(";", orig, dest));
+        sendMessageToAll("[NEW_GROUP] " + nuevoGrupo.getId() + ":" + creator + "|" + String.join(";", orig, dest,hour));
     }
 
     /**

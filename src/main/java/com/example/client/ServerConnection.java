@@ -82,7 +82,7 @@ public class ServerConnection implements Runnable {
                     showGroupMessage(serverResponse);
                 } else if (serverResponse.startsWith("[NEW_GROUP] ")) {
                     String groupId = serverResponse.substring(12, ind);
-                    String[] groupInfo = serverResponse.substring(serverResponse.lastIndexOf(" ")+1).split(";");
+                    String[] groupInfo = serverResponse.substring(serverResponse.lastIndexOf("|")+1).split(";");
                     client.addGroup(groupId, groupInfo);
                 } else {
                     System.out.println("[ERROR] Unknown message format");

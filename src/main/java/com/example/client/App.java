@@ -337,7 +337,7 @@ public class App extends JFrame {
         groupsListPanel.setLayout(new BoxLayout(groupsListPanel, BoxLayout.Y_AXIS));
 
         //Todo falatta añadir hora
-        Vector<String> cabeceraGrupos = new Vector<String>(Arrays.asList("ID", "Origen", "Destino"));
+        Vector<String> cabeceraGrupos = new Vector<String>(Arrays.asList("ID", "Origen", "Destino","Hora Salida"));
 
         modeloGrupos = new DefaultTableModel(new Vector<Vector<Object>>(), cabeceraGrupos){
             @Override
@@ -380,7 +380,8 @@ public class App extends JFrame {
 
         for (String groupId : groups.keySet()) {
             String[] info = groups.get(groupId);
-            modeloGrupos.addRow(new Object[]{groupId, info[0], info[1]});
+
+            modeloGrupos.addRow(new Object[]{groupId, info[0], info[1], info[2]});
         }
         groupsListPanel.revalidate();
         groupsListPanel.repaint();
@@ -584,7 +585,7 @@ public class App extends JFrame {
         return grupos;
     }
 
-//    public static void main(String[] args) {
-//        new App(new Client());
-//    }
+    public static void main(String[] args) {
+        new App(new Client());
+    }
 }
