@@ -11,10 +11,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class MyWaypoint implements Waypoint {
-    private String peligrosidad;
+    private String tipoPeligro;
     private String text;
-    private LocalDateTime date;
     private Client user;
+    private LocalDateTime horaCreacion;
+    private String
     private GeoPosition geoPosition;
 
 
@@ -23,17 +24,14 @@ public class MyWaypoint implements Waypoint {
         return geoPosition;
     }
     public MyWaypoint(GeoPosition geoPosition){
-       this.date = LocalDateTime.now();
        this.geoPosition = geoPosition;
+       this.horaCreacion = LocalDateTime.now();
     }
 
     public String getText() {
         return text;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
 
     public Client getUser() {
         return user;
@@ -48,29 +46,32 @@ public class MyWaypoint implements Waypoint {
         this.text = text;
     }
 
-    public LocalDateTime getDate() {
-        return date;
-    }
-    public String getStringDate(){
-        DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        return this.date.format(formatoHora);
-    }
 
-    public String getPeligrosidad() {
-        return peligrosidad;
+
+    public String getTipoPeligro() {
+        return tipoPeligro;
     }
 
     public void setPeligrosidad(String peligrosidad) {
-        this.peligrosidad = peligrosidad;
+        this.tipoPeligro = tipoPeligro;
     }
 
     @Override
     public String toString() {
         return "MyWaypoint{" +
                 "text='" + text + '\'' +
-                ", date=" + date +
+                ", horaCreacion=" + horaCreacion +
                 ", user=" + user +
                 ", geoPosition=" + geoPosition +
                 '}';
     }
+
+    public LocalDateTime getHoraCreacion() {
+        return horaCreacion;
+    }
+    public String getStringHoraCreacion(){
+        DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return this.horaCreacion.format(formatoHora);
+    }
+
 }

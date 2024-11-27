@@ -1,5 +1,6 @@
 package models;
 
+import main.java.com.example.client.Client;
 import main.java.com.example.mapa.User;
 import main.java.com.example.mapa.MyWaypoint;
 import main.java.com.example.server.Grupo;
@@ -56,22 +57,22 @@ public class BaseDatos {
         }
     }
 
-    public void insertarUsuario(User usuario) {
+    public void insertarUsuario(Client cliente) {
         String comandoInsertarUsuario = "INSERT INTO Usuario VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(2, usuario.getName());
-            pstmt.setString(3, usuario.getUser_name());
-            pstmt.setString(4, usuario.getSexo());
-            pstmt.setInt(5, usuario.getEdad());
-            pstmt.setString(6, usuario.getPassword());
-            pstmt.setArray(7, usuario.getReview());
-            LocalDateTime reg_date = usuario.getReg_date();
+            pstmt.setString(2, cliente.getNombre());
+            pstmt.setString(3, cliente.getUserName());
+            pstmt.setString(4, cliente.getSexo());
+            pstmt.setInt(5, cliente.getEdad());
+            pstmt.setString(6, cliente.getPassword());
+            pstmt.setArray(7, cliente.getReview());
+            LocalDateTime reg_date = cliente.getReg_date();
             String fecha_formateada = reg_date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             pstmt.setString(8,
                     fecha_formateada);
-            pstmt.setString(9, usuario.getMail());
-            pstmt.setString(10, usuario.getDecrp());
+            pstmt.setString(9, cliente.getMail());
+            pstmt.setString(10, cliente.getDecrp());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -93,7 +94,7 @@ public class BaseDatos {
             pstmt.setString(4, hora_formateada);
 
 
-            LocalDateTime fecha_reporte_creacion = reporte.getHora_creacion();
+            LocalDateTime fecha_reporte_creacion = reporte.getHoraCreacion();
             String fecha_formateada = fecha_reporte_creacion.format(formatter);
             pstmt.setString(5, fecha_formateada);
 

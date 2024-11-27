@@ -1,8 +1,6 @@
 package main.java.com.example.server;
 
-import main.java.com.example.server.ClientHandler;
-
-import javax.swing.*;
+import java.sql.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -73,7 +71,7 @@ public class Grupo {
         return this.clientes.contains(cliente);
     }
 
-    public ArrayList<ClientHandler> getClientes() {
+    public Array getClientes() {
         return this.clientes;
     }
 
@@ -91,5 +89,8 @@ public class Grupo {
 
     public String toString() {
         return "Miembros: " + clientes + ", Origen: " + origen + ", Destino: " + destino + ", Fecha: " + fecha;
+    }
+
+    public LocalDateTime getFecha() {
     }
 }

@@ -1,23 +1,14 @@
 package main.java.com.example.client;
 
-import main.java.com.example.config.ClientConfig;
 import main.java.com.example.config.ServerConfig;
 import main.java.com.example.mapa.*;
 import org.jxmapviewer.viewer.GeoPosition;
 
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.sql.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +26,10 @@ import java.util.Set;
  * @author daniel.sanchez.r
  */
 public class Client {
+
+    private String nombre;
+
+
 
     private String userName;
     public App clientGUI;
@@ -116,6 +111,9 @@ public class Client {
         return this.clientGUI;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
     public void sendMessageToServer(String message) {
         out.println(message);
     }
@@ -173,8 +171,8 @@ public class Client {
         this.reg_date = reg_date;
     }
 
-    public ArrayList<String> getReview() {
-        return review;
+    public Array getReview() {
+        return (Array) review;
     }
 
     public void setReview(ArrayList<String> review) {
