@@ -15,7 +15,11 @@ public class MyWaypoint implements Waypoint {
     private String text;
     private Client user;
     private LocalDateTime horaCreacion;
-    private String
+    private String descripcion;
+
+
+
+    private LocalDateTime horaDelReporte;
     private GeoPosition geoPosition;
 
 
@@ -73,5 +77,11 @@ public class MyWaypoint implements Waypoint {
         DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return this.horaCreacion.format(formatoHora);
     }
+    public String getDescripcion() {
+        return descripcion;
+    }
 
+    public LocalDateTime getHoraDelReporte() {
+        return horaDelReporte;
+    }
 }

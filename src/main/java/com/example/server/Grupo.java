@@ -92,5 +92,6 @@ public class Grupo {
     }
 
     public LocalDateTime getFecha() {
+        return null;
     }
 }

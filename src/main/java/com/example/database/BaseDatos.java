@@ -88,7 +88,7 @@ public class BaseDatos {
 
             pstmt.setString(3, reporte.getDescripcion());
 
-            LocalDateTime hora_reporte = reporte.getHora_reporte();
+            LocalDateTime hora_reporte = reporte.getHoraDelReporte();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String hora_formateada = hora_reporte.format(formatter);
             pstmt.setString(4, hora_formateada);
@@ -188,4 +188,7 @@ public class BaseDatos {
         return listaReseñas;
         }
     }
+
+    public
+
 }

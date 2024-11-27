@@ -36,12 +36,17 @@ public class Client {
     public HashMap<String, String[]> grupos = new HashMap<>();
     private static Socket socket;
     private static PrintWriter out;
+    private int id;
+
 
     private int edad;
     private String sexo;
     private String mail;
     private String password;
 
+
+
+    private LocalDateTime horaDelReporte;
     private ArrayList<String> review;
     private LocalDateTime reg_date;
     private String decrp;
@@ -201,6 +206,9 @@ public class Client {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+    public int getId() {
+        return id;
     }
 
     public static void main(String[] args) {
