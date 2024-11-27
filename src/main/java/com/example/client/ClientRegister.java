@@ -24,6 +24,7 @@ public class ClientRegister extends JFrame {
         Color buttonColor = new Color(0, 120, 215);
         Color buttonTextColor = Color.WHITE;
 
+
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(null);
         mainPanel.setBackground(backgroundColor);
@@ -108,25 +109,13 @@ public class ClientRegister extends JFrame {
                 } else {
                     statusLabel.setForeground(Color.GREEN);
                     statusLabel.setText("Cuenta creada exitosamente.");
-                    saveDataToFile(name, email, password, nombreArchivo);
                 }
             }
         });
         getRootPane().setDefaultButton(createAccountButton);
     }
 
-    private void saveDataToFile(String name, String email, String password, String nombreArchivo) {
-        /* FIXME guardar el usuario en la base de datos */
-        String contenido = name + "," + email + "," + password;
-        System.out.println(contenido);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo, true))) {
-            writer.write(contenido);
-            writer.newLine();
-            System.out.println("Información guardada correctamente al archivo " + nombreArchivo);
-        } catch (IOException e) {
-            System.err.println("Error al guardar la información: " + e.getMessage());
-        }
-    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             ClientRegister window = new ClientRegister();
