@@ -2,13 +2,18 @@ package main.java.com.example.client;
 
 import main.java.com.example.config.ServerConfig;
 import main.java.com.example.mapa.*;
+import org.jxmapviewer.viewer.GeoPosition;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.sql.Array;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * La clase Client se encarga de renderizar la pantalla del cliente
@@ -16,35 +21,42 @@ import java.util.*;
  *
  *
  * @see ClientLogin
- * @see App
+ * @see ClientGUI
  * @see ServerConnection
+ * @author daniel.sanchez.r
  */
 public class Client {
 
-    private final String id;
-    private String username;
+    private String nombre;
+
+
+
+    private String userName;
     public App clientGUI;
     public HashMap<String, String[]> grupos = new HashMap<>();
     private static Socket socket;
     private static PrintWriter out;
+    private int id;
 
-    /* TODO implementar la bbdd y dar valor a las siguientes variables */
+
     private int edad;
     private String sexo;
     private String mail;
     private String password;
 
+
+
+    private LocalDateTime horaDelReporte;
     private ArrayList<String> review;
     private LocalDateTime reg_date;
     private String decrp;
-    private Set<Reporte> list_waypoints;
+    private Set<MyWaypoint> list_waypoints;
 
     /**
      * Registrar o ubicar al cliente en la base de datos
      */
     public Client() {
 
-        this.id = UUID.randomUUID().toString();
         this.reg_date = LocalDateTime.now();
         this.review = new ArrayList<>();
         this.list_waypoints = new HashSet<>();
@@ -59,13 +71,12 @@ public class Client {
      */
     public void openChatWindow(String username) {
 
-        this.username = username;
+        userName = username;
 
         this.clientGUI = new App(Client.this);
 
         try {
             socket = new Socket(ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
-            System.out.println(String.format("Started client at %s", socket.getLocalSocketAddress()));
 
             ServerConnection serverConn = new ServerConnection(socket, this);
             out = new PrintWriter(socket.getOutputStream(), true);
@@ -76,7 +87,7 @@ public class Client {
             new Thread(serverConn).start();
 
         } catch (ConnectException ex1) {
-            System.out.format("Servidor en %s/%s no encontrado\n", ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
+            System.out.format("Servidor en %s/%s no encontrado", ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
             System.exit(0);
         } catch (IOException ex2) {
             ex2.printStackTrace();
@@ -90,7 +101,7 @@ public class Client {
      * @param groupId
      */
     public void joinGroupChat(String groupId) {
-        sendMessageToServer("JOIN_GROUP " + this.username + " TO " + groupId);
+        sendMessageToServer("JOIN_GROUP " + this.userName + " TO " + groupId);
         clientGUI.openPrivateGroup(groupId);
     }
 
@@ -105,26 +116,20 @@ public class Client {
         return this.clientGUI;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
     public void sendMessageToServer(String message) {
         out.println(message);
     }
 
     public void addGroup(String groupId, String[] groupInfo) {
         grupos.put(groupId, groupInfo);
-        clientGUI.addGroupRoute(groupInfo[0], groupInfo[1]);
         clientGUI.updateGroupsList(grupos);
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public String getUserame() {
+        return this.userName;
     }
 
     public HashMap<String, String[]> getGrupos() {
@@ -171,8 +176,8 @@ public class Client {
         this.reg_date = reg_date;
     }
 
-    public ArrayList<String> getReview() {
-        return review;
+    public Array getReview() {
+        return (Array) review;
     }
 
     public void setReview(ArrayList<String> review) {
@@ -185,6 +190,25 @@ public class Client {
 
     public void setSexo(String sexo) {
         this.sexo = sexo;
+    }
+
+    public static Socket getSocket() {
+        return socket;
+    }
+
+    public static void setSocket(Socket socket) {
+        Client.socket = socket;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    public int getId() {
+        return id;
     }
 
     public static void main(String[] args) {

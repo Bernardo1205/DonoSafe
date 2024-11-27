@@ -4,15 +4,22 @@ import main.java.com.example.client.Client;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.Waypoint;
 
+import javax.swing.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
-public class Reporte implements Waypoint {
-
-    private String peligrosidad;
-    private String descripcion;
-    private LocalDateTime date;
+public class MyWaypoint implements Waypoint {
+    private String tipoPeligro;
+    private String text;
     private Client user;
+    private LocalDateTime horaCreacion;
+    private String descripcion;
+
+
+
+    private LocalDateTime horaDelReporte;
     private GeoPosition geoPosition;
 
 
@@ -20,56 +27,61 @@ public class Reporte implements Waypoint {
     public GeoPosition getPosition() {
         return geoPosition;
     }
-
-    public Reporte(GeoPosition geoPosition){
-       this.date = LocalDateTime.now();
+    public MyWaypoint(GeoPosition geoPosition){
        this.geoPosition = geoPosition;
+       this.horaCreacion = LocalDateTime.now();
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getText() {
+        return text;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
 
     public Client getUser() {
         return user;
     }
 
+
     public void setUser(Client user) {
         this.user = user;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public LocalDateTime getDate() {
-        return date;
-    }
 
-    public String getStringDate(){
-        DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        return this.date.format(formatoHora);
-    }
 
-    public String getPeligrosidad() {
-        return peligrosidad;
+    public String getTipoPeligro() {
+        return tipoPeligro;
     }
 
     public void setPeligrosidad(String peligrosidad) {
-        this.peligrosidad = peligrosidad;
+        this.tipoPeligro = tipoPeligro;
     }
 
     @Override
     public String toString() {
-        return "Reporte{" +
-                "text='" + descripcion + '\'' +
-                ", date=" + date +
+        return "MyWaypoint{" +
+                "text='" + text + '\'' +
+                ", horaCreacion=" + horaCreacion +
                 ", user=" + user +
                 ", geoPosition=" + geoPosition +
                 '}';
+    }
+
+    public LocalDateTime getHoraCreacion() {
+        return horaCreacion;
+    }
+    public String getStringHoraCreacion(){
+        DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return this.horaCreacion.format(formatoHora);
+    }
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public LocalDateTime getHoraDelReporte() {
+        return horaDelReporte;
     }
 }

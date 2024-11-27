@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="jxmapviewer2-2.5">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/jxmapviewer2-2.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/resources/jxmapviewer2-2.5.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
