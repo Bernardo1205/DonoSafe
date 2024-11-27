@@ -1,4 +1,4 @@
-package mapa;
+package main.java.com.example.mapa;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -51,6 +51,10 @@ public class ValidatorLocalizacion {
         if (jsonArray == null ||jsonArray.size()==0){
             return null;
         }
+        if (jsonArray.size()==1){
+            System.out.println(jsonArray.toString());
+        }
+
         JsonObject features = jsonArray.get(2).getAsJsonObject();
         JsonObject geometry = features.getAsJsonObject("geometry");
         JsonArray coordinates = geometry.getAsJsonArray("coordinates");

@@ -1,6 +1,7 @@
 package main.java.com.example.mapa;
 
 import main.java.com.example.client.Client;
+import main.java.com.example.client.ServerConnection;
 import org.jxmapviewer.viewer.GeoPosition;
 
 
@@ -113,7 +114,7 @@ public class MainPanel extends JPanel {
 
     public MyWaypoint ponerwaypoint(GeoPosition geoPosition, String text){
         MyWaypoint waypoint = new MyWaypoint(geoPosition);
-        waypoint.setDescripcion(text);
+        waypoint.setText(text);
         return waypoint;
     }
 

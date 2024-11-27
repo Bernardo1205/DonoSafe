@@ -1,9 +1,10 @@
 package main.java.com.example.server;
 
-import java.sql.Array;
+import main.java.com.example.server.ClientHandler;
+
+import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -53,16 +54,12 @@ public class Grupo {
         }
     }
 
-    public LocalDateTime getFecha() {
-        return fecha;
-    }
-
     /**
      * Añade un usuario al listado de clientes en el grupo y les notifica
      * @param cliente
      */
     public void añadirUsuario(ClientHandler cliente) {
-        if (!Arrays.asList(this.getClientes()).contains(cliente)) {
+        if (!this.getClientes().contains(cliente)) {
             this.clientes.add(cliente);
             this.sendMessage("[SERVER]", cliente.getClientName() + " joined the chat!");
         }
@@ -76,8 +73,8 @@ public class Grupo {
         return this.clientes.contains(cliente);
     }
 
-    public Array getClientes() {
-        return (Array) this.clientes;
+    public ArrayList<ClientHandler> getClientes() {
+        return this.clientes;
     }
 
     public String getId() {

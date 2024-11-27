@@ -1,5 +1,4 @@
-
-package mapa;
+package main.java.com.example.mapa;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,14 +9,11 @@ import java.util.Date;
 import java.util.HashMap;
 
 import main.java.com.example.client.Client;
-import mapa.AdressAutocomplete;
-import mapa.Localizacion;
-import mapa.ValidatorLocalizacion;
 import org.jxmapviewer.viewer.GeoPosition;
 
 public class VentanaCrearGrupo extends JPanel {
-    private mapa.Localizacion localizacionOrigen;
-    private mapa.Localizacion localizacionDestino;
+    private Localizacion localizacionOrigen;
+    private Localizacion localizacionDestino;
     private Date fecha;
     private Date hora;
 
@@ -73,46 +69,38 @@ public class VentanaCrearGrupo extends JPanel {
             }
         });
 
-        origen.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    localizacionOrigen= filtrarInputUser(origen);
-                    System.out.println("bien origen");
-                } catch (IOException ex) {
-
-                    throw new RuntimeException(ex);
-                }
-
-            }
-        });
-        destino.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    localizacionDestino = filtrarInputUser(destino);
-                    System.out.println("bien destino");
-
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        });
 
         JButton jButton = new JButton("Crear");
         jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (localizacionOrigen != null && localizacionDestino != null){
-                    mapa.Grupo grupo = new mapa.Grupo();
-                    grupo.setDestino(localizacionDestino);
-                    grupo.setOrigen(localizacionOrigen);
-                    String groupInfo = String.join(";", origen.getText(), destino.getText(), (String) groupHour.getSelectedItem());
-                    client.sendMessageToServer("[NEW_GROUP] " + client.getUserame() + " " + groupInfo);
+                String textoOrigen = origen.getText();
+                String textoDestino = destino.getText();
+
+                try {
+                    localizacionOrigen= filtrarInputUser(origen);
+                    localizacionDestino = filtrarInputUser(destino);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                if (localizacionOrigen!= null && localizacionDestino != null &&  groupHour.getSelectedItem() != null){
+
+                        Grupo grupo = new Grupo();
+                        grupo.setDestino(localizacionDestino);
+                        grupo.setOrigen(localizacionOrigen);
+                        String groupInfo = String.join(";", origen.getText(), destino.getText(), (String) groupHour.getSelectedItem());
+                        client.sendMessageToServer("[NEW_GROUP] " + client.getUsername() + "|" + groupInfo);
+
+                        System.out.println(groupInfo);
+
                 }
                 else {
                     JOptionPane.showMessageDialog(VentanaCrearGrupo.this,"Introduce todos los campos correctamente");
+
                 }
+//                origen.setText("");
+//                destino.setText("");
             }
         });
 
@@ -143,6 +131,7 @@ public class VentanaCrearGrupo extends JPanel {
             localizacion.setAdress(inputAdress);
             localizacion.setGeoPosition(adressAutocomplete.getMap().get(inputAdress));
             adressAutocomplete.setMap(new HashMap<>());
+            System.out.println("Esta en dic");
             return localizacion;
 
         } else {
@@ -152,12 +141,14 @@ public class VentanaCrearGrupo extends JPanel {
                 adressAutocomplete.setText("");
                 JOptionPane.showMessageDialog(VentanaCrearGrupo.this, "Direccion incorrecta , porfavor introduce otra diferente");
                 adressAutocomplete.setMap(new HashMap<>());
+                System.out.println("No esta en dic y es null");
                 return null;
             }
             Localizacion localizacion = new Localizacion();
             localizacion.setAdress(inputAdress);
             localizacion.setGeoPosition(geoPosition);
             adressAutocomplete.setMap(new HashMap<>());
+            System.out.println("No esta en dic y no es null");
             return localizacion;
 
         }

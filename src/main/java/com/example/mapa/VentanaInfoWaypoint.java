@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class VentanaInfoWaypoint extends JFrame {
 
-    public VentanaInfoWaypoint(MyWaypoint waypoint){
+    public VentanaInfoWaypoint(Reporte waypoint){
         JPanel jPanel = new JPanel(new BorderLayout());
         JLabel jLabel = new JLabel("Fecha Creacion Waypoint: "+ waypoint.getStringDate());
         JTextArea jTextArea = new JTextArea();

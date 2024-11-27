@@ -1,4 +1,4 @@
-package mapa;
+package main.java.com.example.mapa;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -8,7 +8,6 @@ import org.jxmapviewer.viewer.GeoPosition;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
@@ -16,9 +15,7 @@ import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
@@ -32,18 +29,18 @@ public class AdressAutocomplete extends JTextField {
     private static final String apiKey = "1e47cf29776640d39b07c06e693a0346"; //Api key para usar API de autocomplete de Geoapify
     private static final String geoapify_url = "https://api.geoapify.com/v1/geocode/autocomplete";
 
-/* menu el cual aparecera cada vez que le des click al JtextField */
-    private JPopupMenu jPopupSugestiones;
+    /* Menú que ofrece sugerencias prediciendo la dirección que el usuario quiere ingresar */
+    private JPopupMenu jPopupSugerencias;
     private DefaultListModel<String> listModel;
 
     public AdressAutocomplete() {
         listModel = new DefaultListModel<>();
-        jPopupSugestiones = new JPopupMenu();
-        jPopupSugestiones.setFocusable(false);
+        jPopupSugerencias = new JPopupMenu();
+        jPopupSugerencias.setFocusable(false);
         dict = new HashMap<>();
         getDocument().addDocumentListener(new sugestionesListener());
-
     }
+
     private List<String> getSugestions(String input) throws IOException {
 
         String encodedInput = URLEncoder.encode(input, "UTF-8");
@@ -125,33 +122,30 @@ public class AdressAutocomplete extends JTextField {
             GeoPosition geoPosition = new GeoPosition(coordinates.get(0).getAsDouble(),coordinates.get(1).getAsDouble());
             dict.put(adress,geoPosition);
 
-
             listaSugestiones.add(adress);
-            
         }
         return listaSugestiones;
     }
 
 
-    private void verSugestiones(List<String> listaSugestiones){
-        /* Quitamos las sugestiones que habia antes en la lista */
+    private void mostrarSugerencias(List<String> listaSugerencias){
+        /* Quitamos las sugerencias que habia antes en la lista */
         listModel.clear();
-        for (String sugestion:listaSugestiones){
+        for (String sugestion:listaSugerencias){
             listModel.addElement(sugestion);
         }
         JList jList = new JList<>(listModel);
 
-
-        /* Funcion que sirve para que el popUp se deje de ver solo cuando el jList pierda el foco , ya que si no se añade esta
-        funcion muchas veces no te permite seleccionar elementos del Jlist ya que se perdio el foco en el JPopUp */
+        /* Permitir la visibilidad del popUp se deje de ver solo cuando el jList pierda el foco, ya que si no se añade esta
+        función muchas veces no te permite seleccionar elementos del Jlist ya que se perdió el foco en el JPopUp */
         jList.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
-                jPopupSugestiones.setVisible(false);
+                jPopupSugerencias.setVisible(false);
             }
         });
 
-        /* Para seleccionar unicamente un valor */
+        /* Para seleccionar únicamente un valor */
         jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         jList.addMouseListener(new MouseAdapter() {
@@ -160,20 +154,19 @@ public class AdressAutocomplete extends JTextField {
                 String sugestionSeleccionada = (String) jList.getSelectedValue();
                 if (sugestionSeleccionada!=null){
                     setText(sugestionSeleccionada);
-                    jPopupSugestiones.setVisible(false);
+                    jPopupSugerencias.setVisible(false);
                 }
             }
         });
 
-
-        jPopupSugestiones.removeAll();
-        jPopupSugestiones.add(new JScrollPane(jList));
-        jPopupSugestiones.revalidate();
-        jPopupSugestiones.repaint();
+        jPopupSugerencias.removeAll();
+        jPopupSugerencias.add(new JScrollPane(jList));
+        jPopupSugerencias.revalidate();
+        jPopupSugerencias.repaint();
 
         /* Especificar donde queremos que aparezca el JPopUp en este caso debajo del JTextField */
-        jPopupSugestiones.show(this,0,getHeight());
-        jPopupSugestiones.setVisible(true);
+        jPopupSugerencias.show(this,0,getHeight());
+        jPopupSugerencias.setVisible(true);
 
     }
 
@@ -187,7 +180,6 @@ public class AdressAutocomplete extends JTextField {
         @Override
         public void insertUpdate(DocumentEvent e) {
             sugestions();
-
         }
 
         @Override
@@ -203,7 +195,7 @@ public class AdressAutocomplete extends JTextField {
             String textoJField = getText();
             //Si el texto introducido es menor que 3 no pasamos a la api dicha sugestion
             if (textoJField.length()<3){
-                jPopupSugestiones.setVisible(false);
+                jPopupSugerencias.setVisible(false);
                 return;
             }
 
@@ -224,18 +216,15 @@ public class AdressAutocomplete extends JTextField {
                 protected void done() {
                     super.done();
                     try {
-                        List<String> listaSugestiones = get();
-                        if (!listaSugestiones.isEmpty()){
-                            if (listaSugestiones.get(0)==getText()){
-                                jPopupSugestiones.setVisible(false);
+                        List<String> listaSugerencias = get();
+                        if (!listaSugerencias.isEmpty()) {
+                            if (listaSugerencias.get(0).equals(getText())){
+                                jPopupSugerencias.setVisible(false);
+                            } else {
+                                mostrarSugerencias(listaSugerencias);
                             }
-                            else {
-                                verSugestiones(listaSugestiones);
-                            }
-
-                        }
-                        else {
-                            jPopupSugestiones.setVisible(false);
+                        } else {
+                            jPopupSugerencias.setVisible(false);
                         }
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);

@@ -2,6 +2,7 @@ package main.java.com.example.client;
 
 import main.java.com.example.mapa.MyWaypoint;
 import org.jxmapviewer.viewer.GeoPosition;
+import org.jxmapviewer.viewer.Waypoint;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.function.Consumer;
 
 /**
  * Establece una conexión entre el cliente y el servidor. Dependiendo
@@ -104,8 +106,8 @@ public class ServerConnection implements Runnable {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime date = LocalDateTime.parse(waypoints[4], formatter);
-        myWaypoint.setHora_reporte(date);
-        myWaypoint.setDescripcion(waypoints[6]);
+        myWaypoint.setDate(date);
+        myWaypoint.setText(waypoints[6]);
         clientGUI.updateWaypoints(myWaypoint);
     }
 
