@@ -1,8 +1,7 @@
 package main.java.com.example.client;
 
-import main.java.com.example.mapa.MyWaypoint;
+import main.java.com.example.mapa.Reporte;
 import org.jxmapviewer.viewer.GeoPosition;
-import org.jxmapviewer.viewer.Waypoint;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +9,6 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.function.Consumer;
 
 /**
  * Establece una conexión entre el cliente y el servidor. Dependiendo
@@ -48,6 +46,8 @@ public class ServerConnection implements Runnable {
         this.clientGUI = client.getClientGUI();
         this.server = s;
         this.in = new BufferedReader(new InputStreamReader(server.getInputStream()));
+        System.out.println("Conexión establecida con el servidor!");
+        System.out.println("Manejando al cliente " + client.getUsername());
     }
 
     @Override
@@ -60,17 +60,16 @@ public class ServerConnection implements Runnable {
             while ((serverResponse = in.readLine()) != null) {
                 System.out.println(serverResponse);
                 int ind = serverResponse.indexOf(":");
-                if (serverResponse.startsWith("[New Waypoint] ")) {
-                    System.out.println("Server connection entiende" + client.getUserame());
+                if (serverResponse.startsWith("[NEW_WAYPOINT] ")) {
                     actulizarWaypoints(serverResponse);
                 }
                 if (serverResponse.startsWith("[ALERT] ")) {
                     clientGUI.showAlert(serverResponse);
                 } else if (serverResponse.startsWith("USERS_LIST:")) {
-                    if (serverResponse.contains("," + client.getUserame() + ",")) {
-                        serverResponse = serverResponse.replace("," + client.getUserame() + ",", ",");
+                    if (serverResponse.contains("," + client.getUsername() + ",")) {
+                        serverResponse = serverResponse.replace("," + client.getUsername() + ",", ",");
                     } else {
-                        serverResponse = serverResponse.replaceFirst(",?" + client.getUserame() + ",?", "");
+                        serverResponse = serverResponse.replaceFirst(",?" + client.getUsername() + ",?", "");
                     }
                     String[] users = serverResponse.substring(11).split(",");
                     if (!users[0].isEmpty()) {
@@ -82,12 +81,12 @@ public class ServerConnection implements Runnable {
                     showGroupMessage(serverResponse);
                 } else if (serverResponse.startsWith("[NEW_GROUP] ")) {
                     String groupId = serverResponse.substring(12, ind);
-                    String[] groupInfo = serverResponse.substring(serverResponse.lastIndexOf(" ")+1).split(";");
+                    String[] groupInfo = serverResponse.substring(serverResponse.lastIndexOf("|")+1).split(";");
                     client.addGroup(groupId, groupInfo);
                 } else {
                     System.out.println("[ERROR] Unknown message format");
                     System.out.println(serverResponse);
-                    System.out.println(client.getUserame());
+                    System.out.println(client.getUsername());
                 }
             }
         } catch (IOException e) {
@@ -98,17 +97,18 @@ public class ServerConnection implements Runnable {
     }
 
     private void actulizarWaypoints(String serverResponse) {
-        String[] waypoints = serverResponse.split(",");
-        System.out.println(waypoints);
-        GeoPosition geoPosition = new GeoPosition(Double.parseDouble(waypoints[2]), Double.parseDouble(waypoints[1]));
-        MyWaypoint myWaypoint = new MyWaypoint(geoPosition);
-        myWaypoint.setPeligrosidad(waypoints[3]);
+        String[] waypoints = serverResponse.substring(serverResponse.indexOf(" ")).split(",");
+        GeoPosition geoPosition = new GeoPosition(Double.parseDouble(waypoints[1]), Double.parseDouble(waypoints[0]));
+        Reporte reporte = new Reporte(geoPosition);
+        reporte.setPeligrosidad(waypoints[2]);
 
+        waypoints[3] = waypoints[3].replace("T", " ").substring(0, waypoints[3].indexOf(".")-3);
+        System.out.println(waypoints[3]);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime date = LocalDateTime.parse(waypoints[4], formatter);
-        myWaypoint.setDate(date);
-        myWaypoint.setText(waypoints[6]);
-        clientGUI.updateWaypoints(myWaypoint);
+        LocalDateTime date = LocalDateTime.parse(waypoints[3], formatter);//.substring(0, waypoints[4].indexOf("."))
+        reporte.setDate(date);
+        reporte.setText(waypoints[5]);
+        clientGUI.updateWaypoints(reporte);
     }
 
     /**
@@ -132,7 +132,7 @@ public class ServerConnection implements Runnable {
         String sender = s.substring(s.indexOf(":")+1, s.indexOf("]"));
         String msg = s.substring(s.indexOf("]")+2);
 
-        if (sender.equals(client.getUserame())) {
+        if (sender.equals(client.getUsername())) {
             clientGUI.addGroupMessage("You: " + msg);
         } else if (clientGUI.getGrupoActual().equals(group)) {
             clientGUI.addGroupMessage(sender + ": " + msg);

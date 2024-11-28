@@ -1,4 +1,4 @@
-package models;
+package main.java.com.example.database;
 import java.sql.*;
 
 

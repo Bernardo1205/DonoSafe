@@ -18,27 +18,25 @@ public class MyWaipontRender implements WaypointRenderer<Reporte> {
         /* Guardar estado transparencia */
         Composite composite = graphics2D.getComposite();
 
-        /* Definir color y opacidad  del reyeno de la circunferencia*/
-        if (waypoint.getPeligrosidad().equals("BAJO")){
-            graphics2D.setColor(new Color(26, 255, 0,80));
-        } else if (waypoint.getPeligrosidad().equals("MEDIO")) {
-            graphics2D.setColor(new Color(255, 251, 0,80));
-        } else {
-            graphics2D.setColor(new Color(255,0,9,80));
-        }
-        
+        /* Definir color y opacidad del relleno de la circunferencia */
+        Color[] colorWaypoint = switch (waypoint.getTipoPeligro()) {
+            case "BAJO" -> new Color[]{new Color(26, 255, 0,80), Color.GREEN};
+            case "MEDIO" -> new Color[]{new Color(255, 251, 0,80), Color.YELLOW};
+            case "ALTO" -> new Color[]{new Color(255,0,9,80), Color.RED};
+
+            default -> throw new IllegalStateException("Unexpected value: " + waypoint.getTipoPeligro());
+        };
+        /* Color del relleno */
+        graphics2D.setColor(colorWaypoint[0]);
+        /* Rellenar el círculo */
         graphics2D.fillOval(x-radio,y-radio,radio*2,radio*2);
 
-        /* Restaurar el color ya que usaremos otro tono de rojo y dibujar contorno circunferencia */
-       graphics2D.setComposite(composite);
-        if (waypoint.getPeligrosidad().equals("BAJO")) {
-            graphics2D.setColor(Color.GREEN);
-        } else if (waypoint.getPeligrosidad().equals("MEDIO")) {
-            graphics2D.setColor(Color.YELLOW);
-        } else {
-            graphics2D.setColor(Color.RED);
-        }
-       graphics2D.setStroke(new BasicStroke(2));
-       graphics2D.drawOval(x-radio,y-radio,radio*2,radio*2);
+        /* Restaurar el color para usar otro tono de rojo y dibujar contorno circunferencia */
+        graphics2D.setComposite(composite);
+        /* Color del contorno */
+        graphics2D.setColor(colorWaypoint[1]);
+        /* Dibujar el contorno */
+        graphics2D.setStroke(new BasicStroke(2));
+        graphics2D.drawOval(x-radio,y-radio,radio*2,radio*2);
     }
 }

@@ -60,10 +60,9 @@ public class ClientHandler implements Runnable {
             while ((message = in.readLine()) != null) {
                 System.out.println(message);
                 int ind = message.indexOf(":");
-                if (message.startsWith("[New Waypoint] ")){
+                if (message.startsWith("[NEW_WAYPOINT] ")){
                     sendMessageToAll(message);
-                }
-                if (message.startsWith("[ALERT] ")) { /* Alert message format: [ALERT] content */
+                } else if (message.startsWith("[ALERT] ")) { /* Alert message format: [ALERT] content */
                     sendMessageToAll(message);
                 } else if (message.startsWith("@")) { /* Private message format: @targetUser message */
                     String targetUser = message.substring(1, message.indexOf(" "));

@@ -71,7 +71,7 @@ public class Grupo {
         return this.clientes.contains(cliente);
     }
 
-    public Array getClientes() {
+    public ArrayList getClientes() {
         return this.clientes;
     }
 
@@ -92,6 +92,6 @@ public class Grupo {
     }
 
     public LocalDateTime getFecha() {
-        return null;
+        return fecha;
     }
 }

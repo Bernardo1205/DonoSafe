@@ -1,6 +1,8 @@
 package main.java.com.example.server;
 
 import main.java.com.example.config.ServerConfig;
+import main.java.com.example.database.BaseDatos;
+import main.java.com.example.database.BaseDatos;
 
 import java.io.*;
 import java.net.*;
@@ -11,12 +13,19 @@ public class Server {
     private static HashMap<String, ClientHandler> clients = new HashMap<>();
 
     public Server () throws IOException {
-        ServerSocket listener = new ServerSocket(ServerConfig.SERVER_PORT);
+        /* Se inicia el hilo del servidor */
+        ServerSocket listener = new ServerSocket();
+        listener.bind(new InetSocketAddress(ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT));
+        System.out.println(Server.this);
+
+        /* TODO Implementar la base de datos y comenzar la conexión */
+//        BaseDatos bbdd = new BaseDatos();
+//        bbdd.ConectarBaseDatos();
 
         while (true) {
             System.out.println("[SERVER] Waiting for client connection...");
-            Socket client = listener.accept();  // Wait for an incoming client connection
-            System.out.println("[SERVER] Connected to client!");
+            Socket client = listener.accept();  /* Espera a conexiones de clientes y las acepta */
+            System.out.println("[SERVER] Connected to client at " + client.getInetAddress() + ":" + client.getPort());
 
             ClientHandler clientHandler = new ClientHandler(client, clients);
             Thread clientThread = new Thread(clientHandler);
@@ -25,7 +34,7 @@ public class Server {
     }
 
     public String toString() {
-        return "main.java.com.example.server.Server running in PORT=" + ServerConfig.SERVER_PORT + "\nNº of clients connected: " + clients.size();
+        return "main.java.com.example.server.Server running in IP address=" + ServerConfig.SERVER_IP + " and PORT=" + ServerConfig.SERVER_PORT;
     }
 
     public static void main(String[] args) throws IOException {

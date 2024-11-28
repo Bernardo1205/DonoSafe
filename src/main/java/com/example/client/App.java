@@ -3,10 +3,10 @@ package main.java.com.example.client;
 import main.java.com.example.mapa.MainPanel;
 
 
-import main.java.com.example.mapa.MyWaypoint;
+import main.java.com.example.mapa.Reporte;
 
 import main.java.com.example.mapa.VentanaAgregarWaypoint;
-import mapa.VentanaCrearGrupo;
+import main.java.com.example.mapa.VentanaCrearGrupo;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -20,15 +20,19 @@ import java.util.Set;
 import java.util.Vector;
 
 public class App extends JFrame {
-    private JPanel panelPrincipal           ;
+
+    private String grupoActual = "";
     private boolean esperarClick;
     private String textoWaypoint;
+
     private VentanaAgregarWaypoint ventanaAgregarWaypoint;
     private MainPanel panelMapa;
     private Client client;
-    private String grupoActual = "";
+
     private CardLayout cardLayout;
     private CardLayout chatCardLayout;
+    private JLayeredPane layeredPane;
+    private JPanel panelPrincipal;
     private JPanel mainPanel;
     private JPanel chatPanel;
     private JPanel chatSection;
@@ -37,29 +41,32 @@ public class App extends JFrame {
     private JPanel groupsListPanel;
     private JPanel alertsArea;
     private JPanel messagesPanel;
+
     private JScrollPane scrollMessages;
     private JLabel userTalkingTo;
     private JLabel groupTalkingTo;
-    private HashMap<String, Boolean> unreadMessages = new HashMap<>();
-    public HashMap<String, String[]> grupos = new HashMap<>();
+
     private DefaultTableModel modeloGrupos;
     private DefaultTableModel modeloUsers;
     private JTable tablaUsers;
 
+    private HashMap<String, Boolean> unreadMessages = new HashMap<>();
+    public HashMap<String, String[]> grupos = new HashMap<>();
 
     public App(Client client){
+        setTitle("Mapa");
+        setSize(800,600);
+        setLayout(new BorderLayout());
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         this.client = client;
 
         cardLayout = new CardLayout();
         panelPrincipal = new JPanel(cardLayout);
 
-
-        JPanel chat = createChatSection();
-
         panelPrincipal.add(createMapSection(),"MainPanel");
-        panelPrincipal.add(chat,"ChatSection");
+        panelPrincipal.add(createChatSection(),"ChatSection");
         panelPrincipal.add(createGroupSection(),"GroupSection");
-
 
         JPanel panelBotones = new JPanel(new GridLayout(1,3));
         JButton jButtonAlerta = new JButton("Alerta");
@@ -68,12 +75,12 @@ public class App extends JFrame {
 
         jButtonAlerta.addActionListener(e -> {
             cardLayout.show(panelPrincipal,"MainPanel");
-            agregarAlerta();
-
         });
+
         jButtonGroups.addActionListener(e -> {
             cardLayout.show(panelPrincipal,"GroupSection");
         });
+
         jButtonChats.addActionListener(e -> {
             cardLayout.show(panelPrincipal,"ChatSection");
         });
@@ -82,20 +89,16 @@ public class App extends JFrame {
         panelBotones.add(jButtonChats);
         panelBotones.add(jButtonGroups);
 
+        add(panelBotones, BorderLayout.SOUTH);
+        add(panelPrincipal, BorderLayout.CENTER);
 
-        setLayout(new BorderLayout());
-        add(panelBotones,BorderLayout.SOUTH);
-        add(panelPrincipal,BorderLayout.CENTER);
-        setTitle("Mapa");
-        setSize(800,600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
-    public  void  cambairPanel(JPanel panel , String panelName){
-        panelPrincipal.add(panel,panelName);
+    public void cambiarPanel(JPanel panel, String panelName){
+        panelPrincipal.add(panel, panelName);
         CardLayout cardLayout = (CardLayout) panelPrincipal.getLayout();
-        cardLayout.show(panelPrincipal,panelName);
+        cardLayout.show(panelPrincipal, panelName);
     }
 
     /**
@@ -116,54 +119,36 @@ public class App extends JFrame {
 
     private JPanel createMapSection() {
         JPanel mapPanel = new JPanel(new BorderLayout());
+        layeredPane = new JLayeredPane();
+        layeredPane.setPreferredSize(new Dimension(800, 600));
+
         panelMapa = new MainPanel(this,client);
         panelMapa.setOnWaypointAdded(this::waypointAdded);
-        mapPanel.add(panelMapa, BorderLayout.CENTER);
+        panelMapa.setBounds(0, 0, 800, 600);
+
+        JButton bAñadirAlerta = new JButton("Crear Alerta");
+        bAñadirAlerta.addActionListener(e -> agregarAlerta());
+        bAñadirAlerta.setBounds(10, 10, 120, 40);
+
+        /* Colocar los componentes en sus respectivas capas */
+        layeredPane.add(panelMapa, Integer.valueOf(0));
+        layeredPane.add(bAñadirAlerta, Integer.valueOf(1));
+
+        mapPanel.add(layeredPane);
+
         return mapPanel;
     }
 
-    private void waypointAdded(MyWaypoint waypoint){
-        client.sendMessageToServer("[New Waypoint] "+ "," +String.valueOf(waypoint.getPosition().getLongitude())+","+ String.valueOf(waypoint.getPosition().getLatitude())+","+waypoint.getPeligrosidad() +","+waypoint.getStringDate()+','+waypoint.getUser().getUserame()+','+waypoint.getDescripcion());
+    private void waypointAdded(Reporte reporte){
+        String s = String.join(",", String.valueOf(reporte.getPosition().getLongitude()), String.valueOf(reporte.getPosition().getLatitude()), ventanaAgregarWaypoint.getPeligrosidad(), reporte.getHoraCreacion().toString(), reporte.getUser().getUsername(), reporte.getDescripcion());
+        client.sendMessageToServer("[NEW_WAYPOINT] " + s);
     }
-    public void updateWaypoints(MyWaypoint myWaypoint){
-        Set<MyWaypoint> set = panelMapa.getMap().getSetWaipoints();
-        set.add(myWaypoint);
+
+    public void updateWaypoints(Reporte reporte){
+        Set<Reporte> set = panelMapa.getMap().getSetWaipoints();
+        set.add(reporte);
         panelMapa.getMap().añadirWaypoint(set);
     }
-
-
-    /**
-     * @return El panel de la sección de alertas
-     */
-//    private JPanel createAlertSection() {
-//
-//        /* Panel con las alertas enviadas por los clientes */
-//        JPanel alertPanel = new JPanel(new BorderLayout());
-//        alertsArea = new JPanel();
-//        alertsArea.setLayout(new BoxLayout(alertsArea, BoxLayout.Y_AXIS));
-//
-//        JScrollPane scrollPane = new JScrollPane(alertsArea);
-//
-//        JTextField alertField = new JTextField();
-//        JButton sendAlertButton = new JButton("Send Alert");
-//
-//        sendAlertButton.addActionListener(e -> {
-//            String alertMessage = alertField.getText();
-//            if (!alertMessage.isEmpty()) {
-//                client.sendMessageToServer("[ALERT] " + alertMessage);  // Send alert to the server
-//                alertField.setText("");
-//            }
-//        });
-//
-//        JPanel inputPanel = new JPanel(new BorderLayout());
-//        inputPanel.add(alertField, BorderLayout.CENTER);
-//        inputPanel.add(sendAlertButton, BorderLayout.EAST);
-//
-//        alertPanel.add(scrollPane, BorderLayout.CENTER);
-//        alertPanel.add(inputPanel, BorderLayout.SOUTH);
-//
-//        return alertPanel;
-//    }
 
     /**
      * Sección de los chats:
@@ -204,18 +189,16 @@ public class App extends JFrame {
                 String id = (String) modeloUsers.getValueAt(row,0);
                 if (unreadMessages.containsKey(id)){
                     c.setBackground(Color.ORANGE);
-                }
-                else{
+                } else {
                     c.setBackground(Color.WHITE);
                 }
-                if ( column == 2 && true) {
+                if (column == 2) { //&& true
                     ImageIcon icon = new ImageIcon("src/main/resources/icons/boton.png");
                     Image scaledImage = icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
                     c.setIcon(new ImageIcon(scaledImage));
                     c.setHorizontalAlignment(SwingConstants.CENTER);
                     c.setVerticalAlignment(SwingConstants.CENTER);
-                }
-                else {
+                } else {
                     c.setIcon(null);
                 }
 //                if (isSelected){
@@ -310,7 +293,20 @@ public class App extends JFrame {
             }
         };
 
+        DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel jLabel =(JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (column!=3){
+                    jLabel.setToolTipText(modeloGrupos.getValueAt(row, column).toString());
+                }
+
+                return jLabel;
+            }
+        };
+
         JTable tablaGrupos = new JTable(modeloGrupos);
+        tablaGrupos.setDefaultRenderer(Object.class, defaultTableCellRenderer);
 
         // Ocultar la columna del ID del grupo
         tablaGrupos.getColumnModel().getColumn(0).setMinWidth(0);
@@ -322,7 +318,6 @@ public class App extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int fila = tablaGrupos.rowAtPoint(e.getPoint());
                 if (fila!=-1){
-
                     String idGrupo = (String) modeloGrupos.getValueAt(fila,0);
                     client.joinGroupChat(idGrupo);
                 }
@@ -344,7 +339,7 @@ public class App extends JFrame {
 
         for (String groupId : groups.keySet()) {
             String[] info = groups.get(groupId);
-            modeloGrupos.addRow(new Object[]{groupId, info[0], info[1]});
+            modeloGrupos.addRow(new Object[]{groupId, info[0], info[1], info[2]});
         }
         groupsListPanel.revalidate();
         groupsListPanel.repaint();
@@ -358,8 +353,8 @@ public class App extends JFrame {
         modeloUsers.setRowCount(0);
         /* userListPanel.removeAll(); */
         for (String user : users) {
-            if (!user.equals(client.getUserame())) {
-                modeloUsers.addRow(new Object[]{user,user, ""});
+            if (!user.equals(client.getUsername())) {
+                modeloUsers.addRow(new Object[]{user, user, ""});
             }
         }
         userListPanel.revalidate();
@@ -451,7 +446,7 @@ public class App extends JFrame {
         messageField.addActionListener(e -> {
             String message = messageField.getText();
             if (!message.isEmpty()) {
-                client.sendMessageToServer("GROUP " + group + ":" + client.getUserame() + "] " + message);
+                client.sendMessageToServer("GROUP " + group + ":" + client.getUsername() + "] " + message);
                 messageField.setText("");
             }
         });

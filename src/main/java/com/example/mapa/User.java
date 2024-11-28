@@ -30,6 +30,7 @@ public class User {
     private void addReview(String review){
         this.review.add(review);
     }
+
     private void  addWaypint(Reporte waypoint){
         this.list_waypoints.add(waypoint);
     }
