@@ -91,8 +91,8 @@ public class VentanaCrearGrupo extends JPanel {
                         grupo.setOrigen(localizacionOrigen);
                         String groupInfo = String.join(";", origen.getText(), destino.getText(), (String) groupHour.getSelectedItem());
                         client.sendMessageToServer("[NEW_GROUP] " + client.getUsername() + "|" + groupInfo);
-
-                        System.out.println(groupInfo);
+                        origen.setText("");
+                        destino.setText("");
 
                 }
                 else {

@@ -79,7 +79,6 @@ public class ClientHandler implements Runnable {
                     String groupCreator = message.substring(message.indexOf(" ")+1, message.lastIndexOf("|"));
                     String[] groupInfo = message.substring(message.lastIndexOf("|")).split(";");
                     createGroup(groupCreator, groupInfo[0], groupInfo[1],groupInfo[2]);
-                    System.out.println("----------------------");
                 } else if (message.startsWith("JOIN_GROUP ")) {
                     String userName = message.substring(11, message.indexOf(" TO ")).strip();
                     String groupId = message.substring(message.indexOf(" TO ") + 4);

@@ -69,7 +69,7 @@ public class App extends JFrame {
         panelPrincipal.add(createGroupSection(),"GroupSection");
 
         JPanel panelBotones = new JPanel(new GridLayout(1,3));
-        JButton jButtonAlerta = new JButton("Alerta");
+        JButton jButtonAlerta = new JButton("Mapa");
         JButton jButtonChats = new JButton("Chats");
         JButton jButtonGroups = new JButton("Groups");
 
@@ -218,13 +218,9 @@ public class App extends JFrame {
         tablaUsers.getColumnModel().getColumn(0).setMinWidth(0);
         tablaUsers.getColumnModel().getColumn(0).setMaxWidth(0);
         tablaUsers.getColumnModel().getColumn(0).setWidth(0);
-//
-//        tablaUsers.setRowSelectionAllowed(true);
-//        tablaUsers.setColumnSelectionAllowed(false);
+
         tablaUsers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
         tablaUsers.setDefaultRenderer(Object.class, defaultTableCellRenderer);
-
         tablaUsers.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -283,8 +279,7 @@ public class App extends JFrame {
         groupsListPanel = new JPanel();
         groupsListPanel.setLayout(new BoxLayout(groupsListPanel, BoxLayout.Y_AXIS));
 
-        //Todo falatta añadir hora
-        Vector<String> cabeceraGrupos = new Vector<String>(Arrays.asList("ID", "Origen", "Destino"));
+        Vector<String> cabeceraGrupos = new Vector<String>(Arrays.asList("ID", "Origen", "Destino","Hora salida"));
 
         modeloGrupos = new DefaultTableModel(new Vector<Vector<Object>>(), cabeceraGrupos){
             @Override
@@ -299,6 +294,10 @@ public class App extends JFrame {
                 JLabel jLabel =(JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (column!=3){
                     jLabel.setToolTipText(modeloGrupos.getValueAt(row, column).toString());
+                }
+                else{
+                    jLabel.setHorizontalAlignment(HORIZONTAL);
+                    jLabel.setToolTipText(null);
                 }
 
                 return jLabel;
@@ -320,6 +319,7 @@ public class App extends JFrame {
                 if (fila!=-1){
                     String idGrupo = (String) modeloGrupos.getValueAt(fila,0);
                     client.joinGroupChat(idGrupo);
+                    JOptionPane.showMessageDialog(App.this,String.join(" ","Te has unido al grupo con destino: " , tablaGrupos.getValueAt(fila,2).toString()));
                 }
             }
         });
