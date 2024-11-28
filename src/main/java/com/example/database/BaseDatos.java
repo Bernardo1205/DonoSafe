@@ -1,14 +1,20 @@
-package main.java.com.example.database;
+package models;
 
 import main.java.com.example.client.Client;
+import main.java.com.example.mapa.User;
 import main.java.com.example.mapa.Reporte;
 import main.java.com.example.server.Grupo;
+
+import main.java.com.example.mapa.Map;
+import main.java.com.example.server.ClientHandler;
+import org.jxmapviewer.viewer.GeoPosition;
+import org.jxmapviewer.viewer.Waypoint;
+import main.java.com.example.server.ClientHandler;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class BaseDatos {
 
@@ -56,7 +62,7 @@ public class BaseDatos {
 
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(2, cliente.getNombre());
-            pstmt.setString(3, cliente.getUsername());
+            pstmt.setString(3, cliente.getUserName());
             pstmt.setString(4, cliente.getSexo());
             pstmt.setInt(5, cliente.getEdad());
             pstmt.setString(6, cliente.getPassword());
@@ -127,7 +133,7 @@ public class BaseDatos {
     public void insertarGrupo(Grupo grupo) throws SQLException {
         String comandoInsertarGrupo = "INSERT INTO Grupo VALUES (?,?,?,?,?)";
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setArray(2, (Array) grupo.getClientes());
+            pstmt.setArray(2, grupo.getClientes());
             pstmt.setString(3, grupo.getDestino());
             pstmt.setString(4, grupo.getOrigen());
             LocalDateTime fecha_creacion = grupo.getFecha();
@@ -140,6 +146,7 @@ public class BaseDatos {
             throw new RuntimeException(e);
         }
     }
+
 
     public void insertarReseña(String contenidoReseña, int calificacion, String fecha, int idReseñador, int idUsuario) {
         String comandoInsertarGrupo = "INSERT INTO Reseña VALUES (?,?,?,?,?,?)";
@@ -181,4 +188,7 @@ public class BaseDatos {
         return listaReseñas;
         }
     }
+
+    public
+
 }
