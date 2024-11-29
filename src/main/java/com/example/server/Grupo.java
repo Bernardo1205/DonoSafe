@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
 
+// Hacer funcion getClientesIDs
+
 /**
  * Crea un grupo para establecer una conexión entre usuarios específicos
  * y mandar mensajes privados.
@@ -72,7 +74,7 @@ public class Grupo {
     }
 
     public ArrayList getClientes() {
-        return this.clientes;
+        return (Array) this.clientes;
     }
 
     public String getId() {
@@ -93,5 +95,9 @@ public class Grupo {
 
     public LocalDateTime getFecha() {
         return fecha;
+    }
+
+    public ArrayList<Integer> getClientesIds(){
+
     }
 }

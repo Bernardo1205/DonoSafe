@@ -72,7 +72,7 @@ public class ClientHandler implements Runnable {
                     String targerGroup = message.substring(message.indexOf(" ")+1, ind).strip();
                     String sender = message.substring(ind+1, message.indexOf("]"));
                     String contenido = message.substring(message.indexOf("]")+2);
-                    //TODO guardar en la base de datos
+
 
                     mapGrupos.get(targerGroup).sendMessage(sender, contenido);
                 } else if (message.startsWith("[NEW_GROUP] ")) { /* New group message format: [NEW_GROUP] groupName:username*/

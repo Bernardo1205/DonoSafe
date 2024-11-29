@@ -163,7 +163,6 @@ public class BaseDatos {
             throw new RuntimeException(e);
         }
     }
-
     public ArrayList<String[]> mostarReseñas(int idUsuario) throws SQLException {
 
         String comandoObtenerReseñas = "SELECT contenido_reseña, calificacion, id_reseñador, fecha FROM Reseña where id_usuario = ?;";
@@ -189,6 +188,39 @@ public class BaseDatos {
         }
     }
 
-    public
+    public void eliminarClienteDeGrupo(Grupo grupo, int clienteId) {
+        ArrayList<ClientHandler> clientes = grupo.getClientes();
 
+        boolean clienteEncontrado = false;
+        for (ClientHandler cliente : clientes) {
+            if (cliente.getClient().getId() == clienteId) {
+                clienteEncontrado = true;
+                break;
+            }
+        }
+
+        if (clienteEncontrado) {
+            String comandoEliminar = "DELETE FROM Grupo WHERE grupo_id = ? AND usuarios = ?";
+            try (PreparedStatement pstmt = con.prepareStatement(comandoEliminar)) {
+                pstmt.setString(1, grupo.getId());  // Asume que usuarios es un String en la DB
+                pstmt.setInt(2, clienteId);         // cliente_id que queremos eliminar
+
+                int filasAfectadas = pstmt.executeUpdate();
+                if (filasAfectadas > 0) {
+                    System.out.println("Cliente eliminado correctamente del grupo en la base de datos.");
+                } else {
+                    System.out.println("No se encontró el cliente en la base de datos.");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("Error al eliminar el cliente del grupo en la base de datos", e);
+            }
+        } else {
+            System.out.println("El cliente con ID " + clienteId + " no está en el grupo.");
+        }
+    }
+
+    public void eliminarClienteGrupo(Grupo grupo, int clienteId) {
+        ArrayList<ClientHandler> clientes = grupo.getClientes();
+        grupo.getClientes().
+    }
 }
