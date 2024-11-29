@@ -72,7 +72,6 @@ public class Reporte implements Waypoint {
     @Override
     public String toString() {
         return "Reporte{" +
-                "text='" + text + '\'' +
                 ", horaCreacion=" + horaCreacion +
                 ", user=" + user +
                 ", geoPosition=" + geoPosition +
