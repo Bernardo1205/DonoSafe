@@ -1,18 +1,12 @@
 package main.java.com.example.mapa;
 
-import org.jxmapviewer.viewer.GeoPosition;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Collection;
-import java.util.concurrent.Flow;
+
 
 public class VentanaAgregarWaypoint extends JDialog {
     private String textWaypoint;
@@ -20,81 +14,130 @@ public class VentanaAgregarWaypoint extends JDialog {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 400;
 
-    public VentanaAgregarWaypoint(JFrame parent){
-        super(parent,null,true);
-        /* Colocar la ventana emergente en el centro de la ventana principal */
-        setLocation(parent.getX()+WIDTH/2, parent.getY()+HEIGHT/3);
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        JLabel lable = new JLabel("Crear nueva alerta");
-        lable.setFont(new Font("Arial",Font.BOLD,24));
-        lable.setHorizontalAlignment(SwingConstants.CENTER);
-        mainPanel.add(lable,BorderLayout.NORTH);
+    public VentanaAgregarWaypoint(JFrame parent) {
+        super(parent, null, true);
+        // Centrar la ventana emergente en la ventana principal
+        setLocation(parent.getX() + WIDTH / 2, parent.getY() + HEIGHT / 3);
 
-        JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
 
-        DefaultListModel defaultListModel = new DefaultListModel<>();
-        String[] str ={ "BAJO", "MEDIO", "ALTO"};
-        JList<String> listaPeligrosidad = new JList<>(str);
-        listaPeligrosidad.setVisibleRowCount(1);
-        listaPeligrosidad.setPreferredSize(new Dimension(200, 30));
-        listaPeligrosidad.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+
+        Color backgroundColor = new Color(240, 248, 255); // Azul claro
+        Color buttonColor = new Color(0, 120, 215); // Azul intenso
+        Color buttonTextColor = Color.WHITE;
+
+
+
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBackground(backgroundColor);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(mainPanel);
+
+
+
+        JLabel titleLabel = new JLabel("Crear Nueva Alerta");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
+
+
+        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
+        centerPanel.setBackground(backgroundColor);
+
+
+        String[] nivelesPeligrosidad = {"BAJO", "MEDIO", "ALTO"};
+        JList<String> listaPeligrosidad = new JList<>(nivelesPeligrosidad);
+        listaPeligrosidad.setFont(new Font("Arial", Font.PLAIN, 14));
+        listaPeligrosidad.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listaPeligrosidad.setVisibleRowCount(3);
+        listaPeligrosidad.setFixedCellHeight(30);
+
+
+        listaPeligrosidad.setBackground(Color.WHITE);
+        listaPeligrosidad.setForeground(Color.BLACK);
+        listaPeligrosidad.setSelectionBackground(new Color(173, 216, 230));
+        listaPeligrosidad.setSelectionForeground(Color.BLACK);
+
+
+        listaPeligrosidad.addListSelectionListener(e -> peligrosidad = listaPeligrosidad.getSelectedValue());
+
 
         JScrollPane scrollPane = new JScrollPane(listaPeligrosidad);
-        scrollPane.setBorder(new TitledBorder("Tipo de peligrosidad"));
-
-        listaPeligrosidad.setCellRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                label.setHorizontalAlignment(SwingConstants.CENTER); // Centrar texto
-                // Ajustar ancho dinámico
-                int totalWidth = list.getWidth();
-                int itemWidth = totalWidth / list.getModel().getSize();
-                label.setPreferredSize(new Dimension(itemWidth, list.getFixedCellHeight() > 0 ? list.getFixedCellHeight() : 30));
-                return label;
-            }
-        });
-
-        listaPeligrosidad.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                peligrosidad = listaPeligrosidad.getSelectedValue();
-            }
-        });
+        scrollPane.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(150, 150, 150)),
+                "Tipo de Peligrosidad",
+                TitledBorder.LEFT,
+                TitledBorder.TOP,
+                new Font("Arial", Font.BOLD, 14),
+                Color.BLACK));
         centerPanel.add(scrollPane, BorderLayout.NORTH);
 
-        JTextArea textArea = new JTextArea(5,5);
-        textArea.setMargin(new Insets(10, 10, 10, 10));
-        JScrollPane jScrollPane = new JScrollPane(textArea);
-        jScrollPane.setBorder(new TitledBorder("Descripción de lo ocurrido"));
-        centerPanel.add(jScrollPane, BorderLayout.CENTER);
 
-        JButton jButton = new JButton("Aceptar");
-        jButton.addActionListener(new ActionListener() {
+        JTextArea textArea = new JTextArea(5, 20);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        textArea.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(150, 150, 150)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+
+        JScrollPane textScrollPane = new JScrollPane(textArea);
+        textScrollPane.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(150, 150, 150)),
+                "Descripción de lo Ocurrido",
+                TitledBorder.LEFT,
+                TitledBorder.TOP,
+                new Font("Arial", Font.BOLD, 14),
+                Color.BLACK));
+        centerPanel.add(textScrollPane, BorderLayout.CENTER);
+
+
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+
+
+        JButton aceptarButton = new JButton("Aceptar");
+        aceptarButton.setFont(new Font("Arial", Font.BOLD, 14));
+        aceptarButton.setBackground(buttonColor);
+        aceptarButton.setForeground(buttonTextColor);
+        aceptarButton.setFocusPainted(false);
+        aceptarButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        aceptarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 textWaypoint = textArea.getText().trim();
-                if(!textWaypoint.isEmpty()){
-                    dispose();
-                    textArea.setText("");
+                if (textWaypoint.isEmpty()) {
+                    JOptionPane.showMessageDialog(VentanaAgregarWaypoint.this,
+                            "Introduce el texto para crear Waypoint",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(VentanaAgregarWaypoint.this,"Introduce el texto para crear Waypoint");
+                    dispose();
                 }
             }
         });
-        mainPanel.add(centerPanel,BorderLayout.CENTER);
-        mainPanel.add(jButton,BorderLayout.SOUTH);
-        add(mainPanel);
-        setSize(400, 400);
+
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(backgroundColor);
+        buttonPanel.add(aceptarButton);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+
+        setTitle("Agregar Waypoint");
+        setSize(WIDTH, HEIGHT);
         setResizable(false);
     }
+
 
     public String getPeligrosidad() {
         return peligrosidad;
     }
 
+
     public String getTextWaypoint() {
         return textWaypoint;
     }
+
+
 }

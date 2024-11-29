@@ -88,6 +88,21 @@ public class ClientRegister extends JFrame {
         statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         mainPanel.add(statusLabel);
 
+        JButton backButton = new JButton("Volver");
+        backButton.setFont(new Font("Arial", Font.BOLD, 14));
+        backButton.setBackground(new Color(255, 48, 60));
+        backButton.setForeground(Color.WHITE);
+        backButton.setBounds(75, 400, 200, 40);
+        mainPanel.add(backButton);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                new Client();
+            }
+        });
+
         createAccountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -116,10 +131,5 @@ public class ClientRegister extends JFrame {
     }
 
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            ClientRegister window = new ClientRegister();
-            window.setVisible(true);
-        });
-    }
+
 }
