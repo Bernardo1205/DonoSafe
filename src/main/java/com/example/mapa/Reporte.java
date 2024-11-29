@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
  */
 public class Reporte implements Waypoint {
     private String tipoPeligro;
-    private String text;
     private Client user;
     private LocalDateTime horaCreacion;
     private String descripcion;
@@ -30,13 +29,6 @@ public class Reporte implements Waypoint {
        this.horaCreacion = LocalDateTime.now();
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getText() {
-        return text;
-    }
 
     public void setUser(Client user) {
         this.user = user;
