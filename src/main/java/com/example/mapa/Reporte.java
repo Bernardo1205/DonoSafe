@@ -69,6 +69,9 @@ public class Reporte implements Waypoint {
         return horaDelReporte;
     }
 
+    public void setDescripcion(String text) {
+        this.descripcion = text;
+    }
     @Override
     public String toString() {
         return "Reporte{" +

@@ -108,7 +108,7 @@ public class MainPanel extends JPanel {
 
     public Reporte ponerwaypoint(GeoPosition geoPosition, String text){
         Reporte waypoint = new Reporte(geoPosition);
-        waypoint.setText(text);
+        waypoint.setDescripcion(text);
         return waypoint;
     }
 }
