@@ -55,42 +55,56 @@ public class App extends JFrame {
 
     public App(Client client){
         setTitle("Mapa");
-        setSize(800,600);
+        setSize(800, 600);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+
         this.client = client;
 
+
+        // Layout principal con tarjetas
         cardLayout = new CardLayout();
         panelPrincipal = new JPanel(cardLayout);
 
-        panelPrincipal.add(createMapSection(),"MainPanel");
-        panelPrincipal.add(createChatSection(),"ChatSection");
-        panelPrincipal.add(createGroupSection(),"GroupSection");
 
-        JPanel panelBotones = new JPanel(new GridLayout(1,3));
+        // Añadir paneles de Mapa, Chat y Grupos
+        panelPrincipal.add(createMapSection(), "MainPanel");
+        panelPrincipal.add(createChatSection(), "ChatSection");
+        panelPrincipal.add(createGroupSection(), "GroupSection");
+
+
+        // Botones de navegación
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+
+
         JButton jButtonAlerta = new JButton("Mapa");
         JButton jButtonChats = new JButton("Chats");
-        JButton jButtonGroups = new JButton("Groups");
+        JButton jButtonGroups = new JButton("Grupos");
 
-        jButtonAlerta.addActionListener(e -> {
-            cardLayout.show(panelPrincipal,"MainPanel");
-        });
 
-        jButtonGroups.addActionListener(e -> {
-            cardLayout.show(panelPrincipal,"GroupSection");
-        });
+        // Estilo moderno para botones
+        styleButton(jButtonAlerta);
+        styleButton(jButtonChats);
+        styleButton(jButtonGroups);
 
-        jButtonChats.addActionListener(e -> {
-            cardLayout.show(panelPrincipal,"ChatSection");
-        });
 
+        // Acciones de los botones
+        jButtonAlerta.addActionListener(e -> cardLayout.show(panelPrincipal, "MainPanel"));
+        jButtonGroups.addActionListener(e -> cardLayout.show(panelPrincipal, "GroupSection"));
+        jButtonChats.addActionListener(e -> cardLayout.show(panelPrincipal, "ChatSection"));
+
+
+        // Añadir botones al panel
         panelBotones.add(jButtonAlerta);
         panelBotones.add(jButtonChats);
         panelBotones.add(jButtonGroups);
 
+
+        // Añadir paneles al JFrame
         add(panelBotones, BorderLayout.SOUTH);
         add(panelPrincipal, BorderLayout.CENTER);
+
 
         setVisible(true);
     }
@@ -100,7 +114,25 @@ public class App extends JFrame {
         CardLayout cardLayout = (CardLayout) panelPrincipal.getLayout();
         cardLayout.show(panelPrincipal, panelName);
     }
+    private void styleButton(JButton button) {
+        // Estilo moderno para los botones
+        button.setBackground(new Color(72, 122, 240));
+        button.setForeground(Color.WHITE);
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setPreferredSize(new Dimension(120, 40));
+        button.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0), 1));
+        button.setFocusPainted(false);
 
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(85, 140, 255));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(72, 122, 240));
+            }
+        });
+    }
     /**
      * @param ventanaAgregarWaypoint Ventana que se muestra para agregar un waypoint
      */
@@ -122,22 +154,31 @@ public class App extends JFrame {
         layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(new Dimension(800, 600));
 
-        panelMapa = new MainPanel(this,client);
+
+        panelMapa = new MainPanel(this, client);
         panelMapa.setOnWaypointAdded(this::waypointAdded);
         panelMapa.setBounds(0, 0, 800, 600);
+
 
         JButton bAñadirAlerta = new JButton("Crear Alerta");
         bAñadirAlerta.addActionListener(e -> agregarAlerta());
         bAñadirAlerta.setBounds(10, 10, 120, 40);
+        bAñadirAlerta.setBackground(new Color(255, 100, 100));
+        bAñadirAlerta.setForeground(Color.WHITE);
+        bAñadirAlerta.setFont(new Font("Arial", Font.BOLD, 14));
+        bAñadirAlerta.setFocusPainted(false);
 
-        /* Colocar los componentes en sus respectivas capas */
+
         layeredPane.add(panelMapa, Integer.valueOf(0));
         layeredPane.add(bAñadirAlerta, Integer.valueOf(1));
 
+
         mapPanel.add(layeredPane);
+
 
         return mapPanel;
     }
+
 
     private void waypointAdded(Reporte reporte){
         String s = String.join(",", String.valueOf(reporte.getPosition().getLongitude()), String.valueOf(reporte.getPosition().getLatitude()), ventanaAgregarWaypoint.getPeligrosidad(), reporte.getHoraCreacion().toString(), reporte.getUser().getUsername(), reporte.getDescripcion());

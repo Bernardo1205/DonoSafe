@@ -107,7 +107,7 @@ public class ServerConnection implements Runnable {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime date = LocalDateTime.parse(waypoints[3], formatter);//.substring(0, waypoints[4].indexOf("."))
         reporte.setDate(date);
-        reporte.setText(waypoints[5]);
+        reporte.setDescripcion(waypoints[5]);
         clientGUI.updateWaypoints(reporte);
     }
 
