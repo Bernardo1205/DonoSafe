@@ -50,6 +50,7 @@ public class ClientHandler implements Runnable {
         try {
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             out = new PrintWriter(client.getOutputStream(), true);
+//            out.println("id=");
 
             /* Recibe el nombre de usuario con el que se referenciará a este hilo en los mensajes */
             clientName = in.readLine();
@@ -57,7 +58,8 @@ public class ClientHandler implements Runnable {
             broadcastUserList();
 
             String message;
-            while ((message = in.readLine()) != null) {
+            while (true) {
+                message = waitForMessage();
                 System.out.println(message);
                 int ind = message.indexOf(":");
                 if (message.startsWith("[NEW_WAYPOINT] ")){
@@ -84,7 +86,7 @@ public class ClientHandler implements Runnable {
                     String groupId = message.substring(message.indexOf(" TO ") + 4);
                     joinGroup(groupId, clients.get(userName));
                 } else {
-                    System.out.println("Unknown type" + message);
+                    System.out.println("Unknown type " + message);
                 }
             }
         } catch (SocketException e1) {
@@ -96,7 +98,25 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Función recursiva que espera a recibir un mensaje del cliente
+     *
+     * @return  Mensaje recibido
+     *
+     * @throws IOException
+     */
+    private String waitForMessage() throws IOException {
+        String serverResponse = in.readLine();
+        if (serverResponse.isEmpty()) {
+            return waitForMessage();
+        } else {
+            return serverResponse;
+        }
+    }
 
+    /**
+     * Manda un mensaje a todos los clientes conectados
+     */
     public void sendMessageToAll(String mensaje) {
         for (ClientHandler clientHandler : clients.values()) {
             clientHandler.out.println(mensaje);

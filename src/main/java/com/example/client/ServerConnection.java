@@ -57,13 +57,13 @@ public class ServerConnection implements Runnable {
             * permite llamar a métodos de la clase del cliente en función del tipo de mensaje
             * recibido */
             String serverResponse;
-            while ((serverResponse = in.readLine()) != null) {
+            while (true) {
+                serverResponse = waitForMessage();
                 System.out.println(serverResponse);
                 int ind = serverResponse.indexOf(":");
                 if (serverResponse.startsWith("[NEW_WAYPOINT] ")) {
                     actulizarWaypoints(serverResponse);
-                }
-                if (serverResponse.startsWith("[ALERT] ")) {
+                } else if (serverResponse.startsWith("[ALERT] ")) {
                     clientGUI.showAlert(serverResponse);
                 } else if (serverResponse.startsWith("USERS_LIST:")) {
                     if (serverResponse.contains("," + client.getUsername() + ",")) {
@@ -84,15 +84,29 @@ public class ServerConnection implements Runnable {
                     String[] groupInfo = serverResponse.substring(serverResponse.lastIndexOf("|")+1).split(";");
                     client.addGroup(groupId, groupInfo);
                 } else {
-                    System.out.println("[ERROR] Unknown message format");
-                    System.out.println(serverResponse);
-                    System.out.println(client.getUsername());
+                    System.out.println("[ERROR] Unknown message format: \"" + serverResponse + "\"");
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             closeConnection();
+        }
+    }
+
+    /**
+     * Función recursiva que espera a recibir un mensaje del servidor
+     *
+     * @return  Mensaje recibido
+     *
+     * @throws IOException
+     */
+    private String waitForMessage() throws IOException {
+        String serverResponse = in.readLine();
+        if (serverResponse.isEmpty()) {
+            return waitForMessage();
+        } else {
+            return serverResponse;
         }
     }
 
