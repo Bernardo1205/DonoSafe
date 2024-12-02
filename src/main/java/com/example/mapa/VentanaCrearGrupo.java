@@ -46,7 +46,7 @@ public class VentanaCrearGrupo extends JPanel {
 
 
         // Origen
-        JPanel origenPanel = new JPanel(new BorderLayout());
+        JPanel origenPanel = new JPanel(new FlowLayout());
         origenPanel.setBackground(backgroundColor);
         JLabel origenLabel = new JLabel("Origen:");
         origenLabel.setFont(new Font("Arial", Font.BOLD, 14));
@@ -58,7 +58,7 @@ public class VentanaCrearGrupo extends JPanel {
 
 
         // Destino
-        JPanel destinoPanel = new JPanel(new BorderLayout());
+        JPanel destinoPanel = new JPanel(new FlowLayout());
         destinoPanel.setBackground(backgroundColor);
         JLabel destinoLabel = new JLabel("Destino:");
         destinoLabel.setFont(new Font("Arial", Font.BOLD, 14));
@@ -70,7 +70,7 @@ public class VentanaCrearGrupo extends JPanel {
 
 
         // Hora
-        JPanel horaPanel = new JPanel(new BorderLayout());
+        JPanel horaPanel = new JPanel(new FlowLayout());
         horaPanel.setBackground(backgroundColor);
         JLabel horaLabel = new JLabel("Hora:");
         horaLabel.setFont(new Font("Arial", Font.BOLD, 14));
