@@ -94,7 +94,6 @@ public class App extends JFrame {
         jButtonGroups.addActionListener(e -> cardLayout.show(panelPrincipal, "GroupSection"));
         jButtonChats.addActionListener(e -> cardLayout.show(panelPrincipal, "ChatSection"));
 
-
         // Añadir botones al panel
         panelBotones.add(jButtonAlerta);
         panelBotones.add(jButtonChats);

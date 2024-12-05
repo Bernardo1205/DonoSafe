@@ -28,11 +28,14 @@ import java.util.*;
  */
 public class ClientHandler implements Runnable {
     private Socket client;
+    private int clientId;
     private BufferedReader in;
     private PrintWriter out;
     private static HashMap<String, Grupo> mapGrupos = new HashMap<>();
     public static HashMap<String, ClientHandler> clients;
     private String clientName;
+
+
 
     /**
      * Crea un hilo para un cliente y le envía la lista de usuarios conectados
@@ -74,7 +77,6 @@ public class ClientHandler implements Runnable {
                     String targerGroup = message.substring(message.indexOf(" ")+1, ind).strip();
                     String sender = message.substring(ind+1, message.indexOf("]"));
                     String contenido = message.substring(message.indexOf("]")+2);
-
 
                     mapGrupos.get(targerGroup).sendMessage(sender, contenido);
                 } else if (message.startsWith("[NEW_GROUP] ")) { /* New group message format: [NEW_GROUP] groupName:username*/
@@ -135,7 +137,7 @@ public class ClientHandler implements Runnable {
 
         // Combinar la fecha actual con el tiempo parseado para obtener LocalDateTime
         LocalDateTime dateTime = LocalDateTime.of(currentDate, time);
-        Grupo nuevoGrupo = new Grupo(clients.get(creator), orig, dest, dateTime);
+        Grupo nuevoGrupo = new Grupo(creator, clients.get(creator), orig, dest, dateTime);
 
         mapGrupos.putIfAbsent(nuevoGrupo.getId(), nuevoGrupo);
         sendMessageToAll("[NEW_GROUP] " + nuevoGrupo.getId() + ":" + creator + "|" + String.join(";", orig, dest,hour));
@@ -146,7 +148,7 @@ public class ClientHandler implements Runnable {
      */
     private void joinGroup(String groupId, ClientHandler client) {
         if (!mapGrupos.get(groupId).containsUsuario(client)) {
-            mapGrupos.get(groupId).añadirUsuario(client);
+            mapGrupos.get(groupId).añadirUsuario(this.clientName, client);
         }
     }
 
@@ -178,6 +180,14 @@ public class ClientHandler implements Runnable {
         for (ClientHandler clientHandler : clients.values()) {
             clientHandler.out.println("USERS_LIST:" + String.join(",", clients.keySet()));
         }
+    }
+
+    public static HashMap<String, ClientHandler> getClients() {
+        return clients;
+    }
+
+    public Integer getClientId() {
+        return clientId;
     }
 
     private void closeConnection() {

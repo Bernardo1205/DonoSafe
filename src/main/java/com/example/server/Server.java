@@ -1,8 +1,7 @@
 package main.java.com.example.server;
 
 import main.java.com.example.config.ServerConfig;
-import main.java.com.example.database.BaseDatos;
-import main.java.com.example.database.BaseDatos;
+import main.java.com.example.database.*;
 
 import java.io.*;
 import java.net.*;

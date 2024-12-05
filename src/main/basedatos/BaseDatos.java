@@ -1,20 +1,17 @@
-package models;
+package main.basedatos;
 
 import main.java.com.example.client.Client;
-import main.java.com.example.mapa.User;
 import main.java.com.example.mapa.Reporte;
 import main.java.com.example.server.Grupo;
 
-import main.java.com.example.mapa.Map;
-import main.java.com.example.server.ClientHandler;
-import org.jxmapviewer.viewer.GeoPosition;
-import org.jxmapviewer.viewer.Waypoint;
 import main.java.com.example.server.ClientHandler;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 public class BaseDatos {
 
@@ -62,7 +59,7 @@ public class BaseDatos {
 
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(2, cliente.getNombre());
-            pstmt.setString(3, cliente.getUserName());
+            pstmt.setString(3, cliente.getUsername());
             pstmt.setString(4, cliente.getSexo());
             pstmt.setInt(5, cliente.getEdad());
             pstmt.setString(6, cliente.getPassword());
@@ -79,7 +76,7 @@ public class BaseDatos {
         }
     }
 
-    public void insertarWayPoint(Reporte reporte) {
+    public void insertarReporte(Reporte reporte) {
         String comandoInsertarUsuario = "INSERT INTO Reporte VALUES (?,?,?,?,?,?,?)";
         Statement statement = null;
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
@@ -133,7 +130,7 @@ public class BaseDatos {
     public void insertarGrupo(Grupo grupo) throws SQLException {
         String comandoInsertarGrupo = "INSERT INTO Grupo VALUES (?,?,?,?,?)";
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setArray(2, grupo.getClientes());
+            pstmt.setArray(2, (Array) grupo.getClientes().keySet());
             pstmt.setString(3, grupo.getDestino());
             pstmt.setString(4, grupo.getOrigen());
             LocalDateTime fecha_creacion = grupo.getFecha();
@@ -184,43 +181,108 @@ public class BaseDatos {
                     listaReseñas.add(new String[]{fecha, calificacion, contenido});
                 }
             }
+        }
         return listaReseñas;
-        }
-    }
-
-    public void eliminarClienteDeGrupo(Grupo grupo, int clienteId) {
-        ArrayList<ClientHandler> clientes = grupo.getClientes();
-
-        boolean clienteEncontrado = false;
-        for (ClientHandler cliente : clientes) {
-            if (cliente.getClient().getId() == clienteId) {
-                clienteEncontrado = true;
-                break;
-            }
-        }
-
-        if (clienteEncontrado) {
-            String comandoEliminar = "DELETE FROM Grupo WHERE grupo_id = ? AND usuarios = ?";
-            try (PreparedStatement pstmt = con.prepareStatement(comandoEliminar)) {
-                pstmt.setString(1, grupo.getId());  // Asume que usuarios es un String en la DB
-                pstmt.setInt(2, clienteId);         // cliente_id que queremos eliminar
-
-                int filasAfectadas = pstmt.executeUpdate();
-                if (filasAfectadas > 0) {
-                    System.out.println("Cliente eliminado correctamente del grupo en la base de datos.");
-                } else {
-                    System.out.println("No se encontró el cliente en la base de datos.");
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException("Error al eliminar el cliente del grupo en la base de datos", e);
-            }
-        } else {
-            System.out.println("El cliente con ID " + clienteId + " no está en el grupo.");
-        }
     }
 
     public void eliminarClienteGrupo(Grupo grupo, int clienteId) {
-        ArrayList<ClientHandler> clientes = grupo.getClientes();
-        grupo.getClientes().
+        HashMap<String, ClientHandler> clientes = grupo.getClientes();
+
+        try (Statement stmt = con.createStatement()) {
+            String seleccionarUsuarios = "SELECT usuarios FROM Grupo";
+            ResultSet rs = stmt.executeQuery(seleccionarUsuarios);
+            ArrayList<Integer> idsUsuarioGrupo = new ArrayList<>();
+            idsUsuarioGrupo.add(rs.getInt("usuarios"));
+
+            if (idsUsuarioGrupo.contains(clienteId)) {
+                idsUsuarioGrupo.remove(clienteId);
+            } else {
+                System.out.println("Ese usuario no está en el grupo");
+            }
+
+            String updateUsuario = "UPDATE Grupo SET usuarios = ?";
+
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
+
+
+
+    public static void cargarMensajesDesdeBD(TreeMap<LocalDateTime, Mensaje> mensajes) {
+        String url = "jdbc:sqlite:path/to/your/database.db"; // Cambia esta línea a tu URL de la BD
+
+        try (Connection conn = DriverManager.getConnection(url)) {
+            if (conn != null) {
+                String sql = "SELECT user_id, mensaje, fecha FROM mensajes ORDER BY fecha ASC";
+
+                try (Statement stmt = conn.createStatement();
+                     ResultSet rs = stmt.executeQuery(sql)) {
+
+                    while (rs.next()) {
+                        int userId = rs.getInt("user_id");
+                        String texto = rs.getString("mensaje");
+                        LocalDateTime fecha = rs.getTimestamp("fecha").toLocalDateTime();
+
+                        mensajes.put(fecha, new Mensaje(userId, texto));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al conectar a la base de datos: " + e.getMessage());
+        }
+    }
+
+    public TreeMap<LocalDateTime, Mensaje> cargarMensajesDesdeBD() {
+        TreeMap<LocalDateTime, Mensaje> mensajes_usuario1 = new TreeMap<>();
+        TreeMap<LocalDateTime, Mensaje> mensajes_usuario2 = new TreeMap<>();
+
+        String url = "jdbc:sqlite:path/to/your/database.db"; // Cambia esta línea a tu URL de la BD
+
+
+        try (Connection conn = DriverManager.getConnection(url)) {
+            if (conn != null) {
+                String sql = "SELECT grupo_id, id_usuario_transmisor, fecha_hora, contenido FROM Mensaje ORDER BY fecha ASC";
+
+                try (Statement stmt = conn.createStatement();
+                     ResultSet rs = stmt.executeQuery(sql)) {
+
+                    while (rs.next()) {
+                        int userId = rs.getInt("id_usuario_transmisor");
+                        String texto = rs.getString("contenido");
+                        LocalDateTime fecha = rs.getTimestamp("fecha_hora").toLocalDateTime();
+                        if (mensaje.) {}
+                        mensajes_usuario1.put(fecha, new Mensaje(userId, texto));
+                        mensajes_usuario2.put
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al conectar a la base de datos: " + e.getMessage());
+        }
+
+        return mensajes;
+        }
+    public void mostrarChat() {
+        // Crear una instancia de ChatDisplayDB
+
+        // URL de la base de datos (ajústala a tu configuración)
+        String dbUrl = "jdbc:sqlite:path/to/your/database.db";
+
+        // Cargar los mensajes desde la base de datos
+        TreeMap<LocalDateTime, mensaje> mensajes = chatDB.cargarMensajesDesdeBD(dbUrl);
+
+        // Formateador de fechas
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // Mostrar los mensajes ordenados
+        System.out.println("Chat ordenado por fecha:");
+        mensajes.forEach((fecha, mensaje) -> {
+            System.out.println(fecha.format(formatter) + " [Usuario " + mensaje.getUserId() + "]: " + mensaje.getTexto());
+        });
+    }
+
 }
+
