@@ -55,35 +55,33 @@ public class BaseDatos {
         }
     }
 
-    public void insertarUsuario(Client cliente) {
+    public void insertarUsuario(String nombre, String username, String sexo, String edad, String contraseña, Array reseñas, String fecha_registro, String email, String descripcion) {
         String comandoInsertarUsuario = "INSERT INTO Usuario VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(2, cliente.getNombre());
-            pstmt.setString(3, cliente.getUsername());
-            pstmt.setString(4, cliente.getSexo());
-            pstmt.setInt(5, cliente.getEdad());
-            pstmt.setString(6, cliente.getPassword());
-            pstmt.setArray(7, cliente.getReview());
-            LocalDateTime reg_date = cliente.getReg_date();
-            String fecha_formateada = reg_date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            pstmt.setString(8,
-                    fecha_formateada);
-            pstmt.setString(9, cliente.getMail());
-            pstmt.setString(10, cliente.getDecrp());
+            pstmt.setString(2, nombre);
+            pstmt.setString(3, username);
+            pstmt.setString(4, sexo);
+            int edadParseada = Integer.parseInt(edad);
+            pstmt.setInt(5, edadParseada);
+            pstmt.setString(6,contraseña);
+            pstmt.setArray(7, reseñas);
+            pstmt.setString(8,fecha_registro);
+            pstmt.setString(9, email);
+            pstmt.setString(10, descripcion);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void insertarReporte(Client cliente, String descripcionReporte,String horaDelReporte,
+    public void insertarReporte(int id, String descripcionReporte,String horaDelReporte,
                                 String horaCreacion, String tipoPeligro) {
         String comandoInsertarUsuario = "INSERT INTO Reporte VALUES (?,?,?,?,?,?,?)";
         Statement statement = null;
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
 
-            pstmt.setInt(2, cliente.getId());
+            pstmt.setInt(2, id);
 
             pstmt.setString(3,descripcionReporte);
 
