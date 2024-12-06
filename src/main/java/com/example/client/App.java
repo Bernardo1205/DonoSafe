@@ -9,8 +9,10 @@ import main.java.com.example.mapa.VentanaAgregarWaypoint;
 import main.java.com.example.mapa.VentanaCrearGrupo;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -314,61 +316,72 @@ public class App extends JFrame {
      */
     private JPanel createGroupSection() {
         JPanel groupPanel = new JPanel(new BorderLayout());
-        JPanel centerPanel = new JPanel(new GridLayout(1,2,0,5));
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 10)); // Espaciado entre paneles
+        centerPanel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Márgenes externos
 
+        // Panel para la lista de grupos
         groupsListPanel = new JPanel();
         groupsListPanel.setLayout(new BoxLayout(groupsListPanel, BoxLayout.Y_AXIS));
+        groupsListPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        Vector<String> cabeceraGrupos = new Vector<String>(Arrays.asList("ID", "Origen", "Destino","Hora salida"));
-
-        modeloGrupos = new DefaultTableModel(new Vector<Vector<Object>>(), cabeceraGrupos){
+        Vector<String> cabeceraGrupos = new Vector<>(Arrays.asList("ID", "Origen", "Destino", "Hora salida"));
+        modeloGrupos = new DefaultTableModel(new Vector<>(), cabeceraGrupos) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
 
-        DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer(){
+        JTable tablaGrupos = new JTable(modeloGrupos);
+        tablaGrupos.setFillsViewportHeight(true); // Extiende la tabla para ocupar el panel
+        tablaGrupos.setRowHeight(25); // Altura de las filas
+        tablaGrupos.setFont(new Font("Arial", Font.PLAIN, 14)); // Fuente
+
+        // Configurar el renderer para la tabla
+        DefaultTableCellRenderer defaultRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                JLabel jLabel =(JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (column!=3){
-                    jLabel.setToolTipText(modeloGrupos.getValueAt(row, column).toString());
-                }
-                else{
-                    jLabel.setHorizontalAlignment(HORIZONTAL);
-                    jLabel.setToolTipText(null);
-                }
-
+                JLabel jLabel = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                jLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                jLabel.setToolTipText(column != 3 ? value.toString() : null);
                 return jLabel;
             }
         };
 
-        JTable tablaGrupos = new JTable(modeloGrupos);
-        tablaGrupos.setDefaultRenderer(Object.class, defaultTableCellRenderer);
+        tablaGrupos.setDefaultRenderer(Object.class, defaultRenderer);
 
-        // Ocultar la columna del ID del grupo
+        // Estilo de cabecera de la tabla
+        JTableHeader header = tablaGrupos.getTableHeader();
+        header.setFont(new Font("Arial", Font.BOLD, 16));
+        header.setBackground(new Color(70, 130, 180)); // Azul suave
+        header.setForeground(Color.WHITE);
+
+        // Ocultar la columna de ID
         tablaGrupos.getColumnModel().getColumn(0).setMinWidth(0);
         tablaGrupos.getColumnModel().getColumn(0).setMaxWidth(0);
         tablaGrupos.getColumnModel().getColumn(0).setWidth(0);
 
+        // Scroll para la tabla
+        JScrollPane groupsListScroll = new JScrollPane(tablaGrupos);
+        groupsListScroll.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
+
+        // Añadir evento para unirse a grupo
         tablaGrupos.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int fila = tablaGrupos.rowAtPoint(e.getPoint());
-                if (fila!=-1){
-                    String idGrupo = (String) modeloGrupos.getValueAt(fila,0);
+                if (fila != -1) {
+                    String idGrupo = (String) modeloGrupos.getValueAt(fila, 0);
                     client.joinGroupChat(idGrupo);
-                    JOptionPane.showMessageDialog(App.this,String.join(" ","Te has unido al grupo con destino: " , tablaGrupos.getValueAt(fila,2).toString()));
+                    JOptionPane.showMessageDialog(App.this, "Te has unido al grupo con destino: " + modeloGrupos.getValueAt(fila, 2));
                 }
             }
         });
-        JScrollPane groupsListScroll = new JScrollPane(tablaGrupos);
 
-        groupsListPanel.add(groupsListScroll, BorderLayout.WEST);
-
+        groupsListPanel.add(groupsListScroll);
         centerPanel.add(groupsListPanel);
-        centerPanel.add(new VentanaCrearGrupo(client));
+        centerPanel.add(new VentanaCrearGrupo(client)); // Panel para crear grupo
+
         groupPanel.add(centerPanel, BorderLayout.CENTER);
 
         return groupPanel;
@@ -462,68 +475,124 @@ public class App extends JFrame {
         groupChatPanel.removeAll();
 
         String[] groupInfo = client.getGrupos().get(group);
-
         grupoActual = group;
 
+        // Configurar el panel de cabecera
         JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(new Color(70, 130, 180)); // Color de fondo de cabecera
+        headerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        groupTalkingTo = new JLabel(groupInfo[0] + " - " + groupInfo[1]);
-        JButton exitChatButton = new JButton("<--");
+        groupTalkingTo = new JLabel("Grupo desde "+groupInfo[0] + " hasta " + groupInfo[1]);
+        groupTalkingTo.setForeground(Color.WHITE);
+        groupTalkingTo.setFont(new Font("Arial", Font.BOLD, 16));
+
+        // Botón de salida con estilo
+        JButton exitChatButton = new JButton("\u2190"); // Flecha hacia atrás
+        exitChatButton.setFocusPainted(false);
+        exitChatButton.setBackground(new Color(220, 53, 69)); // Rojo para botón de salida
+        exitChatButton.setForeground(Color.WHITE);
         exitChatButton.addActionListener(e -> {
             grupoActual = "";
             showUsersList();
         });
+
         headerPanel.add(exitChatButton, BorderLayout.WEST);
         headerPanel.add(groupTalkingTo, BorderLayout.CENTER);
         groupChatPanel.add(headerPanel, BorderLayout.NORTH);
 
+        // Configurar panel de mensajes
         messagesPanel = new JPanel();
         messagesPanel.setLayout(new BoxLayout(messagesPanel, BoxLayout.Y_AXIS));
+        messagesPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         scrollMessages = new JScrollPane(messagesPanel);
+        scrollMessages.setBorder(null); // Sin borde adicional
         groupChatPanel.add(scrollMessages, BorderLayout.CENTER);
 
+        // Campo de texto con estilo y placeholder
         JTextField messageField = new JTextField();
+        messageField.setFont(new Font("Arial", Font.PLAIN, 14));
+        messageField.setBorder(BorderFactory.createCompoundBorder(
+                messageField.getBorder(),
+                new EmptyBorder(8, 8, 8, 8) // Espaciado interno
+        ));
+
         messageField.addActionListener(e -> {
-            String message = messageField.getText();
+            String message = messageField.getText().trim();
             if (!message.isEmpty()) {
-                client.sendMessageToServer("GROUP " + group + ":" + client.getUsername() + "] " + message);
+                // Formatear el mensaje correctamente sin corchetes
+                String formattedMessage = "GROUP " + group + ": " + client.getUsername() + ": " + message;
+
+                // Enviar el mensaje al servidor
+                client.sendMessageToServer(formattedMessage);
+
+                // Agregar el mensaje solo si no será recibido de nuevo
+                addGroupMessage("You: " + message);
+
                 messageField.setText("");
             }
         });
+
+
         groupChatPanel.add(messageField, BorderLayout.SOUTH);
+
+        // Actualizar la interfaz
         groupChatPanel.revalidate();
         groupChatPanel.repaint();
     }
 
     public void openPrivateChat(String targetUser) {
-
         chatPanel.removeAll();
 
+        // Configurar panel de cabecera
         JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(new Color(60, 90, 150)); // Color de fondo personalizado
+        headerPanel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Añadir espacio interno
+
         userTalkingTo = new JLabel(targetUser);
-        JButton exitChatButton = new JButton("<--");
-        exitChatButton.addActionListener(e -> {
-            showUsersList();
-        });
+        userTalkingTo.setForeground(Color.WHITE); // Color del texto
+        userTalkingTo.setFont(new Font("Arial", Font.BOLD, 16)); // Cambiar la fuente
+
+        // Botón de salida con icono
+        JButton exitChatButton = new JButton("\u2190"); // Flecha hacia atrás
+        exitChatButton.setFocusPainted(false);
+        exitChatButton.setBackground(new Color(220, 53, 69)); // Color rojo para salida
+        exitChatButton.setForeground(Color.WHITE);
+        exitChatButton.addActionListener(e -> showUsersList());
+
         headerPanel.add(exitChatButton, BorderLayout.WEST);
         headerPanel.add(userTalkingTo, BorderLayout.CENTER);
 
         chatPanel.add(headerPanel, BorderLayout.NORTH);
 
+        // Configurar panel de mensajes con scroll
         messagesPanel = new JPanel();
         messagesPanel.setLayout(new BoxLayout(messagesPanel, BoxLayout.Y_AXIS));
+        messagesPanel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Espacio entre mensajes
         scrollMessages = new JScrollPane(messagesPanel);
+        scrollMessages.setBorder(null); // Sin borde para un look más limpio
         chatPanel.add(scrollMessages, BorderLayout.CENTER);
 
-        /* Envía un mensaje al servidor indicando a quien va dirigido el mensaje y su contenido */
+        // Campo de texto con placeholder
         JTextField messageField = new JTextField();
+        messageField.setFont(new Font("Arial", Font.PLAIN, 14));
+        messageField.setBorder(BorderFactory.createCompoundBorder(
+                messageField.getBorder(),
+                new EmptyBorder(8, 8, 8, 8) // Padding interno
+        ));
+
+        // Escuchar y enviar mensajes
         messageField.addActionListener(e -> {
-            String message = messageField.getText();
-            client.sendMessageToServer("@" + targetUser + " " + message);
-            addPrivateMessage("You: " + message);
-            messageField.setText("");
+            String message = messageField.getText().trim();
+            if (!message.isEmpty()) {
+                client.sendMessageToServer("@" + targetUser + " " + message);
+                addPrivateMessage("You: " + message);
+                messageField.setText("");
+            }
         });
+
         chatPanel.add(messageField, BorderLayout.SOUTH);
+
+        // Actualizar panel
         chatPanel.revalidate();
         chatPanel.repaint();
     }
