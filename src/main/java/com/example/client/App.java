@@ -155,23 +155,33 @@ public class App extends JFrame {
         layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(new Dimension(800, 600));
 
-
         panelMapa = new MainPanel(this, client);
         panelMapa.setOnWaypointAdded(this::waypointAdded);
         panelMapa.setBounds(0, 0, 800, 600);
 
+        AnimatedMenu menu = new AnimatedMenu(layeredPane);
 
         JButton bAñadirAlerta = new JButton("Crear Alerta");
         bAñadirAlerta.addActionListener(e -> agregarAlerta());
-        bAñadirAlerta.setBounds(10, 10, 120, 40);
+        bAñadirAlerta.setBounds(10, 60, 120, 40);
         bAñadirAlerta.setBackground(new Color(255, 100, 100));
         bAñadirAlerta.setForeground(Color.WHITE);
         bAñadirAlerta.setFont(new Font("Arial", Font.BOLD, 14));
         bAñadirAlerta.setFocusPainted(false);
 
+        JButton bMostrarMenu = new JButton("Menú");
+        bMostrarMenu.setBounds(10, 10, 120, 40);
+        bMostrarMenu.setBackground(new Color(255, 100, 100));
+        bMostrarMenu.setForeground(Color.WHITE);
+        bMostrarMenu.setFont(new Font("Arial", Font.BOLD, 14));
+        bMostrarMenu.setFocusPainted(false);
+
+        bMostrarMenu.addActionListener(e -> menu.toggleMenu());
 
         layeredPane.add(panelMapa, Integer.valueOf(0));
         layeredPane.add(bAñadirAlerta, Integer.valueOf(1));
+        layeredPane.add(bMostrarMenu, Integer.valueOf(2));
+        layeredPane.add(menu, Integer.valueOf(1));
 
 
         mapPanel.add(layeredPane);
