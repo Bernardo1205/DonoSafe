@@ -1,6 +1,7 @@
 package main.basedatos;
 
 import main.java.com.example.client.Client;
+import main.java.com.example.client.ClientRegister;
 import main.java.com.example.mapa.Reporte;
 import main.java.com.example.server.Grupo;
 
@@ -76,30 +77,32 @@ public class BaseDatos {
         }
     }
 
-    public void insertarReporte(Reporte reporte) {
+    public void insertarReporte(Client cliente, String descripcionReporte,String horaDelReporte,
+                                String horaCreacion, String tipoPeligro) {
         String comandoInsertarUsuario = "INSERT INTO Reporte VALUES (?,?,?,?,?,?,?)";
         Statement statement = null;
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
 
-            pstmt.setInt(2, reporte.getUser().getId());
+            pstmt.setInt(2, cliente.getId());
 
-            pstmt.setString(3, reporte.getDescripcion());
+            pstmt.setString(3,descripcionReporte);
 
-            LocalDateTime hora_reporte = reporte.getHoraDelReporte();
+            //LocalDateTime hora_reporte = horaDelReporte;
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            String hora_formateada = hora_reporte.format(formatter);
-            pstmt.setString(4, hora_formateada);
+            //String hora_formateada = hora_reporte.format(formatter);
+            //pstmt.setString(4, horaDelReporte);
 
 
-            LocalDateTime fecha_reporte_creacion = reporte.getHoraCreacion();
-            String fecha_formateada = fecha_reporte_creacion.format(formatter);
-            pstmt.setString(5, fecha_formateada);
+            //LocalDateTime fecha_reporte_creacion = horaCreacion;
+            //String fecha_formateada = fecha_reporte_creacion.format(formatter);
+            pstmt.setString(5, horaDelReporte);
 
+            LocalDateTime fecha_reporte_creacion = LocalDateTime.parse(horaDelReporte, formatter);
             LocalDateTime fecha_reporte_finalizacion = fecha_reporte_creacion.plusHours(1);
             String fecha_finalizacion_formateada = fecha_reporte_finalizacion.format(formatter);
             pstmt.setString(6, fecha_finalizacion_formateada);
 
-            pstmt.setString(7, reporte.getTipoPeligro());
+            pstmt.setString(7, tipoPeligro);
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -127,15 +130,13 @@ public class BaseDatos {
         }
     }
 
-    public void insertarGrupo(Grupo grupo) throws SQLException {
+    public void insertarGrupo(Array clientes, String destino, String origen, String fecha) {
         String comandoInsertarGrupo = "INSERT INTO Grupo VALUES (?,?,?,?,?)";
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setArray(2, (Array) grupo.getClientes().keySet());
-            pstmt.setString(3, grupo.getDestino());
-            pstmt.setString(4, grupo.getOrigen());
-            LocalDateTime fecha_creacion = grupo.getFecha();
-            String fechaCreacionFormateada = fecha_creacion.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            pstmt.setString(5, fechaCreacionFormateada);
+            pstmt.setArray(2, clientes);
+            pstmt.setString(3, destino);
+            pstmt.setString(4, origen);
+            pstmt.setString(5, fecha);
 
             pstmt.executeUpdate();
 
@@ -209,80 +210,54 @@ public class BaseDatos {
         }
     }
 
+    //public TreeMap<LocalDateTime, Mensaje> cargarMensajesDesdeBD() {
+    //    TreeMap<LocalDateTime, Mensaje> mensajes_usuario1 = new TreeMap<>();
+    //    TreeMap<LocalDateTime, Mensaje> mensajes_usuario2 = new TreeMap<>();
+
+    //    String url = "jdbc:sqlite:path/to/your/database.db"; // Cambia esta línea a tu URL de la BD
 
 
-    public static void cargarMensajesDesdeBD(TreeMap<LocalDateTime, Mensaje> mensajes) {
-        String url = "jdbc:sqlite:path/to/your/database.db"; // Cambia esta línea a tu URL de la BD
+    //    try (Connection conn = DriverManager.getConnection(url)) {
+    //        if (conn != null) {
+    //            String sql = "SELECT grupo_id, id_usuario_transmisor, fecha_hora, contenido FROM Mensaje ORDER BY fecha ASC";
 
-        try (Connection conn = DriverManager.getConnection(url)) {
-            if (conn != null) {
-                String sql = "SELECT user_id, mensaje, fecha FROM mensajes ORDER BY fecha ASC";
+    //            try (Statement stmt = conn.createStatement();
+    //                 ResultSet rs = stmt.executeQuery(sql)) {
 
-                try (Statement stmt = conn.createStatement();
-                     ResultSet rs = stmt.executeQuery(sql)) {
+    //                while (rs.next()) {
+    //                    int userId = rs.getInt("id_usuario_transmisor");
+    //                    String texto = rs.getString("contenido");
+    //                    LocalDateTime fecha = rs.getTimestamp("fecha_hora").toLocalDateTime();
+    //                    if (mensaje.) {}
+    //                    mensajes_usuario1.put(fecha, new Mensaje(userId, texto));
+    //                   mensajes_usuario2.put
+    //                }
+    //            }
+    //         }
+    //    } catch (SQLException e) {
+    //        System.out.println("Error al conectar a la base de datos: " + e.getMessage());
+    //    }
 
-                    while (rs.next()) {
-                        int userId = rs.getInt("user_id");
-                        String texto = rs.getString("mensaje");
-                        LocalDateTime fecha = rs.getTimestamp("fecha").toLocalDateTime();
-
-                        mensajes.put(fecha, new Mensaje(userId, texto));
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al conectar a la base de datos: " + e.getMessage());
-        }
-    }
-
-    public TreeMap<LocalDateTime, Mensaje> cargarMensajesDesdeBD() {
-        TreeMap<LocalDateTime, Mensaje> mensajes_usuario1 = new TreeMap<>();
-        TreeMap<LocalDateTime, Mensaje> mensajes_usuario2 = new TreeMap<>();
-
-        String url = "jdbc:sqlite:path/to/your/database.db"; // Cambia esta línea a tu URL de la BD
-
-
-        try (Connection conn = DriverManager.getConnection(url)) {
-            if (conn != null) {
-                String sql = "SELECT grupo_id, id_usuario_transmisor, fecha_hora, contenido FROM Mensaje ORDER BY fecha ASC";
-
-                try (Statement stmt = conn.createStatement();
-                     ResultSet rs = stmt.executeQuery(sql)) {
-
-                    while (rs.next()) {
-                        int userId = rs.getInt("id_usuario_transmisor");
-                        String texto = rs.getString("contenido");
-                        LocalDateTime fecha = rs.getTimestamp("fecha_hora").toLocalDateTime();
-                        if (mensaje.) {}
-                        mensajes_usuario1.put(fecha, new Mensaje(userId, texto));
-                        mensajes_usuario2.put
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al conectar a la base de datos: " + e.getMessage());
-        }
-
-        return mensajes;
-        }
-    public void mostrarChat() {
+    //    return mensajes;
+    //    }
+    //public void mostrarChat() {
         // Crear una instancia de ChatDisplayDB
 
         // URL de la base de datos (ajústala a tu configuración)
-        String dbUrl = "jdbc:sqlite:path/to/your/database.db";
+    //    String dbUrl = "jdbc:sqlite:path/to/your/database.db";
 
         // Cargar los mensajes desde la base de datos
-        TreeMap<LocalDateTime, mensaje> mensajes = chatDB.cargarMensajesDesdeBD(dbUrl);
+    //    TreeMap<LocalDateTime, mensaje> mensajes = chatDB.cargarMensajesDesdeBD(dbUrl);
 
         // Formateador de fechas
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    //    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         // Mostrar los mensajes ordenados
-        System.out.println("Chat ordenado por fecha:");
-        mensajes.forEach((fecha, mensaje) -> {
-            System.out.println(fecha.format(formatter) + " [Usuario " + mensaje.getUserId() + "]: " + mensaje.getTexto());
-        });
-    }
+    //    System.out.println("Chat ordenado por fecha:");
+    //    mensajes.forEach((fecha, mensaje) -> {
+    //        System.out.println(fecha.format(formatter) + " [Usuario " + mensaje.getUserId() + "]: " + mensaje.getTexto());
+    //    });
+    // }
 
 }
 
