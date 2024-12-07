@@ -208,54 +208,38 @@ public class BaseDatos {
         }
     }
 
-    //public TreeMap<LocalDateTime, Mensaje> cargarMensajesDesdeBD() {
-    //    TreeMap<LocalDateTime, Mensaje> mensajes_usuario1 = new TreeMap<>();
-    //    TreeMap<LocalDateTime, Mensaje> mensajes_usuario2 = new TreeMap<>();
+    public ArrayList getMensajesUsuario(int id_grupo, int id_usuario) {
+        ArrayList<String[]> mensajes = new ArrayList<>(); // Lista temporal para almacenar mensajes
+        String url = "jdbc:sqlite:path/to/your/database.db"; // Cambia esta línea a tu URL de la BD
 
-    //    String url = "jdbc:sqlite:path/to/your/database.db"; // Cambia esta línea a tu URL de la BD
+        try (Connection conn = DriverManager.getConnection(url)) {
+            if (conn != null) {
+                String sql = "SELECT grupo_id, id_usuario_transmisor, fecha_hora, contenido FROM Mensaje ORDER BY fecha_hora ASC";
 
+                try (Statement stmt = conn.createStatement();
+                     ResultSet rs = stmt.executeQuery(sql)) {
 
-    //    try (Connection conn = DriverManager.getConnection(url)) {
-    //        if (conn != null) {
-    //            String sql = "SELECT grupo_id, id_usuario_transmisor, fecha_hora, contenido FROM Mensaje ORDER BY fecha ASC";
+                    while (rs.next()) {
+                        int grupoId = rs.getInt("grupo_id");
+                        int userId = rs.getInt("id_usuario_transmisor");
+                        String texto = rs.getString("contenido");
+                        String fecha = rs.getString("fecha_hora");
 
-    //            try (Statement stmt = conn.createStatement();
-    //                 ResultSet rs = stmt.executeQuery(sql)) {
+                        // Solo procesar los mensajes que coincidan con el id_usuario y id_grupo dados
+                        if (userId == id_usuario && grupoId == id_grupo) {
+                            // Añadir un nuevo mensaje como un arreglo {fecha, texto}
+                            mensajes.add(new String[]{fecha, texto});
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al conectar a la base de datos: " + e.getMessage());
+        }
 
-    //                while (rs.next()) {
-    //                    int userId = rs.getInt("id_usuario_transmisor");
-    //                    String texto = rs.getString("contenido");
-    //                    LocalDateTime fecha = rs.getTimestamp("fecha_hora").toLocalDateTime();
-    //                    if (mensaje.) {}
-    //                    mensajes_usuario1.put(fecha, new Mensaje(userId, texto));
-    //                   mensajes_usuario2.put
-    //                }
-    //            }
-    //         }
-    //    } catch (SQLException e) {
-    //        System.out.println("Error al conectar a la base de datos: " + e.getMessage());
-    //    }
-
-    //    return mensajes;
-    //    }
-    //public void mostrarChat() {
-        // Crear una instancia de ChatDisplayDB
-
-        // URL de la base de datos (ajústala a tu configuración)
-    //    String dbUrl = "jdbc:sqlite:path/to/your/database.db";
-
-        // Cargar los mensajes desde la base de datos
-    //    TreeMap<LocalDateTime, mensaje> mensajes = chatDB.cargarMensajesDesdeBD(dbUrl);
-
-        // Formateador de fechas
-    //    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        // Mostrar los mensajes ordenados
-    //    System.out.println("Chat ordenado por fecha:");
-    //    mensajes.forEach((fecha, mensaje) -> {
-    //        System.out.println(fecha.format(formatter) + " [Usuario " + mensaje.getUserId() + "]: " + mensaje.getTexto());
-    //    });
-    // }
+        // Convertir la lista en un arreglo bidimensional
+        return mensajes;
+    }
 
 }
 
