@@ -182,8 +182,7 @@ public class BaseDatos {
         return listaReseñas;
     }
 
-    public void eliminarClienteGrupo(Grupo grupo, int clienteId) {
-        HashMap<String, ClientHandler> clientes = grupo.getClientes();
+    public void eliminarClienteGrupo(int grupoId, int clienteId) {
 
         try (Statement stmt = con.createStatement()) {
             String seleccionarUsuarios = "SELECT usuarios FROM Grupo";
@@ -198,8 +197,6 @@ public class BaseDatos {
             }
 
             String updateUsuario = "UPDATE Grupo SET usuarios = ?";
-
-
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -262,6 +259,22 @@ public class BaseDatos {
         }
 
         return grupos;
+    }
+    public void ainadirUsuario(int id_usuario) throws SQLException {
+        try (Statement stmt = con.createStatement()) {
+            String seleccionarUsuarios = "SELECT usuarios FROM Grupo";
+            ResultSet rs = stmt.executeQuery(seleccionarUsuarios);
+            ArrayList<Integer> idsUsuarioGrupo = new ArrayList<>();
+            idsUsuarioGrupo.add(rs.getInt("usuarios"));
+
+            if (idsUsuarioGrupo.contains(id_usuario)) {
+                System.out.println("Este usuario ya está en el grupo");
+            } else {
+                idsUsuarioGrupo.add(id_usuario);
+            }
+
+            String updateUsuario = "UPDATE Grupo SET usuarios = ?";
+        }
     }
 
 }
