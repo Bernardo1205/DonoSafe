@@ -182,26 +182,6 @@ public class BaseDatos {
         return listaReseñas;
     }
 
-    public void eliminarClienteGrupo(int grupoId, int clienteId) {
-
-        try (Statement stmt = con.createStatement()) {
-            String seleccionarUsuarios = "SELECT usuarios FROM Grupo";
-            ResultSet rs = stmt.executeQuery(seleccionarUsuarios);
-            ArrayList<Integer> idsUsuarioGrupo = new ArrayList<>();
-            idsUsuarioGrupo.add(rs.getInt("usuarios"));
-
-            if (idsUsuarioGrupo.contains(clienteId)) {
-                idsUsuarioGrupo.remove(clienteId);
-            } else {
-                System.out.println("Ese usuario no está en el grupo");
-            }
-
-            String updateUsuario = "UPDATE Grupo SET usuarios = ?";
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public ArrayList getMensajesUsuario(int id_grupo, int id_usuario) {
         ArrayList<String[]> mensajes = new ArrayList<>(); // Lista temporal para almacenar mensajes
@@ -260,6 +240,41 @@ public class BaseDatos {
 
         return grupos;
     }
+
+    public void getReporte() {
+        String consulta = "SELECT id_reporte, id_usuario, descripcion, hora, fecha_creacion, fecha_fin, Tipo_peligro FROM Reporte";
+        ArrayList<String[]> reportes = new ArrayList<>();
+
+        try (Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(consulta)) {
+
+            LocalDateTime hora_consulta = LocalDateTime.now();
+
+            while (rs.next()) { // Asegurarse de recorrer cada fila del ResultSet
+                String fecha_fin = rs.getString("fecha_fin");
+                LocalDateTime fecha_fin_parseada = LocalDateTime.parse(fecha_fin);
+
+                if (fecha_fin_parseada.isBefore(hora_consulta)) { // Comprobar si ya caducó
+                    System.out.println("El reporte ha caducado");
+                } else {
+                    // Añadir los datos relevantes al ArrayList
+                    reportes.add(new String[]{
+                            rs.getString("id_reporte"),
+                            rs.getString("id_usuario"),
+                            rs.getString("descripcion"),
+                            rs.getString("hora"),
+                            rs.getString("fecha_creacion"),
+                            rs.getString("fecha_fin"),
+                            rs.getString("Tipo_peligro")
+                    });
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al ejecutar la consulta: " + e.getMessage(), e);
+        }
+    }
+
     public void ainadirUsuario(int id_usuario) throws SQLException {
         try (Statement stmt = con.createStatement()) {
             String seleccionarUsuarios = "SELECT usuarios FROM Grupo";
@@ -276,5 +291,24 @@ public class BaseDatos {
             String updateUsuario = "UPDATE Grupo SET usuarios = ?";
         }
     }
+    public void eliminarUsuario(int grupoId, int clienteId) {
 
+        try (Statement stmt = con.createStatement()) {
+            String seleccionarUsuarios = "SELECT usuarios FROM Grupo";
+            ResultSet rs = stmt.executeQuery(seleccionarUsuarios);
+            ArrayList<Integer> idsUsuarioGrupo = new ArrayList<>();
+            idsUsuarioGrupo.add(rs.getInt("usuarios"));
+
+            if (idsUsuarioGrupo.contains(clienteId)) {
+                idsUsuarioGrupo.remove(clienteId);
+            } else {
+                System.out.println("Ese usuario no está en el grupo");
+            }
+
+            String updateUsuario = "UPDATE Grupo SET usuarios = ?";
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
