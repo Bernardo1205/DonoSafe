@@ -10,9 +10,7 @@ import main.java.com.example.server.ClientHandler;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class BaseDatos {
 
@@ -210,36 +208,60 @@ public class BaseDatos {
 
     public ArrayList getMensajesUsuario(int id_grupo, int id_usuario) {
         ArrayList<String[]> mensajes = new ArrayList<>(); // Lista temporal para almacenar mensajes
-        String url = "jdbc:sqlite:path/to/your/database.db"; // Cambia esta línea a tu URL de la BD
 
-        try (Connection conn = DriverManager.getConnection(url)) {
-            if (conn != null) {
-                String sql = "SELECT grupo_id, id_usuario_transmisor, fecha_hora, contenido FROM Mensaje ORDER BY fecha_hora ASC";
 
-                try (Statement stmt = conn.createStatement();
-                     ResultSet rs = stmt.executeQuery(sql)) {
+        String sql = "SELECT grupo_id, id_usuario_transmisor, fecha_hora, contenido FROM Mensaje ORDER BY fecha_hora ASC";
 
-                    while (rs.next()) {
-                        int grupoId = rs.getInt("grupo_id");
-                        int userId = rs.getInt("id_usuario_transmisor");
-                        String texto = rs.getString("contenido");
-                        String fecha = rs.getString("fecha_hora");
+        try (Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
-                        // Solo procesar los mensajes que coincidan con el id_usuario y id_grupo dados
-                        if (userId == id_usuario && grupoId == id_grupo) {
-                            // Añadir un nuevo mensaje como un arreglo {fecha, texto}
-                            mensajes.add(new String[]{fecha, texto});
-                        }
-                    }
+            while (rs.next()) {
+                int grupoId = rs.getInt("grupo_id");
+                int userId = rs.getInt("id_usuario_transmisor");
+                String texto = rs.getString("contenido");
+                String fecha = rs.getString("fecha_hora");
+
+                // Solo procesar los mensajes que coincidan con el id_usuario y id_grupo dados
+                if (userId == id_usuario && grupoId == id_grupo) {
+                    // Añadir un nuevo mensaje como un arreglo {fecha, texto}
+                    mensajes.add(new String[]{fecha, texto});
                 }
             }
         } catch (SQLException e) {
             System.out.println("Error al conectar a la base de datos: " + e.getMessage());
         }
 
-        // Convertir la lista en un arreglo bidimensional
         return mensajes;
+    }
+    public ArrayList<List> getGrupo(int id_usuario){
+        ArrayList<List> grupos = new ArrayList<>();
+        String sql = "SELECT id_grupo, usuarios, destino, inicio, fecha_creacion FROM Grupo ORDER BY fecha_hora ASC";
+        try (Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+
+                int grupoId = rs.getInt("id_grupo");
+                String usuarios = rs.getString("usuarios");
+                String[] arrayUsuarios = usuarios.split(",");
+                ArrayList<Integer> arrayIndicesUsuarios = new ArrayList<>();
+                for (int i = 0; i < arrayUsuarios.length; i++) {
+                    arrayIndicesUsuarios.add(Integer.parseInt(arrayUsuarios[i].trim()));
+                }
+                String destino = rs.getString("destino");
+                String inicio = rs.getString("inicio");
+                String fecha = rs.getString("fecha_creacion");
+
+                // Solo procesar los mensajes que coincidan con el id_usuario y id_grupo dados
+                if (arrayIndicesUsuarios.contains(id_usuario)) {
+                    grupos.add(Arrays.asList(grupoId, arrayIndicesUsuarios, destino, inicio, fecha));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al conectar a la base de datos: " + e.getMessage());
+        }
+
+        return grupos;
     }
 
 }
-
