@@ -19,15 +19,15 @@ public class Server {
         System.out.println(Server.this);
 
         /* TODO Implementar la base de datos y comenzar la conexión */
-//        BaseDatos bbdd = new BaseDatos();
-//        bbdd.ConectarBaseDatos();
+        BaseDatos bbdd = new BaseDatos();
+        bbdd.ConectarBaseDatos();
 
         while (true) {
             System.out.println("[SERVER] Waiting for client connection...");
             Socket client = listener.accept();  /* Espera a conexiones de clientes y las acepta */
             System.out.println("[SERVER] Connected to client at " + client.getInetAddress() + ":" + client.getPort());
 
-            ClientHandler clientHandler = new ClientHandler(client, clients);
+            ClientHandler clientHandler = new ClientHandler(client, clients , bbdd);
             Thread clientThread = new Thread(clientHandler);
             clientThread.start();
         }

@@ -1,5 +1,7 @@
 package main.java.com.example.server;
 
+import main.java.com.example.database.BaseDatos;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,10 +29,11 @@ import java.util.*;
  * @see main.java.com.example.client.Client
  */
 public class ClientHandler implements Runnable {
+    private BaseDatos bbdd;
     private Socket client;
     private BufferedReader in;
     private PrintWriter out;
-    private static HashMap<String, Grupo> mapGrupos = new HashMap<>();
+//    private static HashMap<String, Grupo> mapGrupos = new HashMap<>();
     public static HashMap<String, ClientHandler> clients;
     private String clientName;
 
@@ -39,7 +42,7 @@ public class ClientHandler implements Runnable {
      * @param clientSocket
      * @param clients
      */
-    public ClientHandler(Socket clientSocket, HashMap<String, ClientHandler> clients) {
+    public ClientHandler(Socket clientSocket, HashMap<String, ClientHandler> clients , BaseDatos bbdd) {
         this.client = clientSocket;
         this.clients = clients;
         broadcastUserList();
@@ -64,6 +67,7 @@ public class ClientHandler implements Runnable {
                 int ind = message.indexOf(":");
                 if (message.startsWith("[NEW_WAYPOINT] ")){
                     sendMessageToAll(message);
+                    bbdd.insertarWayPoint();
                 } else if (message.startsWith("[ALERT] ")) { /* Alert message format: [ALERT] content */
                     sendMessageToAll(message);
                 } else if (message.startsWith("@")) { /* Private message format: @targetUser message */
