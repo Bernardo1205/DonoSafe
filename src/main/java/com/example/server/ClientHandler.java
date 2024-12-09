@@ -1,5 +1,8 @@
 package main.java.com.example.server;
 
+import main.java.com.example.client.Client;
+import main.java.com.example.database.BaseDatos;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,17 +35,19 @@ public class ClientHandler implements Runnable {
     private PrintWriter out;
     private static HashMap<String, Grupo> mapGrupos = new HashMap<>();
     public static HashMap<String, ClientHandler> clients;
+    private static BaseDatos bbdd;
     private String clientName;
+    private String clientInfo;
 
     /**
      * Crea un hilo para un cliente y le envía la lista de usuarios conectados
      * @param clientSocket
      * @param clients
      */
-    public ClientHandler(Socket clientSocket, HashMap<String, ClientHandler> clients) {
+    public ClientHandler(Socket clientSocket, HashMap<String, ClientHandler> clients, BaseDatos bbdd) {
         this.client = clientSocket;
         this.clients = clients;
-        broadcastUserList();
+        ClientHandler.bbdd = bbdd;
     }
 
     @Override
@@ -50,43 +55,71 @@ public class ClientHandler implements Runnable {
         try {
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             out = new PrintWriter(client.getOutputStream(), true);
-//            out.println("id=");
 
-            /* Recibe el nombre de usuario con el que se referenciará a este hilo en los mensajes */
-            clientName = in.readLine();
+            String[] userInfo;
+            /* Valida el usuario y la contraseña del cliente */
+            while (true) {
+                userInfo = waitForMessage().split(",");
+                /* Si el usuario ya está conectado */
+                if (clients.containsKey(userInfo[0])) {
+                    sendMessageToClient("Code: 409 (Conflict)");
+                }
+                clientInfo = bbdd.getUsuario(userInfo[0], userInfo[1]);
+                if (clientInfo == null) {
+                    sendMessageToClient("Code: 401 (Unauthorized)");
+                } else {
+                    this.clientName = userInfo[0];
+                    sendMessageToClient("Code: 200 (OK)");
+                    /* TODO Enviar solo los datos relevantes */
+                    /* TODO Enviar los grupos activos, reportes y alertas recientes...
+                    *   para que el cliente esté actualizado para cuando se inicie la App */
+                    sendMessageToClient(clientInfo);
+                    break;
+                }
+            }
             clients.put(clientName, this);
+
             broadcastUserList();
 
+            /* Bucle principal que sirve como comunicación entre este hilo y el del cliente.
+            * Cuando recibe un mensaje, lo parsea y decide qué hacer en función de su contenido
+            */
             String message;
             while (true) {
                 message = waitForMessage();
                 System.out.println(message);
                 int ind = message.indexOf(":");
-                if (message.startsWith("[NEW_WAYPOINT] ")){
+                if (message.startsWith("[NEW_WAYPOINT] ")) { /* Waypoint message format: [NEW_WAYPOINT] content */
+                    //TODO guardar waypoint en la base de datos
                     sendMessageToAll(message);
                 } else if (message.startsWith("[ALERT] ")) { /* Alert message format: [ALERT] content */
+                    // TODO guardar alerta en la base de datos
                     sendMessageToAll(message);
                 } else if (message.startsWith("@")) { /* Private message format: @targetUser message */
                     String targetUser = message.substring(1, message.indexOf(" "));
                     String privateMessage = message.substring(message.indexOf(" ") + 1);
-                    sendMessageToClient(targetUser, this.clientName + "(private): " + privateMessage);
-                } else if (message.startsWith("GROUP ")) {
+                    // TODO guardar mensaje privado en la base de datos
+                    clients.get(targetUser).sendMessageToClient(this.clientName + "(private): " + privateMessage);
+                } else if (message.startsWith("GROUP ")) { /* Group message format: GROUP groupId:sender] message */
                     String targerGroup = message.substring(message.indexOf(" ")+1, ind).strip();
                     String sender = message.substring(ind+1, message.indexOf("]"));
                     String contenido = message.substring(message.indexOf("]")+2);
-                    //TODO guardar en la base de datos
+                    //TODO guardar mensaje grupal en la base de datos
 
                     mapGrupos.get(targerGroup).sendMessage(sender, contenido);
                 } else if (message.startsWith("[NEW_GROUP] ")) { /* New group message format: [NEW_GROUP] groupName:username*/
                     String groupCreator = message.substring(message.indexOf(" ")+1, message.lastIndexOf("|"));
                     String[] groupInfo = message.substring(message.lastIndexOf("|")).split(";");
                     createGroup(groupCreator, groupInfo[0], groupInfo[1],groupInfo[2]);
-                } else if (message.startsWith("JOIN_GROUP ")) {
+                } else if (message.startsWith("JOIN_GROUP ")) { /* Join group message format: JOIN_GROUP username TO groupId */
                     String userName = message.substring(11, message.indexOf(" TO ")).strip();
                     String groupId = message.substring(message.indexOf(" TO ") + 4);
+                    // TODO añadir usuario al grupo en la base de datos
                     joinGroup(groupId, clients.get(userName));
+                } else if (message.startsWith("[Request]")) {
+                    // TODO enviar la información solicitada
                 } else {
-                    System.out.println("Unknown type " + message);
+                    System.out.println("[Error Code: 400 (Bad Request)] " + message);
                 }
             }
         } catch (SocketException e1) {
@@ -157,14 +190,8 @@ public class ClientHandler implements Runnable {
     /**
      * Manda un mensaje privado a un cliente en específico
      */
-    public void sendMessageToClient(String targetUser, String message) {
-        ClientHandler targetHandler = clients.get(targetUser);
-        if (targetHandler != null) {
-            targetHandler.out.println(message);
-        } else {
-            targetHandler.closeConnection();
-            System.out.println("Couldn't find " + targetUser);
-        }
+    public void sendMessageToClient(String message) {
+        this.out.println(message);
     }
 
     public void sendMessageToClient(ClientHandler clientHandler, String message) {

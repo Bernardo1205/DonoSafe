@@ -3,7 +3,9 @@ package main.java.com.example.client;
 import main.java.com.example.config.ServerConfig;
 import main.java.com.example.mapa.*;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
@@ -34,6 +36,7 @@ public class Client {
 
     private int id;
 
+    private String[] userInfo; // [id, nombre, edad, sexo, mail, password]
     private int edad;
     private String sexo;
     private String mail;
@@ -45,8 +48,10 @@ public class Client {
     private String decrp;
     private Set<Reporte> list_waypoints;
 
-    private static Socket socket;
-    private static PrintWriter out;
+    private ServerConnection serverConn;
+    private Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
 
     /**
      * Registrar o ubicar al cliente en la base de datos
@@ -56,7 +61,23 @@ public class Client {
         this.reg_date = LocalDateTime.now();
         this.review = new ArrayList<>();
         this.list_waypoints = new HashSet<>();
-        new ClientLogin(this);
+
+        try {
+            socket = new Socket(ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
+            System.out.println(String.format("Started client at %s", socket.getLocalSocketAddress()));
+
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            out = new PrintWriter(socket.getOutputStream(), true);
+
+        } catch (ConnectException ex1) {
+            System.out.format("Servidor en %s:%s no encontrado", ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
+            System.exit(0);
+        } catch (IOException ex2) {
+            ex2.printStackTrace();
+        }
+
+        new ClientLogin(Client.this);
     }
 
     /**
@@ -65,30 +86,20 @@ public class Client {
      * @param username
      * @see ServerConnection
      */
-    public void openChatWindow(String username) {
+    public void openChatWindow(String[] clientInfo) {
 
-        this.username = username;
+        /* clientInfo contiene la información relevante al cliente dentro de la base de datos
+        * del servidor.
+        * Formato del Array: id,nombre,nombre_usuario,sexo,edad,contraseña,reseña,fecha_registro,email,descripción */
+        this.id = Integer.parseInt(clientInfo[0]);
+        this.username = clientInfo[2];
+        this.userInfo = clientInfo;
 
         this.clientGUI = new App(Client.this);
 
-        try {
-            socket = new Socket(ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
-            System.out.println(String.format("STARTED CLIENT AT %s", socket.getLocalSocketAddress()));
+        ServerConnection serverConn = new ServerConnection(socket, this, in);
+        new Thread(serverConn).start();
 
-            ServerConnection serverConn = new ServerConnection(socket, this);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            /* Informar al servidor del nombre de usuario para que este pueda manejar el
-            * hilo de cada cliente, permitiéndole saber a quien enviar cada mensaje */
-            out.println(username);
-
-            new Thread(serverConn).start();
-
-        } catch (ConnectException ex1) {
-            System.out.format("Servidor en %s:%s no encontrado", ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT);
-            System.exit(0);
-        } catch (IOException ex2) {
-            ex2.printStackTrace();
-        }
     }
 
     /**
@@ -100,6 +111,22 @@ public class Client {
     public void joinGroupChat(String groupId) {
         sendMessageToServer("JOIN_GROUP " + this.username + " TO " + groupId);
         clientGUI.openPrivateGroup(groupId);
+    }
+
+    /**
+     * Función recursiva que espera a recibir un mensaje del servidor
+     *
+     * @return  Mensaje recibido
+     *
+     * @throws IOException
+     */
+    public String waitForMessage() throws IOException {
+        String serverResponse = in.readLine();
+        if (serverResponse == null) {
+            return waitForMessage();
+        } else {
+            return serverResponse;
+        }
     }
 
     /**
@@ -127,6 +154,10 @@ public class Client {
     }
 
     /* Getters y setters */
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

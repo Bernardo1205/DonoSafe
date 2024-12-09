@@ -4,6 +4,7 @@ import main.java.com.example.client.Client;
 import main.java.com.example.mapa.Reporte;
 import main.java.com.example.server.Grupo;
 
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,7 +25,7 @@ public class BaseDatos {
             return;
         }
 
-        String url = "jdbc:sqlite:C:/Users/lucas.stille/basedatos.db";
+        String url = "jdbc:sqlite:src/db/basedatos.db";
 
         try {
             con = DriverManager.getConnection(url); // Asignar a 'con'
@@ -51,22 +52,21 @@ public class BaseDatos {
         }
     }
 
-    public void insertarUsuario(Client cliente) {
+    public void insertarUsuario(String nombre, String username, String sexo, String edad, String contraseña, String reseñas, String fecha_registro, String email, String descripcion) {
         String comandoInsertarUsuario = "INSERT INTO Usuario VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(2, cliente.getNombre());
-            pstmt.setString(3, cliente.getUsername());
-            pstmt.setString(4, cliente.getSexo());
-            pstmt.setInt(5, cliente.getEdad());
-            pstmt.setString(6, cliente.getPassword());
-            pstmt.setArray(7, cliente.getReview());
-            LocalDateTime reg_date = cliente.getReg_date();
-            String fecha_formateada = reg_date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            pstmt.setString(8,
-                    fecha_formateada);
-            pstmt.setString(9, cliente.getMail());
-            pstmt.setString(10, cliente.getDecrp());
+            pstmt.setString(2, nombre);
+            pstmt.setString(3, username);
+            pstmt.setString(4, sexo);
+            int edadParseada = Integer.parseInt(edad);
+            pstmt.setInt(5, edadParseada);
+            pstmt.setString(6,contraseña);
+//            pstmt.setArray(7, reseñas);
+            pstmt.setString(7, reseñas);
+            pstmt.setString(8,fecha_registro);
+            pstmt.setString(9, email);
+            pstmt.setString(10, descripcion);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -155,6 +155,74 @@ public class BaseDatos {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String getUsuarios() {
+        String comandoObtenerUsuarios = "SELECT * FROM Usuario";
+        try (Statement stmt = con.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery(comandoObtenerUsuarios)) {
+                while (rs.next()) {
+                    String info = String.join(",",
+                            String.valueOf(rs.getInt("id_usuario")),
+                            rs.getString("nombre"),
+                            rs.getString("nombre_usuario"),
+                            rs.getString("sexo"),
+                            String.valueOf(rs.getInt("edad")),
+                            rs.getString("contraseña"),
+                            rs.getString("reseña"),
+                            rs.getString("fecha_registro"),
+                            rs.getString("reseña"),
+                            rs.getString("email"),
+                            rs.getString("descripcion"));
+                    System.out.println(info);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return "";
+    }
+
+//    public boolean getAuth(String username, String password) {
+//        String comandoObtenerUsuario = String.format("SELECT * FROM Usuario WHERE nombre_usuario = \"%s\" AND contraseña = \"%s\"", username, password);
+//        try (Statement stmt = con.createStatement()) {
+//            try (ResultSet rs = stmt.executeQuery(comandoObtenerUsuario)) {
+//                return rs.next();
+//            }
+//        } catch (SQLException e) {
+//            return false;
+//        }
+//
+//    }
+
+    /**
+     * Devuelve la información del usuario
+     * @param userInfo Array con el nombre de usuario y la contraseña
+     * @return
+     */
+    public String getUsuario(String username, String password) {
+        String comandoObtenerUsuario = String.format("SELECT * FROM Usuario WHERE nombre_usuario = \"%s\" AND contraseña = \"%s\"", username, password);
+        try (Statement stmt = con.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery(comandoObtenerUsuario)) {
+                if (rs.next()) {
+                    String info = String.join(",",
+                            String.valueOf(rs.getInt("id_usuario")),
+                            rs.getString("nombre"),
+                            rs.getString("nombre_usuario"),
+                            rs.getString("sexo"),
+                            String.valueOf(rs.getInt("edad")),
+                            rs.getString("contraseña"),
+                            rs.getString("reseña"),
+                            rs.getString("fecha_registro"),
+                            rs.getString("email"),
+                            rs.getString("descripcion"));
+                    return info;
+                }
+            }
+        } catch (SQLException e) {
+            return null;
+        }
+        return null;
     }
 
     public ArrayList<String[]> mostarReseñas(int idUsuario) throws SQLException {
