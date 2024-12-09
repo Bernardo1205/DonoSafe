@@ -6,10 +6,18 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * La clase ClientLogin se encarga de renderizar la pantalla de inicio de sesión.
+ * Contiene métodos para validar las credenciales del usuario y abrir la ventana
+ *
+ * @see Client
+ * @see ClientRegister
+ */
 public class ClientLogin {
-    private static HashMap<String, String> registeredUsers = new HashMap<>();
+
     private static Font font = new Font(Font.DIALOG, Font.PLAIN, 14);
     private static final int WIDTH = 350;
     private static final int HEIGHT = 550;
@@ -20,10 +28,6 @@ public class ClientLogin {
 
     public ClientLogin(Client client) {
         this.client = client;
-        for (int i=1; i<10; i++) {
-            registeredUsers.put(String.valueOf(i), String.valueOf(i));
-            //FIXME: registeredUsers should contain the userName and hashed password read from the database
-        }
 
         frame = new JFrame("Inicio Sesión");
         frame.setSize(WIDTH, HEIGHT);
@@ -31,8 +35,6 @@ public class ClientLogin {
         frame.setLocationRelativeTo(null);
 
         Color backgroundColor = new Color(240, 248, 255);
-
-
 
         JPanel panel = new JPanel();
         frame.add(panel, BorderLayout.CENTER);
@@ -101,12 +103,32 @@ public class ClientLogin {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
 
-                if (validateLogin(username, password)) {
-                    client.openChatWindow(username);
-                    frame.dispose();
-                } else {
-                    statusLabel.setText("Contraseña o usuario incorrecto.");
-                    statusLabel.setForeground(Color.RED);
+                try {
+                    switch (validateLogin(username, password)) {
+                        case 200:
+                            /* Si las credenciales son correctas, llama a openChatWindow, la cual inicia la App
+                            * y comienza una comunicación formal con el servidor */
+                            String[] clientInfo = client.waitForMessage().split(",");
+                            client.openChatWindow(clientInfo);
+                            frame.dispose();
+                            break;
+                        case 401:
+                            /* Si las credenciales son incorrectas, se lo hace saber al usuario de forma gráfica
+                             * mostrándole un campo en color rojo con el siguiente texto */
+                            statusLabel.setText("Contraseña o usuario incorrecto.");
+                            statusLabel.setForeground(Color.RED);
+                            break;
+                        case 409:
+                            /* Si el usuario ya está conectado, se lo hace saber al usuario de forma gráfica
+                             * mostrándole un campo en color rojo con el siguiente texto */
+                            statusLabel.setText("Conexión ya establecida.");
+                            statusLabel.setForeground(Color.RED);
+                            break;
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });
@@ -115,14 +137,17 @@ public class ClientLogin {
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
                 new ClientRegister().setVisible(true);
-
             }
         });
-
-
     }
 
-    private boolean validateLogin(String username, String password) {
-        return registeredUsers.containsKey(username) && registeredUsers.get(username).equals(password);
+    /** Se le envía el usuario y contraseña al servidor, el cual devuelve VALID si las credenciales son correctas,
+     * INVALID si no lo son y ConnectionError en caso de que el usuario ya esté conectado.
+     */
+    private int validateLogin(String username, String password) throws IOException, InterruptedException {
+        client.sendMessageToServer(username+","+password);
+        String serverValidation = client.waitForMessage();
+
+        return Integer.parseInt(serverValidation.substring(6, 9));
     }
 }

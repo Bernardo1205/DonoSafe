@@ -3,6 +3,7 @@ package main.java.com.example.client;
 import main.java.com.example.mapa.Reporte;
 import org.jxmapviewer.viewer.GeoPosition;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +23,9 @@ import java.time.format.DateTimeFormatter;
  * usuario(private): mensaje     |  Añade un mensaje al panel del chat
  * GROUP Id:Emisor] mensaje      |  Añade un mensaje al panel del grupo
  * [NEW_GROUP] Id:Creador Info   |  Actualiza la lista de los grupos
+ * [NEW_WAYPOINT] lat,lon,peligrosidad,fecha,descripcion
+ *                              |  Actualiza la lista de waypoints
+ * [ERROR] Unknown message format: "mensaje" |  Muestra un mensaje de error
  * </pre>
  *
  * @see Client
@@ -41,17 +45,19 @@ public class ServerConnection implements Runnable {
      *
      * @throws IOException
      */
-    public ServerConnection(Socket s, Client client) throws IOException {
+    public ServerConnection(Socket s, Client client, BufferedReader in) {
         this.client = client;
         this.clientGUI = client.getClientGUI();
         this.server = s;
-        this.in = new BufferedReader(new InputStreamReader(server.getInputStream()));
+        this.in = in;
+
         System.out.println("Conexión establecida con el servidor!");
         System.out.println("Manejando al cliente " + client.getUsername());
     }
 
     @Override
     public void run() {
+
         try {
             /* Bucle en el cual se comprueba si hay nuevos mensajes por parte del servidor y
             * permite llamar a métodos de la clase del cliente en función del tipo de mensaje
@@ -101,9 +107,9 @@ public class ServerConnection implements Runnable {
      *
      * @throws IOException
      */
-    private String waitForMessage() throws IOException {
+    public String waitForMessage() throws IOException {
         String serverResponse = in.readLine();
-        if (serverResponse.isEmpty()) {
+        if (serverResponse == null) {
             return waitForMessage();
         } else {
             return serverResponse;
@@ -123,6 +129,7 @@ public class ServerConnection implements Runnable {
         reporte.setDate(date);
         reporte.setDescripcion(waypoints[5]);
         clientGUI.updateWaypoints(reporte);
+//        JOptionPane.showOptionDialog(null, "Warning", "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, new Object[]{}, null);
     }
 
     /**

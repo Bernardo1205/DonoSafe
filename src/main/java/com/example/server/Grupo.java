@@ -50,7 +50,7 @@ public class Grupo {
      */
     public void sendMessage(String sender, String message) {
         for (ClientHandler clientHandler : clientes) {
-            clientHandler.sendMessageToClient(clientHandler.getClientName(), "GROUP " + this.id + ":" + sender + "] " + message) ;
+            clientHandler.sendMessageToClient("GROUP " + this.id + ":" + sender + "] " + message) ;
         }
     }
 

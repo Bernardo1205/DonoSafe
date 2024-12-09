@@ -63,7 +63,7 @@ public class MainPanel extends JPanel {
                     Point converted_pont2D = new Point((int) point2D.getX()-rect.x,
                             (int)point2D.getY() -rect.y);
                     if (converted_pont2D.distance(e.getPoint())<10){
-                        VentanaInfoWaypoint ventanaInfoWaypoint = new VentanaInfoWaypoint(waypoint);
+                        VentanaInfoWaypoint ventanaInfoWaypoint = new VentanaInfoWaypoint(jFrame, waypoint);
                         ventanaInfoWaypoint.setVisible(true);
                     }
                 }

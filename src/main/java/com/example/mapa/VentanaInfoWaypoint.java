@@ -6,12 +6,14 @@ import java.awt.*;
 
 public class VentanaInfoWaypoint extends JFrame {
 
-    public VentanaInfoWaypoint(Reporte reporte) {
+    private static final int WIDTH = 350;
+    private static final int HEIGHT = 350;
+
+    public VentanaInfoWaypoint(JFrame parent, Reporte reporte) {
         setTitle("Información del Waypoint");
-        setSize(350, 350);
+        setSize(WIDTH, HEIGHT);
+        setLocation(parent.getX() + (parent.getWidth() - WIDTH) / 2, (int) (parent.getY() + (parent.getHeight() - HEIGHT) / 2.5));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-
 
         Font labelFont = new Font("Arial", Font.BOLD, 14);
         Font textFont = new Font("Arial", Font.PLAIN, 12);
@@ -19,12 +21,10 @@ public class VentanaInfoWaypoint extends JFrame {
         Color borderColor = new Color(0, 120, 215);
         Color labelColor = Color.DARK_GRAY;
 
-
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.setBackground(backgroundColor);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
 
         TitledBorder title = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(borderColor, 2), "Detalles del Waypoint");
         title.setTitleJustification(TitledBorder.CENTER);
@@ -42,21 +42,23 @@ public class VentanaInfoWaypoint extends JFrame {
         jTextArea.setText(reporte.getDescripcion());
         jTextArea.setFont(textFont);
         jTextArea.setEditable(false);
+
         JScrollPane jScrollPane = new JScrollPane(jTextArea);
         mainPanel.add(jScrollPane, BorderLayout.CENTER);
 
-
         JPanel buttonPanel = new JPanel();
+
         JButton closeButton = new JButton("Cerrar");
         closeButton.setFont(new Font("Arial", Font.BOLD, 14));
         closeButton.setBackground(borderColor);
         closeButton.setForeground(Color.WHITE);
         closeButton.addActionListener(e -> dispose());
+
         buttonPanel.add(closeButton);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-        setResizable(false);
+
         add(mainPanel);
 
-
+        setResizable(false);
     }
 }
