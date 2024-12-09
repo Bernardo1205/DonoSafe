@@ -54,7 +54,7 @@ public class BaseDatos {
     }
 
     public void insertarUsuario(String nombre, String username, String sexo, String edad, String contraseña, Array reseñas, String fecha_registro, String email, String descripcion) {
-        String comandoInsertarUsuario = "INSERT INTO Usuario VALUES (?,?,?,?,?,?,?,?,?,?)";
+        String comandoInsertarUsuario = "INSERT INTO Usuario VALUES ('autoincrement',?,?,?,?,?,?,?,?,?)";
 
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(2, nombre);
@@ -75,7 +75,7 @@ public class BaseDatos {
 
     public void insertarReporte(int id, String descripcionReporte,String horaDelReporte,
                                 String horaCreacion, String tipoPeligro) {
-        String comandoInsertarUsuario = "INSERT INTO Reporte VALUES (?,?,?,?,?,?,?)";
+        String comandoInsertarUsuario = "INSERT INTO Reporte VALUES ('autoincrement',?,?,?,?,?,?)";
         Statement statement = null;
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -110,7 +110,7 @@ public class BaseDatos {
     public void insertarMensaje(String groupId, int id_usuario, String fecha, String contenido) {
         //int grupoId, String username/id, String mensaje, String fecha
 
-        String comandoInsertarMensaje = "INSERT INTO Mensaje VALUES (?,?,?,?)";
+        String comandoInsertarMensaje = "INSERT INTO Mensaje VALUES ('autoincrement',?,?,?)";
 
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarMensaje, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -126,10 +126,11 @@ public class BaseDatos {
         }
     }
 
-    public void insertarGrupo(Array clientes, String destino, String origen, String fecha) {
-        String comandoInsertarGrupo = "INSERT INTO Grupo VALUES (?,?,?,?,?)";
+    public void insertarGrupo(String[] clientes, String destino, String origen, String fecha) {
+        String comandoInsertarGrupo = "INSERT INTO Grupo VALUES ('autoincrement',?,?,?,?)";
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setArray(2, clientes);
+            Array sqlArray = con.createArrayOf("VARCHAR", clientes);
+            pstmt.setArray(2, sqlArray);
             pstmt.setString(3, destino);
             pstmt.setString(4, origen);
             pstmt.setString(5, fecha);
@@ -143,7 +144,7 @@ public class BaseDatos {
 
 
     public void insertarReseña(String contenidoReseña, int calificacion, String fecha, int idReseñador, int idUsuario) {
-        String comandoInsertarGrupo = "INSERT INTO Reseña VALUES (?,?,?,?,?,?)";
+        String comandoInsertarGrupo = "INSERT INTO Reseña VALUES ('autoincrement',?,?,?,?,?)";
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(2, contenidoReseña);
             pstmt.setInt(3, idReseñador);
