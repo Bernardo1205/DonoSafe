@@ -73,25 +73,24 @@ public class BaseDatos {
         }
     }
 
-    public void insertarReporte(int id, String descripcionReporte,String horaDelReporte,
-                                String horaCreacion, String tipoPeligro) {
+    public void insertarReporte(double longitud, double latitud, String tipoPeligro, String horaCreacion,
+                                int idUsuario, String descripcionReporte, String horaDelReporte ) {
         String comandoInsertarUsuario = "INSERT INTO Reporte VALUES ('autoincrement',?,?,?,?,?,?)";
         Statement statement = null;
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
 
-            pstmt.setInt(2, id);
+            pstmt.setInt(2, idUsuario);
 
             pstmt.setString(3,descripcionReporte);
 
-            //LocalDateTime hora_reporte = horaDelReporte;
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             //String hora_formateada = hora_reporte.format(formatter);
-            //pstmt.setString(4, horaDelReporte);
+            pstmt.setString(4, horaDelReporte);
 
 
             //LocalDateTime fecha_reporte_creacion = horaCreacion;
             //String fecha_formateada = fecha_reporte_creacion.format(formatter);
-            pstmt.setString(5, horaDelReporte);
+            pstmt.setString(5, horaCreacion);
 
             LocalDateTime fecha_reporte_creacion = LocalDateTime.parse(horaDelReporte, formatter);
             LocalDateTime fecha_reporte_finalizacion = fecha_reporte_creacion.plusHours(1);
@@ -99,6 +98,8 @@ public class BaseDatos {
             pstmt.setString(6, fecha_finalizacion_formateada);
 
             pstmt.setString(7, tipoPeligro);
+
+
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -211,7 +212,7 @@ public class BaseDatos {
 
         return mensajes;
     }
-    public ArrayList<List> getGrupo(int id_usuario){
+    public ArrayList<List> getGruposUsuario(int id_usuario){
         ArrayList<List> grupos = new ArrayList<>();
         String sql = "SELECT id_grupo, usuarios, destino, inicio, fecha_creacion FROM Grupo ORDER BY fecha_hora ASC";
         try (Statement stmt = con.createStatement();
@@ -242,7 +243,7 @@ public class BaseDatos {
         return grupos;
     }
 
-    public void getReporte() {
+    public ArrayList<String[]> getReporte() {
         String consulta = "SELECT id_reporte, id_usuario, descripcion, hora, fecha_creacion, fecha_fin, Tipo_peligro FROM Reporte";
         ArrayList<String[]> reportes = new ArrayList<>();
 
@@ -274,42 +275,125 @@ public class BaseDatos {
         } catch (SQLException e) {
             throw new RuntimeException("Error al ejecutar la consulta: " + e.getMessage(), e);
         }
+        return reportes;
     }
 
-    public void ainadirUsuario(int id_usuario) throws SQLException {
-        try (Statement stmt = con.createStatement()) {
-            String seleccionarUsuarios = "SELECT usuarios FROM Grupo";
-            ResultSet rs = stmt.executeQuery(seleccionarUsuarios);
-            ArrayList<Integer> idsUsuarioGrupo = new ArrayList<>();
-            idsUsuarioGrupo.add(rs.getInt("usuarios"));
+    public void añadirUsuario(int grupoId, int clienteId) {
+        // Query para verificar si el grupo existe
+        String verificarGrupo = "SELECT usuarios FROM Grupo WHERE id_grupo = ?";
+        // Query para actualizar la lista de usuarios
+        String actualizarUsuarios = "UPDATE Grupo SET usuarios = ? WHERE id_grupo = ?";
 
-            if (idsUsuarioGrupo.contains(id_usuario)) {
-                System.out.println("Este usuario ya está en el grupo");
-            } else {
-                idsUsuarioGrupo.add(id_usuario);
+        try (PreparedStatement verificarStmt = con.prepareStatement(verificarGrupo);
+             PreparedStatement actualizarStmt = con.prepareStatement(actualizarUsuarios)) {
+
+            // Verificar si el grupo existe
+            verificarStmt.setInt(1, grupoId);
+            ResultSet rs = verificarStmt.executeQuery();
+
+            if (!rs.next()) {
+                System.out.println("El grupo con id " + grupoId + " no existe en la base de datos.");
+                return;
             }
 
-            String updateUsuario = "UPDATE Grupo SET usuarios = ?";
-        }
-    }
-    public void eliminarUsuario(int grupoId, int clienteId) {
-
-        try (Statement stmt = con.createStatement()) {
-            String seleccionarUsuarios = "SELECT usuarios FROM Grupo";
-            ResultSet rs = stmt.executeQuery(seleccionarUsuarios);
+            // Parsear los usuarios a un array de enteros
+            String usuariosString = rs.getString("usuarios");
             ArrayList<Integer> idsUsuarioGrupo = new ArrayList<>();
-            idsUsuarioGrupo.add(rs.getInt("usuarios"));
+            if (usuariosString != null && !usuariosString.isEmpty()) {
+                String[] usuariosArray = usuariosString.split(",");
+                for (String usuario : usuariosArray) {
+                    idsUsuarioGrupo.add(Integer.parseInt(usuario.trim()));
+                }
+            }
 
+            // Verificar si el clienteId ya está en el array
             if (idsUsuarioGrupo.contains(clienteId)) {
-                idsUsuarioGrupo.remove(clienteId);
-            } else {
-                System.out.println("Ese usuario no está en el grupo");
+                System.out.println("El usuario con id " + clienteId + " ya está en el grupo con id " + grupoId);
+                return;
             }
 
-            String updateUsuario = "UPDATE Grupo SET usuarios = ?";
+            // Añadir el clienteId al array
+            idsUsuarioGrupo.add(clienteId);
+
+            // Convertir la lista de usuarios de nuevo a un formato String para actualizar la base de datos
+            StringBuilder usuariosActualizados = new StringBuilder();
+            for (int id : idsUsuarioGrupo) {
+                if (usuariosActualizados.length() > 0) {
+                    usuariosActualizados.append(",");
+                }
+                usuariosActualizados.append(id);
+            }
+
+            // Actualizar la base de datos
+            actualizarStmt.setString(1, usuariosActualizados.toString());
+            actualizarStmt.setInt(2, grupoId);
+            actualizarStmt.executeUpdate();
+
+            System.out.println("El usuario con id " + clienteId + " ha sido añadido al grupo con id " + grupoId);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error al añadir el usuario al grupo: " + e.getMessage(), e);
+        }
+    }
+
+    public void eliminarUsuarioGrupo(int grupoId, int clienteId) {
+        // Query para verificar si el grupo existe
+        String verificarGrupo = "SELECT usuarios FROM Grupo WHERE id_grupo = ?";
+        // Query para actualizar la lista de usuarios
+        String actualizarUsuarios = "UPDATE Grupo SET usuarios = ? WHERE id_grupo = ?";
+
+        try (PreparedStatement verificarStmt = con.prepareStatement(verificarGrupo);
+             PreparedStatement actualizarStmt = con.prepareStatement(actualizarUsuarios)) {
+
+            // Verificar si el grupo existe
+            verificarStmt.setInt(1, grupoId);
+            ResultSet rs = verificarStmt.executeQuery();
+
+            if (!rs.next()) {
+                System.out.println("El grupo con id " + grupoId + " no existe en la base de datos.");
+                return;
+            }
+
+            // Parsear los usuarios a un array de enteros
+            String usuariosString = rs.getString("usuarios");
+            if (usuariosString == null || usuariosString.isEmpty()) {
+                System.out.println("El grupo no tiene usuarios registrados.");
+                return;
+            }
+
+            String[] usuariosArray = usuariosString.split(",");
+            ArrayList<Integer> idsUsuarioGrupo = new ArrayList<>();
+            for (String usuario : usuariosArray) {
+                idsUsuarioGrupo.add(Integer.parseInt(usuario.trim()));
+            }
+
+            // Verificar si el clienteId está en el array
+            if (!idsUsuarioGrupo.contains(clienteId)) {
+                System.out.println("El usuario con id " + clienteId + " no está en el grupo con id " + grupoId);
+                return;
+            }
+
+            // Eliminar el clienteId del array
+            idsUsuarioGrupo.remove((Integer) clienteId);
+
+            // Convertir la lista de usuarios de nuevo a un formato String para actualizar la base de datos
+            StringBuilder usuariosActualizados = new StringBuilder();
+            for (int id : idsUsuarioGrupo) {
+                if (usuariosActualizados.length() > 0) {
+                    usuariosActualizados.append(",");
+                }
+                usuariosActualizados.append(id);
+            }
+
+            // Actualizar la base de datos
+            actualizarStmt.setString(1, usuariosActualizados.toString());
+            actualizarStmt.setInt(2, grupoId);
+            actualizarStmt.executeUpdate();
+
+            System.out.println("El usuario con id " + clienteId + " ha sido eliminado del grupo con id " + grupoId);
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al eliminar el usuario del grupo: " + e.getMessage(), e);
         }
     }
 }
