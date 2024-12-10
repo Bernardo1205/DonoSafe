@@ -498,7 +498,7 @@ public class App extends JFrame {
         messageField.addActionListener(e -> {
             String message = messageField.getText();
             if (!message.isEmpty()) {
-                client.sendMessageToServer("GROUP " + group + ":" + client.getUsername() + "] " + message);
+                client.sendMessageToServer("GROUP " + group + ":" + client.getId() + "] " + message);
                 messageField.setText("");
             }
         });

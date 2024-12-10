@@ -93,9 +93,13 @@ public class ClientHandler implements Runnable {
                     createGroup(groupCreator, groupInfo[0], groupInfo[1],groupInfo[2]);
                     bbdd.insertarGrupo(Integer.parseInt(groupCreator),groupInfo[1],groupInfo[0],groupInfo[2]);
                 } else if (message.startsWith("JOIN_GROUP ")) {
-                    String userName = message.substring(11, message.indexOf(" TO ")).strip();
+                    //Guardar en la base de datos
+                    String id = message.substring(11, message.indexOf(" TO ")).strip();
+                    int idParseado = Integer.parseInt(id);
                     String groupId = message.substring(message.indexOf(" TO ") + 4);
-                    joinGroup(groupId, clients.get(userName));
+                    int grupoIdParseado = Integer.parseInt(groupId);
+                    joinGroup(groupId, clients.get(id));
+                    bbdd.añadirUsuario(grupoIdParseado, idParseado);
                 } else {
                     System.out.println("Unknown type " + message);
                 }

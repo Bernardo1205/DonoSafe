@@ -1,5 +1,7 @@
 package main.java.com.example.client;
 
+import main.java.com.example.database.BaseDatos;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -106,6 +108,7 @@ public class ClientRegister extends JFrame {
         createAccountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 String nombreArchivo = System.getProperty("user.dir") + File.separator + "datos.txt";
                 String email = emailField.getText();
                 String name = nameField.getText();
