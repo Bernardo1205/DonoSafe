@@ -25,6 +25,8 @@ public class Server {
         bbdd = new BaseDatos();
         bbdd.ConectarBaseDatos();
 
+        System.out.println(bbdd.getUsuarios());
+
         /* Bucle principal que crea instancias de ClientHandler a medida que recicbe conexiones de clientes */
         while (true) {
             System.out.println("[SERVER] Waiting for client connection...");

@@ -137,7 +137,7 @@ public class ClientLogin {
             public void actionPerformed(ActionEvent e) {
 
                 frame.dispose();
-                new ClientRegister().setVisible(true);
+                new ClientRegister(client).setVisible(true);
             }
         });
     }
@@ -146,7 +146,7 @@ public class ClientLogin {
      * INVALID si no lo son y ConnectionError en caso de que el usuario ya esté conectado.
      */
     private int validateLogin(String username, String password) throws IOException, InterruptedException {
-        client.sendMessageToServer(username+","+password);
+        client.sendMessageToServer("Login:" + username+","+password);
         String serverValidation = client.waitForMessage();
 
         return Integer.parseInt(serverValidation.substring(6, 9));

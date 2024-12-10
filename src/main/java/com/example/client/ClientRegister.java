@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class ClientRegister extends JFrame {
 
-    public ClientRegister() {
+    public ClientRegister(Client client) {
         setTitle("Creación de Cuenta");
         setSize(350, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,46 +47,56 @@ public class ClientRegister extends JFrame {
         nameField.setBounds(170, 40, 150, 25);
         mainPanel.add(nameField);
 
+        JLabel usernameLabel = new JLabel("Nombre de Usuario:");
+        usernameLabel.setFont(labelFont);
+        usernameLabel.setBounds(10, 90, 150, 25);
+        mainPanel.add(usernameLabel);
+
+        JTextField usernameField = new JTextField(20);
+        usernameField.setFont(inputFont);
+        usernameField.setBounds(170, 90, 150, 25);
+        mainPanel.add(usernameField);
+
         JLabel emailLabel = new JLabel("Correo Gmail:");
         emailLabel.setFont(labelFont);
-        emailLabel.setBounds(10, 90, 120, 25);
+        emailLabel.setBounds(10, 140, 120, 25);
         mainPanel.add(emailLabel);
 
         JTextField emailField = new JTextField(20);
         emailField.setFont(inputFont);
-        emailField.setBounds(170, 90, 150, 25);
+        emailField.setBounds(170, 140, 150, 25);
         mainPanel.add(emailField);
 
         JLabel passwordLabel = new JLabel("Contraseña:");
         passwordLabel.setFont(labelFont);
-        passwordLabel.setBounds(10, 140, 120, 25);
+        passwordLabel.setBounds(10, 190, 120, 25);
         mainPanel.add(passwordLabel);
 
         JPasswordField passwordField = new JPasswordField(20);
         passwordField.setFont(inputFont);
-        passwordField.setBounds(170, 140, 150, 25);
+        passwordField.setBounds(170, 190, 150, 25);
         mainPanel.add(passwordField);
 
         JLabel passwordLabel2 = new JLabel("Repita la contraseña:");
         passwordLabel2.setFont(labelFont);
-        passwordLabel2.setBounds(10, 190, 150, 25);
+        passwordLabel2.setBounds(10, 240, 150, 25);
         mainPanel.add(passwordLabel2);
 
         JPasswordField passwordField2 = new JPasswordField(20);
         passwordField2.setFont(inputFont);
-        passwordField2.setBounds(170, 190, 150, 25);
+        passwordField2.setBounds(170, 240, 150, 25);
         mainPanel.add(passwordField2);
 
         JButton createAccountButton = new JButton("Crear Cuenta");
         createAccountButton.setFont(new Font("Arial", Font.BOLD, 14));
         createAccountButton.setBackground(buttonColor);
         createAccountButton.setForeground(buttonTextColor);
-        createAccountButton.setBounds(75, 250, 200, 40);
+        createAccountButton.setBounds(75, 290, 200, 40);
         mainPanel.add(createAccountButton);
 
         JLabel statusLabel = new JLabel("");
         statusLabel.setFont(labelFont);
-        statusLabel.setBounds(10, 310, 320, 50);
+        statusLabel.setBounds(10, 310, 350, 50);
         statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         mainPanel.add(statusLabel);
 
@@ -109,9 +119,9 @@ public class ClientRegister extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                String nombreArchivo = System.getProperty("user.dir") + File.separator + "datos.txt";
                 String email = emailField.getText();
                 String name = nameField.getText();
+                String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
                 String password2 = new String(passwordField2.getPassword());
 
@@ -125,6 +135,8 @@ public class ClientRegister extends JFrame {
                     statusLabel.setForeground(Color.RED);
                     statusLabel.setText("<html>La contraseña debe tener al menos 6 <br>caracteres.</html>");
                 } else {
+                    String infoCliente =String.join(",", name, username, password, email);
+                    client.sendMessageToServer("Register:" + infoCliente);
                     statusLabel.setForeground(Color.GREEN);
                     statusLabel.setText("Cuenta creada exitosamente.");
                 }

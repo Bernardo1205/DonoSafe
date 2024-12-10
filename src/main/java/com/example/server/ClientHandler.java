@@ -45,7 +45,7 @@ public class ClientHandler implements Runnable {
      * @param clientSocket
      * @param clients
      */
-    public ClientHandler(Socket clientSocket, HashMap<String, ClientHandler> clients, BaseDatos bbdd) {
+    public ClientHandler(Socket clientSocket, HashMap<String, ClientHandler> clients , BaseDatos bbdd) {
         this.client = clientSocket;
         this.clients = clients;
         ClientHandler.bbdd = bbdd;
@@ -57,61 +57,71 @@ public class ClientHandler implements Runnable {
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             out = new PrintWriter(client.getOutputStream(), true);
 
+            String[] line;
             String[] userInfo;
-            /* Valida el usuario y la contraseña del cliente */
+            /* Bucle que valida las credenciales del usuario */
             while (true) {
-                userInfo = waitForMessage().split(",");
-                /* Si el usuario ya está conectado */
-                if (clients.containsKey(userInfo[0])) {
-                    sendMessageToClient("Code: 409 (Conflict)");
-                }
-                clientInfo = bbdd.getUsuario(userInfo[0], userInfo[1]);
-                if (clientInfo == null) {
-                    sendMessageToClient("Code: 401 (Unauthorized)");
-                } else {
-                    this.clientName = userInfo[0];
-                    sendMessageToClient("Code: 200 (OK)");
-                    /* TODO Enviar solo los datos relevantes */
-                    /* TODO Enviar los grupos activos, reportes y alertas recientes...
-                    *   para que el cliente esté actualizado para cuando se inicie la App */
-                    sendMessageToClient(clientInfo);
-                    break;
+                line = waitForMessage().split(":");
+                if (line[0].equals("Login")) {
+                    userInfo = line[1].split(",");
+                    /* Si el usuario ya está conectado */
+                    if (clients.containsKey(userInfo[0])) {
+                        sendMessageToClient("Code: 409 (Conflict)");
+                    }
+                    clientInfo = bbdd.getUsuario(userInfo[0], userInfo[1]);
+                    if (clientInfo == null) {
+                        sendMessageToClient("Code: 401 (Unauthorized)");
+                    } else {
+                        this.clientName = userInfo[0];
+                        sendMessageToClient("Code: 200 (OK)");
+                        /* TODO Enviar los grupos activos, reportes y alertas recientes...
+                         *   para que el cliente esté actualizado para cuando se inicie la App */
+                        sendMessageToClient(clientInfo);
+                        break;
+                    }
+                } else if (line[0].equals("Register")) {
+                    userInfo = line[1].split(",");
+                    bbdd.insertarUsuario(userInfo[0], userInfo[1], userInfo[2], userInfo[3]);
                 }
             }
             clients.put(clientName, this);
             broadcastUserList();
 
-            /* Bucle principal que sirve como comunicación entre este hilo y el del cliente.
-            * Cuando recibe un mensaje, lo parsea y decide qué hacer en función de su contenido
-            */
+            /* Recibe el nombre de usuario con el que se referenciará a este hilo en los mensajes */
+            clientName = in.readLine();
+            clients.put(clientName, this);
+            broadcastUserList();
+
             String message;
             while (true) {
                 message = waitForMessage();
                 System.out.println(message);
                 int ind = message.indexOf(":");
-                if (message.startsWith("[NEW_WAYPOINT] ")) {
+                if (message.startsWith("[NEW_WAYPOINT] ")){
                     sendMessageToAll(message);
                     String[] info_waypoints = message.substring(message.indexOf(" ")).split(",");
                     Double latitud =Double.parseDouble(info_waypoints[1]);
                     Double longitud = Double.parseDouble(info_waypoints[0]);
                     info_waypoints[3] = info_waypoints[3].replace("T", " ").substring(0, info_waypoints[3].indexOf(".")-3);
                     bbdd.insertarReporte(longitud , latitud , info_waypoints[2],info_waypoints[3],Integer.parseInt(info_waypoints[4]) ,info_waypoints[5]);
+                } else if (message.startsWith("[ALERT] ")) { /* Alert message format: [ALERT] content */
+                    sendMessageToAll(message);
                 } else if (message.startsWith("@")) { /* Private message format: @targetUser message */
                     String targetUser = message.substring(1, message.indexOf(" "));
                     String privateMessage = message.substring(message.indexOf(" ") + 1);
                     clients.get(targetUser).sendMessageToClient(this.clientName + "(private): " + privateMessage);
-                } else if (message.startsWith("GROUP ")) { /* Group message format: GROUP groupId:sender]message */
+                } else if (message.startsWith("GROUP ")) {
                     String targerGroup = message.substring(message.indexOf(" ")+1, ind).strip();
                     String sender = message.substring(ind+1, message.indexOf("]"));
-                    String contenido = message.substring(message.indexOf("]")+1);
-                    //TODO guardar mensaje grupal en la base de datos
+                    String contenido = message.substring(message.indexOf("]")+2);
+                    //TODO guardar en la base de datos
 
                     mapGrupos.get(targerGroup).sendMessage(sender, contenido);
                 } else if (message.startsWith("[NEW_GROUP] ")) { /* New group message format: [NEW_GROUP] groupName:username*/
                     String groupCreator = message.substring(message.indexOf(" ")+1, message.lastIndexOf("|"));
                     String[] groupInfo = message.substring(message.lastIndexOf("|")).split(";");
                     createGroup(groupCreator, groupInfo[0], groupInfo[1],groupInfo[2]);
-                    bbdd.insertarGrupo(Integer.parseInt(groupCreator),groupInfo[1],groupInfo[0],groupInfo[2]);
+                    bbdd.insertarGrupo(Integer.parseInt(groupCreator),groupInfo[1],groupInfo[0],groupInfo[2],LocalDate.now().toString());
                 } else if (message.startsWith("JOIN_GROUP ")) {
                     //Guardar en la base de datos
                     String id = message.substring(11, message.indexOf(" TO ")).strip();
@@ -121,16 +131,8 @@ public class ClientHandler implements Runnable {
                     joinGroup(groupId, clients.get(id));
                     bbdd.añadirUsuario(grupoIdParseado, idParseado);
 
-                } else if (message.startsWith("[New Client] |")){
-                    String infoCliente = message.substring(message.indexOf("|") + 1).strip();
-                    String id = message.substring(message.lastIndexOf(",") + 1).strip();
-                    int idParseado = Integer.parseInt(id);
-                    String nombre = message.substring(message.indexOf("|") + 1, message.indexOf(",")).strip();
-                    String email = message.substring(message.indexOf(",") + 1, message.lastIndexOf(",password")).strip();
-                    String password = message.substring(message.lastIndexOf(",password") + 1, message.lastIndexOf(",")).strip();
-                    bbdd.insertarUsuario(nombre, password, email);
-                }else {
-                    System.out.println("[Error Code: 400 (Bad Request)] " + message);
+                } else {
+                    System.out.println("Unknown type " + message);
                 }
             }
         } catch (SocketException e1) {
@@ -151,7 +153,7 @@ public class ClientHandler implements Runnable {
      */
     private String waitForMessage() throws IOException {
         String serverResponse = in.readLine();
-        if (serverResponse == null) {
+        if (serverResponse.isEmpty()) {
             return waitForMessage();
         } else {
             return serverResponse;
@@ -202,10 +204,12 @@ public class ClientHandler implements Runnable {
      * Manda un mensaje privado a un cliente en específico
      */
     public void sendMessageToClient(String message) {
-        this.out.println(message);
+        if (out != null) {
+            out.println(message);
+        }
     }
 
-    public void sendMessageToClient(ClientHandler clientHandler, String message) {
+    public void sendMessageToClient2(ClientHandler clientHandler, String message) {
         if (clientHandler != null) {
             clientHandler.out.println(message);
         }
