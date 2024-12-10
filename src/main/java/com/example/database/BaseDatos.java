@@ -126,15 +126,13 @@ public class BaseDatos {
         }
     }
 
-    public void insertarGrupo(String[] clientes, String destino, String origen, String fecha) {
+    public void insertarGrupo(int idCreador, String destino, String origen, String fecha) {
         String comandoInsertarGrupo = "INSERT INTO Grupo VALUES ('autoincrement',?,?,?,?)";
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)) {
-            Array sqlArray = con.createArrayOf("VARCHAR", clientes);
-            pstmt.setArray(2, sqlArray);
+            pstmt.setInt(2, idCreador);
             pstmt.setString(3, destino);
             pstmt.setString(4, origen);
             pstmt.setString(5, fecha);
-
             pstmt.executeUpdate();
 
         } catch (SQLException e) {

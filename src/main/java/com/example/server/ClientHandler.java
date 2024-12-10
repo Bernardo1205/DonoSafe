@@ -91,6 +91,7 @@ public class ClientHandler implements Runnable {
                     String groupCreator = message.substring(message.indexOf(" ")+1, message.lastIndexOf("|"));
                     String[] groupInfo = message.substring(message.lastIndexOf("|")).split(";");
                     createGroup(groupCreator, groupInfo[0], groupInfo[1],groupInfo[2]);
+                    bbdd.insertarGrupo(Integer.parseInt(groupCreator),groupInfo[1],groupInfo[0],groupInfo[2]);
                 } else if (message.startsWith("JOIN_GROUP ")) {
                     String userName = message.substring(11, message.indexOf(" TO ")).strip();
                     String groupId = message.substring(message.indexOf(" TO ") + 4);
@@ -177,7 +178,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void sendMessageToClient(ClientHandler clientHandler, String message) {
+    public void sendMessageToClient2(ClientHandler clientHandler, String message) {
         if (clientHandler != null) {
             clientHandler.out.println(message);
         }
