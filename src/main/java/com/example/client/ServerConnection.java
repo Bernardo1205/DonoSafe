@@ -69,8 +69,6 @@ public class ServerConnection implements Runnable {
                 int ind = serverResponse.indexOf(":");
                 if (serverResponse.startsWith("[NEW_WAYPOINT] ")) {
                     actulizarWaypoints(serverResponse);
-                } else if (serverResponse.startsWith("[ALERT] ")) {
-                    clientGUI.showAlert(serverResponse);
                 } else if (serverResponse.startsWith("USERS_LIST:")) {
                     if (serverResponse.contains("," + client.getUsername() + ",")) {
                         serverResponse = serverResponse.replace("," + client.getUsername() + ",", ",");
@@ -129,19 +127,21 @@ public class ServerConnection implements Runnable {
         reporte.setDate(date);
         reporte.setDescripcion(waypoints[5]);
         clientGUI.updateWaypoints(reporte);
-//        JOptionPane.showOptionDialog(null, "Warning", "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, new Object[]{}, null);
     }
 
     /**
      * Muestra un mensaje privado entre dos personas
      */
     private void showPrivateMessage(String s) {
-        if (!clientGUI.getUserTalkingTo().equals(s.substring(0, s.indexOf("(")))) {
-            String user = s.substring(0, s.indexOf("(private)"));
-            String msg = s.substring(s.indexOf(":")+2);
+        String user = s.substring(0, s.indexOf("(private)"));
+        String msg = s.substring(s.indexOf(":")+2);
+        /* Si el cliente no tiene chat abierto, le muestra en la pantalla de chats que ha recibido un mensaje */
+        if (clientGUI.getChat() == null) {
+            clientGUI.receiveMessage(user, msg);
+        } else if (!clientGUI.getChat().getChatName().equals(user)) {
             clientGUI.receiveMessage(user, msg);
         } else {
-            clientGUI.addPrivateMessage(s.replaceFirst("[(]private[)]", ""));
+            clientGUI.addPrivateMessage(user, msg);
         }
     }
 
@@ -153,10 +153,14 @@ public class ServerConnection implements Runnable {
         String sender = s.substring(s.indexOf(":")+1, s.indexOf("]"));
         String msg = s.substring(s.indexOf("]")+2);
 
-        if (sender.equals(client.getUsername())) {
-            clientGUI.addGroupMessage("You: " + msg);
-        } else if (clientGUI.getGrupoActual().equals(group)) {
-            clientGUI.addGroupMessage(sender + ": " + msg);
+        if (clientGUI.getChat() == null) {
+            return;
+        } else if (sender.equals(client.getUsername())) {
+            clientGUI.addGroupMessage("You", msg);
+        } else if (clientGUI.getChat().getChatId().equals(group)) {
+            clientGUI.addGroupMessage(sender, msg);
+        } else {
+            System.out.println("Mensaje de grupo recibido pero no se muestra");
         }
     }
 

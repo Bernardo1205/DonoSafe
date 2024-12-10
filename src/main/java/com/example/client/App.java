@@ -22,7 +22,6 @@ import java.util.Vector;
 
 public class App extends JFrame {
 
-    private String grupoActual = "";
     private boolean esperarClick;
     private String textoWaypoint;
 
@@ -40,12 +39,7 @@ public class App extends JFrame {
     private JPanel userListPanel;
     private JPanel groupChatPanel;
     private JPanel groupsListPanel;
-    private JPanel alertsArea;
-    private JPanel messagesPanel;
-
-    private JScrollPane scrollMessages;
-    private JLabel userTalkingTo;
-    private JLabel groupTalkingTo;
+    private Chat chat;
 
     private DefaultTableModel modeloGrupos;
     private DefaultTableModel modeloUsers;
@@ -115,6 +109,7 @@ public class App extends JFrame {
         CardLayout cardLayout = (CardLayout) panelPrincipal.getLayout();
         cardLayout.show(panelPrincipal, panelName);
     }
+
     private void styleButton(JButton button) {
         // Estilo moderno para los botones
         button.setBackground(new Color(72, 122, 240));
@@ -257,7 +252,7 @@ public class App extends JFrame {
 //                    c.setBackground(table.getSelectionBackground());;
 //                }
                 c.setOpaque(column != 2);
-                tablaUsers.setRowHeight(20);
+                tablaUsers.setRowHeight(30);
 
                 return c;
             }
@@ -432,18 +427,6 @@ public class App extends JFrame {
     }
 
     /**
-     * Añade una alerta
-     * @param alert
-     */
-    void showAlert(String alert) {
-        SwingUtilities.invokeLater(() -> {
-            alertsArea.add(new JLabel(alert));
-            alertsArea.repaint();
-            alertsArea.revalidate();
-        });
-    }
-
-    /**
      * Añade el mensaje a {@link #unreadMessages} y llama a {@link #updateUserList(String, String)}
      *
      * @param fromUser
@@ -458,9 +441,7 @@ public class App extends JFrame {
      * Cambia la vista del {@link #cardLayout} a la del panel con el
      * listado de usuarios conectados
      */
-    private void showUsersList() {
-        if (userTalkingTo != null) {userTalkingTo.setText("");};
-        if (groupTalkingTo != null) {groupTalkingTo.setText("");};
+    public void showUsersList() {
         chatCardLayout.show(chatSection, "Users Section");
     }
 
@@ -475,127 +456,44 @@ public class App extends JFrame {
 
         String[] groupInfo = client.getGrupos().get(group);
 
-        grupoActual = group;
+        chat = new Chat(this, group, groupInfo[0] + " - " + groupInfo[1], TipoChat.GRUPO);
+        groupChatPanel.add(chat);
 
-        JPanel headerPanel = new JPanel(new BorderLayout());
-
-        groupTalkingTo = new JLabel(groupInfo[0] + " - " + groupInfo[1]);
-        JButton exitChatButton = new JButton("<--");
-        exitChatButton.addActionListener(e -> {
-            grupoActual = "";
-            showUsersList();
-        });
-        headerPanel.add(exitChatButton, BorderLayout.WEST);
-        headerPanel.add(groupTalkingTo, BorderLayout.CENTER);
-        groupChatPanel.add(headerPanel, BorderLayout.NORTH);
-
-        messagesPanel = new JPanel();
-        messagesPanel.setLayout(new BoxLayout(messagesPanel, BoxLayout.Y_AXIS));
-        scrollMessages = new JScrollPane(messagesPanel);
-        groupChatPanel.add(scrollMessages, BorderLayout.CENTER);
-
-        JTextField messageField = new JTextField();
-        messageField.addActionListener(e -> {
-            String message = messageField.getText();
-            if (!message.isEmpty()) {
-                client.sendMessageToServer("GROUP " + group + ":" + client.getUsername() + "] " + message);
-                messageField.setText("");
-            }
-        });
-        groupChatPanel.add(messageField, BorderLayout.SOUTH);
-        groupChatPanel.revalidate();
-        groupChatPanel.repaint();
     }
 
     public void openPrivateChat(String targetUser) {
 
         chatPanel.removeAll();
 
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        userTalkingTo = new JLabel(targetUser);
-        JButton exitChatButton = new JButton("<--");
-        exitChatButton.addActionListener(e -> {
-            showUsersList();
-        });
-        headerPanel.add(exitChatButton, BorderLayout.WEST);
-        headerPanel.add(userTalkingTo, BorderLayout.CENTER);
-
-        chatPanel.add(headerPanel, BorderLayout.NORTH);
-
-        messagesPanel = new JPanel();
-        messagesPanel.setLayout(new BoxLayout(messagesPanel, BoxLayout.Y_AXIS));
-        scrollMessages = new JScrollPane(messagesPanel);
-        chatPanel.add(scrollMessages, BorderLayout.CENTER);
-
-        /* Envía un mensaje al servidor indicando a quien va dirigido el mensaje y su contenido */
-        JTextField messageField = new JTextField();
-        messageField.addActionListener(e -> {
-            String message = messageField.getText();
-            client.sendMessageToServer("@" + targetUser + " " + message);
-            addPrivateMessage("You: " + message);
-            messageField.setText("");
-        });
-        chatPanel.add(messageField, BorderLayout.SOUTH);
-        chatPanel.revalidate();
-        chatPanel.repaint();
+        chat = new Chat(this, targetUser, TipoChat.PRIVADO);
+        chatPanel.add(chat);
     }
 
-    public void addPrivateMessage(String message) {
-        SwingUtilities.invokeLater(() -> {
-            // Verifica si el scroll está en el extremo inferior
-            boolean isAtBottom = scrollMessages.getVerticalScrollBar().getValue() +
-                    scrollMessages.getVerticalScrollBar().getVisibleAmount() ==
-                    scrollMessages.getVerticalScrollBar().getMaximum();
-            messagesPanel.add(new JLabel(message));
-            messagesPanel.revalidate();       // Revalidate to refresh the layout
-            messagesPanel.repaint();          // Repaint to ensure the new message is displayed
-            // Si el scroll estaba abajo, desplazarse automáticamente al final
-            if (isAtBottom) {
-                SwingUtilities.invokeLater(() -> {
-                    scrollMessages.getVerticalScrollBar().setValue(
-                            scrollMessages.getVerticalScrollBar().getMaximum());
-                });
-            }
-        });
+    public Client getClient() {
+        return client;
     }
 
-    public void addGroupMessage(String message) {
-        SwingUtilities.invokeLater(() -> {
-            // Verifica si el scroll está en el extremo inferior
-            boolean isAtBottom = scrollMessages.getVerticalScrollBar().getValue() +
-                    scrollMessages.getVerticalScrollBar().getVisibleAmount() ==
-                    scrollMessages.getVerticalScrollBar().getMaximum();
-            messagesPanel.add(new JLabel(message));
-            messagesPanel.revalidate();       // Revalidate to refresh the layout
-            messagesPanel.repaint();          // Repaint to ensure the new message is displayed
-            // Si el scroll estaba abajo, desplazarse automáticamente al final
-            if (isAtBottom) {
-                SwingUtilities.invokeLater(() -> {
-                    scrollMessages.getVerticalScrollBar().setValue(
-                            scrollMessages.getVerticalScrollBar().getMaximum());
-                });
-            }
-        });
+    public Chat getChat() {
+        return chat;
     }
 
-    public String getUserTalkingTo() {
-        if (userTalkingTo==null) return "";
-        return this.userTalkingTo.getText();
+    public void addPrivateMessage(String sender, String message) {
+
+        chat.addMessage(new Mensaje(sender, message, TipoChat.PRIVADO));
+
+    }
+
+    public void addGroupMessage(String sender, String message) {
+
+        chat.addMessage(new Mensaje(sender, message, TipoChat.GRUPO));
+
     }
 
     public JPanel getGroupChatPanel() {
         return groupChatPanel;
     }
 
-    public String getGrupoActual() {
-        return this.grupoActual;
-    }
-
     public HashMap<String, String[]> getGrupos() {
         return grupos;
     }
-
-//    public static void main(String[] args) {
-//        new App(new Client());
-//    }
 }

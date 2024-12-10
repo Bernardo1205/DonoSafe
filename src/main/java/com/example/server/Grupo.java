@@ -48,7 +48,9 @@ public class Grupo {
      */
     public void sendMessage(String sender, String message) {
         for (ClientHandler clientHandler : clientes) {
-            clientHandler.sendMessageToClient("GROUP " + this.id + ":" + sender + "] " + message) ;
+            if (!clientHandler.getClientName().equals(sender)) {
+                clientHandler.sendMessageToClient("GROUP " + this.id + ":" + sender + "] " + message);
+            }
         }
     }
 
@@ -59,7 +61,7 @@ public class Grupo {
     public void añadirUsuario(ClientHandler cliente) {
         if (!this.getClientes().contains(cliente)) {
             this.clientes.add(cliente);
-            this.sendMessage("[SERVER]", cliente.getClientName() + " joined the chat!");
+            this.sendMessage("SERVER]", cliente.getClientName() + " joined the chat!");
         }
     }
 

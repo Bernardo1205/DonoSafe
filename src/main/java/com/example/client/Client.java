@@ -20,9 +20,9 @@ import java.util.Set;
  * La clase Client se encarga de renderizar la pantalla del cliente
  * y de conectarse al servidor para luego mandar y recibir mensajes.
  *
- *
+ * @see App
  * @see ClientLogin
- * @see ClientGUI
+ * @see ClientRegister
  * @see ServerConnection
  * @author daniel.sanchez.r
  */
@@ -88,7 +88,7 @@ public class Client {
      */
     public void openChatWindow(String[] clientInfo) {
 
-        /* clientInfo contiene la información relevante al cliente dentro de la base de datos
+        /* 'clientInfo' contiene la información relevante al cliente dentro de la base de datos
         * del servidor.
         * Formato del Array: id,nombre,nombre_usuario,sexo,edad,contraseña,reseña,fecha_registro,email,descripción */
         this.id = Integer.parseInt(clientInfo[0]);

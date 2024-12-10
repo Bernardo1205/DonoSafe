@@ -100,10 +100,10 @@ public class ClientHandler implements Runnable {
                     String privateMessage = message.substring(message.indexOf(" ") + 1);
                     // TODO guardar mensaje privado en la base de datos
                     clients.get(targetUser).sendMessageToClient(this.clientName + "(private): " + privateMessage);
-                } else if (message.startsWith("GROUP ")) { /* Group message format: GROUP groupId:sender] message */
+                } else if (message.startsWith("GROUP ")) { /* Group message format: GROUP groupId:sender]message */
                     String targerGroup = message.substring(message.indexOf(" ")+1, ind).strip();
                     String sender = message.substring(ind+1, message.indexOf("]"));
-                    String contenido = message.substring(message.indexOf("]")+2);
+                    String contenido = message.substring(message.indexOf("]")+1);
                     //TODO guardar mensaje grupal en la base de datos
 
                     mapGrupos.get(targerGroup).sendMessage(sender, contenido);
@@ -140,7 +140,7 @@ public class ClientHandler implements Runnable {
      */
     private String waitForMessage() throws IOException {
         String serverResponse = in.readLine();
-        if (serverResponse.isEmpty()) {
+        if (serverResponse == null) {
             return waitForMessage();
         } else {
             return serverResponse;
