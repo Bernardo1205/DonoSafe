@@ -135,6 +135,7 @@ public class ClientLogin {
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 frame.dispose();
                 new ClientRegister().setVisible(true);
             }

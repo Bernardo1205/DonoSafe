@@ -96,4 +96,8 @@ public class Grupo {
     public LocalDateTime getFecha() {
         return fecha;
     }
+
+    public ArrayList<Integer> getClientesIds(){
+        return null;
+    }
 }

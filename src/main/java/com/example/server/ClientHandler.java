@@ -1,7 +1,8 @@
 package main.java.com.example.server;
 
-import main.java.com.example.client.Client;
 import main.java.com.example.database.BaseDatos;
+import main.java.com.example.mapa.Reporte;
+import org.jxmapviewer.viewer.GeoPosition;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,12 +31,12 @@ import java.util.*;
  * @see main.java.com.example.client.Client
  */
 public class ClientHandler implements Runnable {
+    private static BaseDatos bbdd;
     private Socket client;
     private BufferedReader in;
     private PrintWriter out;
     private static HashMap<String, Grupo> mapGrupos = new HashMap<>();
     public static HashMap<String, ClientHandler> clients;
-    private static BaseDatos bbdd;
     private String clientName;
     private String clientInfo;
 
@@ -78,7 +79,6 @@ public class ClientHandler implements Runnable {
                 }
             }
             clients.put(clientName, this);
-
             broadcastUserList();
 
             /* Bucle principal que sirve como comunicación entre este hilo y el del cliente.
@@ -89,16 +89,16 @@ public class ClientHandler implements Runnable {
                 message = waitForMessage();
                 System.out.println(message);
                 int ind = message.indexOf(":");
-                if (message.startsWith("[NEW_WAYPOINT] ")) { /* Waypoint message format: [NEW_WAYPOINT] content */
-                    //TODO guardar waypoint en la base de datos
+                if (message.startsWith("[NEW_WAYPOINT] ")) {
                     sendMessageToAll(message);
-                } else if (message.startsWith("[ALERT] ")) { /* Alert message format: [ALERT] content */
-                    // TODO guardar alerta en la base de datos
-                    sendMessageToAll(message);
+                    String[] info_waypoints = message.substring(message.indexOf(" ")).split(",");
+                    Double latitud =Double.parseDouble(info_waypoints[1]);
+                    Double longitud = Double.parseDouble(info_waypoints[0]);
+                    info_waypoints[3] = info_waypoints[3].replace("T", " ").substring(0, info_waypoints[3].indexOf(".")-3);
+                    bbdd.insertarReporte(longitud , latitud , info_waypoints[2],info_waypoints[3],Integer.parseInt(info_waypoints[4]) ,info_waypoints[5]);
                 } else if (message.startsWith("@")) { /* Private message format: @targetUser message */
                     String targetUser = message.substring(1, message.indexOf(" "));
                     String privateMessage = message.substring(message.indexOf(" ") + 1);
-                    // TODO guardar mensaje privado en la base de datos
                     clients.get(targetUser).sendMessageToClient(this.clientName + "(private): " + privateMessage);
                 } else if (message.startsWith("GROUP ")) { /* Group message format: GROUP groupId:sender]message */
                     String targerGroup = message.substring(message.indexOf(" ")+1, ind).strip();
@@ -111,14 +111,25 @@ public class ClientHandler implements Runnable {
                     String groupCreator = message.substring(message.indexOf(" ")+1, message.lastIndexOf("|"));
                     String[] groupInfo = message.substring(message.lastIndexOf("|")).split(";");
                     createGroup(groupCreator, groupInfo[0], groupInfo[1],groupInfo[2]);
-                } else if (message.startsWith("JOIN_GROUP ")) { /* Join group message format: JOIN_GROUP username TO groupId */
-                    String userName = message.substring(11, message.indexOf(" TO ")).strip();
+                    bbdd.insertarGrupo(Integer.parseInt(groupCreator),groupInfo[1],groupInfo[0],groupInfo[2]);
+                } else if (message.startsWith("JOIN_GROUP ")) {
+                    //Guardar en la base de datos
+                    String id = message.substring(11, message.indexOf(" TO ")).strip();
+                    int idParseado = Integer.parseInt(id);
                     String groupId = message.substring(message.indexOf(" TO ") + 4);
-                    // TODO añadir usuario al grupo en la base de datos
-                    joinGroup(groupId, clients.get(userName));
-                } else if (message.startsWith("[Request]")) {
-                    // TODO enviar la información solicitada
-                } else {
+                    int grupoIdParseado = Integer.parseInt(groupId);
+                    joinGroup(groupId, clients.get(id));
+                    bbdd.añadirUsuario(grupoIdParseado, idParseado);
+
+                } else if (message.startsWith("[New Client] |")){
+                    String infoCliente = message.substring(message.indexOf("|") + 1).strip();
+                    String id = message.substring(message.lastIndexOf(",") + 1).strip();
+                    int idParseado = Integer.parseInt(id);
+                    String nombre = message.substring(message.indexOf("|") + 1, message.indexOf(",")).strip();
+                    String email = message.substring(message.indexOf(",") + 1, message.lastIndexOf(",password")).strip();
+                    String password = message.substring(message.lastIndexOf(",password") + 1, message.lastIndexOf(",")).strip();
+                    bbdd.insertarUsuario(nombre, password, email);
+                }else {
                     System.out.println("[Error Code: 400 (Bad Request)] " + message);
                 }
             }
