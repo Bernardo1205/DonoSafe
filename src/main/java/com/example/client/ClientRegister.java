@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class ClientRegister extends JFrame {
 
-    public ClientRegister() {
+    public ClientRegister(Client client) {
         setTitle("Creación de Cuenta");
         setSize(350, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -125,6 +125,8 @@ public class ClientRegister extends JFrame {
                     statusLabel.setForeground(Color.RED);
                     statusLabel.setText("<html>La contraseña debe tener al menos 6 <br>caracteres.</html>");
                 } else {
+                    String infoCliente =String.join(",",name , email , password , String.valueOf(client.getId()));
+                    client.sendMessageToServer("[New Client] |" +infoCliente);
                     statusLabel.setForeground(Color.GREEN);
                     statusLabel.setText("Cuenta creada exitosamente.");
                 }

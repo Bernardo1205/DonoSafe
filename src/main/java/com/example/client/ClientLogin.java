@@ -137,7 +137,7 @@ public class ClientLogin {
             public void actionPerformed(ActionEvent e) {
 
                 frame.dispose();
-                new ClientRegister().setVisible(true);
+                new ClientRegister(client).setVisible(true);
             }
         });
     }

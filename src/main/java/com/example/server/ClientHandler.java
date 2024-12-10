@@ -38,6 +38,7 @@ public class ClientHandler implements Runnable {
     private static HashMap<String, Grupo> mapGrupos = new HashMap<>();
     public static HashMap<String, ClientHandler> clients;
     private String clientName;
+    private Integer id_group;
 
     /**
      * Crea un hilo para un cliente y le envía la lista de usuarios conectados
@@ -84,14 +85,16 @@ public class ClientHandler implements Runnable {
                     String targerGroup = message.substring(message.indexOf(" ")+1, ind).strip();
                     String sender = message.substring(ind+1, message.indexOf("]"));
                     String contenido = message.substring(message.indexOf("]")+2);
-                    //TODO guardar en la base de datos
-
+                    LocalDateTime localDateTime = LocalDateTime.now();
+                    DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    String horaMesj =localDateTime.format(formatoHora);
+                    bbdd.insertarMensaje(targerGroup,Integer.parseInt(sender),horaMesj,contenido);
                     mapGrupos.get(targerGroup).sendMessage(sender, contenido);
                 } else if (message.startsWith("[NEW_GROUP] ")) { /* New group message format: [NEW_GROUP] groupName:username*/
                     String groupCreator = message.substring(message.indexOf(" ")+1, message.lastIndexOf("|"));
                     String[] groupInfo = message.substring(message.lastIndexOf("|")).split(";");
                     createGroup(groupCreator, groupInfo[0], groupInfo[1],groupInfo[2]);
-                    bbdd.insertarGrupo(Integer.parseInt(groupCreator),groupInfo[1],groupInfo[0],groupInfo[2]);
+                    bbdd.insertarGrupo(id_group,groupCreator,groupInfo[1],groupInfo[0],groupInfo[2]);
                 } else if (message.startsWith("JOIN_GROUP ")) {
                     //Guardar en la base de datos
                     String id = message.substring(11, message.indexOf(" TO ")).strip();
@@ -160,8 +163,8 @@ public class ClientHandler implements Runnable {
         // Combinar la fecha actual con el tiempo parseado para obtener LocalDateTime
         LocalDateTime dateTime = LocalDateTime.of(currentDate, time);
         Grupo nuevoGrupo = new Grupo(clients.get(creator), orig, dest, dateTime);
-
         mapGrupos.putIfAbsent(nuevoGrupo.getId(), nuevoGrupo);
+        this.id_group = Integer.parseInt(nuevoGrupo.getId());
         sendMessageToAll("[NEW_GROUP] " + nuevoGrupo.getId() + ":" + creator + "|" + String.join(";", orig, dest,hour));
     }
 
