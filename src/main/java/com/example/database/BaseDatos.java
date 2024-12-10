@@ -1,3 +1,4 @@
+package main.java.com.example.database;
 import com.google.gson.JsonObject;
 import main.java.com.example.client.Client;
 import main.java.com.example.client.ClientRegister;
@@ -253,9 +254,9 @@ public class BaseDatos {
 
         } catch (SQLException e) {
             System.out.println("Error al conectar a la base de datos: " + e.getMessage());
+            return "Error conexion";
         }
-        // Devolver el json pero en string
-        return jsonObject.toString();
+
     }
 
     public ArrayList<String> getGruposUsuario(int id_usuario){

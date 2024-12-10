@@ -2,7 +2,6 @@ package main.java.com.example.server;
 import main.java.com.example.database.*;
 import main.java.com.example.mapa.Reporte;
 import org.jxmapviewer.viewer.GeoPosition;
-import main.java.com.example.database.BaseDatos;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,6 +13,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+
 
 /**
  * Maneja el hilo de un cliente, recibe mensajes de este y los parsea
@@ -111,7 +112,12 @@ public class ClientHandler implements Runnable {
                     String email = message.substring(message.indexOf(",") + 1, message.lastIndexOf(",password")).strip();
                     String password = message.substring(message.lastIndexOf(",password") + 1, message.lastIndexOf(",")).strip();
                     bbdd.insertarUsuario(nombre, password, email);
-                }else {
+                } else if (message.startsWith("[Get Content]")){
+                    String client_name = message.substring(message.lastIndexOf("|")+1, message.lastIndexOf(",")).trim();
+                    Integer id_client = Integer.parseInt(message.substring(message.indexOf(",")+1).trim());
+                    String jsonMensajes = "[Get Content] | " + bbdd.getMensajes(id_client);
+                    sendMessageToClient(client_name,jsonMensajes);
+                } else {
                     System.out.println("Unknown type " + message);
                 }
             }

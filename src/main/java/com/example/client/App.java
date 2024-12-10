@@ -1,5 +1,7 @@
 package main.java.com.example.client;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import main.java.com.example.config.ClientConfig;
 import main.java.com.example.mapa.MainPanel;
 
@@ -53,6 +55,9 @@ public class App extends JFrame {
 
     private HashMap<String, Boolean> unreadMessages = new HashMap<>();
     public HashMap<String, String[]> grupos = new HashMap<>();
+
+    public JsonObject jsonMensajes;
+    private String idGrupo;
 
     public App(Client client){
         setTitle("Mapa");
@@ -369,8 +374,9 @@ public class App extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int fila = tablaGrupos.rowAtPoint(e.getPoint());
                 if (fila!=-1){
-                    String idGrupo = (String) modeloGrupos.getValueAt(fila,0);
+                    idGrupo = (String) modeloGrupos.getValueAt(fila,0);
                     client.joinGroupChat(idGrupo);
+
                     JOptionPane.showMessageDialog(App.this,String.join(" ","Te has unido al grupo con destino: " , tablaGrupos.getValueAt(fila,2).toString()));
                 }
             }
@@ -468,7 +474,7 @@ public class App extends JFrame {
      * Abre el panel del chat de grupo indicado
      * @param group
      */
-    public void openPrivateGroup(String group) {
+    public void openPrivateGroup(String group ) {
         cardLayout.show(panelPrincipal, "ChatSection");
         chatCardLayout.show(chatSection, "Group Section");
         groupChatPanel.removeAll();
@@ -498,19 +504,21 @@ public class App extends JFrame {
         messageField.addActionListener(e -> {
             String message = messageField.getText();
             if (!message.isEmpty()) {
-                client.sendMessageToServer("GROUP " + group + ":" + client.getId() + "] " + message);
+                client.sendMessageToServer("GROUP " + idGrupo + ":" + client.getId() + "] " + message);
                 messageField.setText("");
+                updateGroupMessages(idGrupo,String.valueOf(client.getId()),message);
             }
         });
+        setInitialGroupMessage();
         groupChatPanel.add(messageField, BorderLayout.SOUTH);
         groupChatPanel.revalidate();
         groupChatPanel.repaint();
     }
 
+
+
     public void openPrivateChat(String targetUser) {
-
         chatPanel.removeAll();
-
         JPanel headerPanel = new JPanel(new BorderLayout());
         userTalkingTo = new JLabel(targetUser);
         JButton exitChatButton = new JButton("<--");
@@ -576,6 +584,42 @@ public class App extends JFrame {
                 });
             }
         });
+    }
+
+    //todo acabar esto bien
+    public void updateGroupMessages(String group,String user_id, String message) {
+        //Comprobar si el mensaje del user ya existe o esta en un grupo y si es asi añadirlo al json y si no crear un nuevo json con el mensaje
+        if (jsonMensajes.has(group)){
+            JsonObject jsonObject = jsonMensajes.get(group).getAsJsonObject();
+            jsonObject.addProperty(user_id,message);
+            jsonMensajes.add(group,jsonObject);
+        } else {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty(user_id,message);
+            jsonMensajes.add(group,jsonObject);
+        }
+
+    }
+
+    /**
+     * Cuando el servidor se inicia manda json string con los mensajes de los grupos , despues de recibirlo se llama hace un
+     *    setJsonMensajes y una vez hecho eso cada vez que el user entre en una ventana de chat de grupo se hace un update de los mensajes de ese grupo a partri del jsonObject
+     * @param group
+     */
+    public void setInitialGroupMessage(){
+        //Cada vez que se entre en un chat de grupo se actualizan los mensajes de ese grupo
+        for (String id_grupo : jsonMensajes.keySet()){
+            if (id_grupo.equals(idGrupo)){
+                for (String  id_persona: jsonMensajes.get(id_grupo).getAsJsonObject().keySet()){
+                    addGroupMessage(jsonMensajes.get(id_grupo).getAsJsonObject().get(id_persona).getAsString());
+                }
+            }
+
+
+        }
+    }
+    public void setJsonMensajes(String menssage){
+        jsonMensajes = JsonParser.parseString(menssage).getAsJsonObject();
     }
 
     public String getUserTalkingTo() {

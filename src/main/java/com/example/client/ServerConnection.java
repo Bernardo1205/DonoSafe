@@ -89,6 +89,9 @@ public class ServerConnection implements Runnable {
                     String groupId = serverResponse.substring(12, ind);
                     String[] groupInfo = serverResponse.substring(serverResponse.lastIndexOf("|")+1).split(";");
                     client.addGroup(groupId, groupInfo);
+                } else if (serverResponse.startsWith("[Get Content]")) {
+                        clientGUI.setJsonMensajes(serverResponse.substring(serverResponse.lastIndexOf("|")+1));
+
                 } else {
                     System.out.println("[ERROR] Unknown message format: \"" + serverResponse + "\"");
                 }
@@ -153,6 +156,8 @@ public class ServerConnection implements Runnable {
         String sender = s.substring(s.indexOf(":")+1, s.indexOf("]"));
         String msg = s.substring(s.indexOf("]")+2);
 
+        //todo creo q group y sender son names y no ids
+        clientGUI.updateGroupMessages(group, sender, msg);
         if (sender.equals(client.getUsername())) {
             clientGUI.addGroupMessage("You: " + msg);
         } else if (clientGUI.getGrupoActual().equals(group)) {
