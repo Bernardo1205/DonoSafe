@@ -58,15 +58,10 @@ public class BaseDatos {
 
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(2, nombre);
-            pstmt.setString(3, username);
-            pstmt.setString(4, sexo);
-            int edadParseada = Integer.parseInt(edad);
-            pstmt.setInt(5, edadParseada);
             pstmt.setString(6,contraseña);
             pstmt.setArray(7, reseñas);
             pstmt.setString(8,fecha_registro);
             pstmt.setString(9, email);
-            pstmt.setString(10, descripcion);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -100,7 +100,16 @@ public class ClientHandler implements Runnable {
                     int grupoIdParseado = Integer.parseInt(groupId);
                     joinGroup(groupId, clients.get(id));
                     bbdd.añadirUsuario(grupoIdParseado, idParseado);
-                } else {
+
+                } else if (message.startsWith("[New Client] |")){
+                    String infoCliente = message.substring(message.indexOf("|") + 1).strip();
+                    String id = message.substring(message.lastIndexOf(",") + 1).strip();
+                    int idParseado = Integer.parseInt(id);
+                    String nombre = message.substring(message.indexOf("|") + 1, message.indexOf(",")).strip();
+                    String email = message.substring(message.indexOf(",") + 1, message.lastIndexOf(",password")).strip();
+                    String password = message.substring(message.lastIndexOf(",password") + 1, message.lastIndexOf(",")).strip();
+                    bbdd.insertarUsuario(nombre, password, email);
+                }else {
                     System.out.println("Unknown type " + message);
                 }
             }
