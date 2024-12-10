@@ -98,6 +98,6 @@ public class Grupo {
     }
 
     public ArrayList<Integer> getClientesIds(){
-
+        return null;
     }
 }

@@ -192,7 +192,7 @@ public class App extends JFrame {
 
 
     private void waypointAdded(Reporte reporte){
-        String s = String.join(",", String.valueOf(reporte.getPosition().getLongitude()), String.valueOf(reporte.getPosition().getLatitude()), ventanaAgregarWaypoint.getPeligrosidad(), reporte.getHoraCreacion().toString(), reporte.getUser().getUsername(), reporte.getDescripcion());
+        String s = String.join(",", String.valueOf(reporte.getPosition().getLongitude()), String.valueOf(reporte.getPosition().getLatitude()), ventanaAgregarWaypoint.getPeligrosidad(), reporte.getHoraCreacion().toString(), String.valueOf(reporte.getUser().getId()), reporte.getDescripcion());
         client.sendMessageToServer("[NEW_WAYPOINT] " + s);
     }
 
