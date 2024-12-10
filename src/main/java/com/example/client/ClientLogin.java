@@ -123,6 +123,9 @@ public class ClientLogin {
                              * mostrándole un campo en color rojo con el siguiente texto */
                             statusLabel.setText("Conexión ya establecida.");
                             statusLabel.setForeground(Color.RED);
+
+                            //Envia mensaje al servidor indicando que le pase los datos inicales (mensajes del grupo)
+                            client.sendMessageToServer("[Get Content] | " + client.getUsername() + ","+ String.valueOf(client.getId()));
                             break;
                     }
                 } catch (IOException ex) {

@@ -458,33 +458,6 @@ public class App extends JFrame {
 
         chat = new Chat(this, group, groupInfo[0] + " - " + groupInfo[1], TipoChat.GRUPO);
         groupChatPanel.add(chat);
-
-//        groupTalkingTo = new JLabel(groupInfo[0] + " - " + groupInfo[1]);
-//        JButton exitChatButton = new JButton("<--");
-//        exitChatButton.addActionListener(e -> {
-//            grupoActual = "";
-//            showUsersList();
-//        });
-//        headerPanel.add(exitChatButton, BorderLayout.WEST);
-//        headerPanel.add(groupTalkingTo, BorderLayout.CENTER);
-//        groupChatPanel.add(headerPanel, BorderLayout.NORTH);
-//
-//        messagesPanel = new JPanel();
-//        messagesPanel.setLayout(new BoxLayout(messagesPanel, BoxLayout.Y_AXIS));
-//        scrollMessages = new JScrollPane(messagesPanel);
-//        groupChatPanel.add(scrollMessages, BorderLayout.CENTER);
-//
-//        JTextField messageField = new JTextField();
-//        messageField.addActionListener(e -> {
-//            String message = messageField.getText();
-//            if (!message.isEmpty()) {
-//                client.sendMessageToServer("GROUP " + group + ":" + client.getId() + "] " + message);
-//                messageField.setText("");
-//            }
-//        });
-//        groupChatPanel.add(messageField, BorderLayout.SOUTH);
-//        groupChatPanel.revalidate();
-//        groupChatPanel.repaint();
     }
 
     public void openPrivateChat(String targetUser) {
