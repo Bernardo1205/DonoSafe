@@ -1,9 +1,8 @@
 package main.java.com.example.server;
-
-import main.java.com.example.database.BaseDatos;
+import main.java.com.example.database.*;
 import main.java.com.example.mapa.Reporte;
 import org.jxmapviewer.viewer.GeoPosition;
-
+import main.java.com.example.database.BaseDatos;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

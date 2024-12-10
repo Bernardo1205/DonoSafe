@@ -1,5 +1,3 @@
-package main.java.com.example.database;
-
 import com.google.gson.JsonObject;
 import main.java.com.example.client.Client;
 import main.java.com.example.client.ClientRegister;
@@ -188,6 +186,7 @@ public class BaseDatos {
 
         String sql = "SELECT grupo_id, id_usuario_transmisor, fecha_hora, contenido FROM Mensaje ORDER BY fecha_hora ASC";
 
+
         try (Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -210,52 +209,58 @@ public class BaseDatos {
         return mensajes;
     }
 
-    public HashMap<Integer, HashMap<Integer, String>> getMensajes(Integer id_user) {
+    public String getMensajes(Integer id_user) {
         /* Hashmap con el id de los grupos en los que el user forma parte , y dentro de este se encuentra otro hashmap con la clave de cada user y el mensaje enviado dentro del grupo,
          * usamos linkedJasMap para tener mensajes ordenados segun la fecha de envio*/
-
         HashMap<Integer, LinkedHashMap<Integer, String>> mensajes = new HashMap<>();
+        JsonObject jsonObject = new JsonObject();
 
+        //Sql cuarry que nos devuelve t
+        String sql ="SELECT grupo_id, id_usuario_transmisor, fecha_hora, contenido FROM Mensaje ORDER BY fecha_hora ASC";
 
-        String sql = "SELECT grupo_id, id_usuario_transmisor, fecha_hora, contenido FROM Mensaje";
+        //Recopilar lista de grupos del user
+        ArrayList<String> grupos_usuario = getGruposUsuario(id_user);
 
-        try (Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+        try (PreparedStatement pstmt = con.prepareStatement(sql)){
+            pstmt.setInt(1,(int)id_user);
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 int grupoId = rs.getInt("grupo_id");
                 int userId = rs.getInt("id_usuario_transmisor");
                 String texto = rs.getString("contenido");
                 String fecha = rs.getString("fecha_hora");
 
-                //Comprobar los grupos en los que el usuario forma parte y si todavia no se ha añadido al
-                if (userId == (int) id_user &&  mensajes.get(grupoId) == null) {
+                /* Comprobar si el grupo del mensaje esta en la lista de grupos en los que participa el user , y si es el caso y admeas no se ha añadido al mapa se añade y crea un linkedHashMap */
+                if ((grupos_usuario.contains(String.valueOf(grupoId)) && (mensajes.get(grupoId).isEmpty()))) {
                     mensajes.put(grupoId, new LinkedHashMap<>());
                     mensajes.get(grupoId).put(Integer.valueOf(userId), texto);
-                } else if (mensajes.get(grupoId) != null) {
+                } else if (grupos_usuario.contains(String.valueOf(grupoId))){
                     mensajes.get(grupoId).put(Integer.valueOf(userId), texto);
                 }
+
             }
             /* Creamos un json object en el que le pasaremos el hasmpa , despues lo convertiremos en un string y lo enviaremos al server , este recopilara dicho mensaje
             y se lo enviara al cliente el cual tendra que convertir dicho string a json y obtener los valores */
-            JsonObject jsonObject = new JsonObject();
             for (Integer id_groups : mensajes.keySet()){
                 JsonObject mensajes_group = new JsonObject();
                 for (Integer id_clients :mensajes.get(id_groups).keySet()){
-                    mensajes_group.addProperty(id_clients,mensajes.get(id_groups).get(id_clients));
+                    mensajes_group.addProperty(String.valueOf(id_clients),mensajes.get(id_groups).get(id_clients));
                 }
+                jsonObject.add(String.valueOf(id_groups) , mensajes_group);
             }
+
+            return jsonObject.toString();
 
         } catch (SQLException e) {
             System.out.println("Error al conectar a la base de datos: " + e.getMessage());
         }
-        // Devolver arraylist de mensajes enviados por un usuario en un grupo concreto
-        return mensajes;
+        // Devolver el json pero en string
+        return jsonObject.toString();
     }
 
-    public ArrayList<String[]> getGruposUsuario(int id_usuario){
+    public ArrayList<String> getGruposUsuario(int id_usuario){
         //Función para obtener los grupos en que participa un usuario en concreto
-        ArrayList<String[]> grupos = new ArrayList<>();
+        ArrayList<String> grupos = new ArrayList<>();
         String sql = "SELECT id_grupo, usuarios, destino, inicio, fecha_creacion FROM Grupo ORDER BY fecha_hora ASC";
         try (Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -275,8 +280,8 @@ public class BaseDatos {
                 String fecha = rs.getString("fecha_creacion");
 
                 // Solo procesar los mensajes que coincidan con el id_usuario y id_grupo dados
-                if (arrayIndicesUsuarios.contains(id_usuario)) {
-                    grupos.add(new String[]{grupoIdParseado, usuarios, destino, inicio, fecha});
+                if (arrayIndicesUsuarios.contains(id_usuario) && !grupos.contains(String.valueOf(grupoId))) {
+                    grupos.add(String.valueOf(grupoId));
                 }
             }
         } catch (SQLException e) {
@@ -442,14 +447,3 @@ public class BaseDatos {
     // Funcion para recoger todos los mensajes.
     //Hashmap con id_usuario: id_grupo: contenido mensaje. Y así sucesivamente.
 }
-
-
-
-
-
-
-
-
-
-
-
