@@ -87,11 +87,6 @@ public class ClientHandler implements Runnable {
             clients.put(clientName, this);
             broadcastUserList();
 
-            /* Recibe el nombre de usuario con el que se referenciará a este hilo en los mensajes */
-            clientName = in.readLine();
-            clients.put(clientName, this);
-            broadcastUserList();
-
             String message;
             while (true) {
                 message = waitForMessage();
@@ -100,7 +95,7 @@ public class ClientHandler implements Runnable {
                 if (message.startsWith("[NEW_WAYPOINT] ")){
                     sendMessageToAll(message);
                     String[] info_waypoints = message.substring(message.indexOf(" ")).split(",");
-                    Double latitud =Double.parseDouble(info_waypoints[1]);
+                    Double latitud = Double.parseDouble(info_waypoints[1]);
                     Double longitud = Double.parseDouble(info_waypoints[0]);
                     info_waypoints[3] = info_waypoints[3].replace("T", " ").substring(0, info_waypoints[3].indexOf(".")-3);
                     bbdd.insertarReporte(longitud , latitud , info_waypoints[2],info_waypoints[3],Integer.parseInt(info_waypoints[4]) ,info_waypoints[5]);
@@ -118,18 +113,27 @@ public class ClientHandler implements Runnable {
 
                     mapGrupos.get(targerGroup).sendMessage(sender, contenido);
                 } else if (message.startsWith("[NEW_GROUP] ")) { /* New group message format: [NEW_GROUP] groupName:username*/
+                    String groupId = message.substring(message.indexOf("[NEW_GROUP] ")+12, message.lastIndexOf("|"));
                     String groupCreator = message.substring(message.indexOf(" ")+1, message.lastIndexOf("|"));
+                    System.out.println("Id del grupo: " + groupId + " Creador: " + groupCreator);
+                    /* groupInfo contiene el origen, el destino y la hora del grupo */
                     String[] groupInfo = message.substring(message.lastIndexOf("|")).split(";");
+                    for (String s : groupInfo) {
+                        System.out.println(s);
+                    }
                     createGroup(groupCreator, groupInfo[0], groupInfo[1],groupInfo[2]);
-                    bbdd.insertarGrupo(Integer.parseInt(groupCreator),groupInfo[1],groupInfo[0],groupInfo[2],LocalDate.now().toString());
                 } else if (message.startsWith("JOIN_GROUP ")) {
                     //Guardar en la base de datos
                     String id = message.substring(11, message.indexOf(" TO ")).strip();
-                    int idParseado = Integer.parseInt(id);
+//                    int idParseado = Integer.parseInt(id);
                     String groupId = message.substring(message.indexOf(" TO ") + 4);
-                    int grupoIdParseado = Integer.parseInt(groupId);
+                    System.out.println(id);
+                    System.out.println(groupId);
                     joinGroup(groupId, clients.get(id));
-                    bbdd.añadirUsuario(grupoIdParseado, idParseado);
+//                    bbdd.añadirUsuario(groupId, id);
+
+                } else if (message.startsWith("[NEW_GROUP_TOALL]")) {
+                    sendMessageToAll(message);
 
                 } else {
                     System.out.println("Unknown type " + message);
@@ -184,7 +188,10 @@ public class ClientHandler implements Runnable {
         Grupo nuevoGrupo = new Grupo(clients.get(creator), orig, dest, dateTime);
 
         mapGrupos.putIfAbsent(nuevoGrupo.getId(), nuevoGrupo);
-        sendMessageToAll("[NEW_GROUP] " + nuevoGrupo.getId() + ":" + creator + "|" + String.join(";", orig, dest,hour));
+        sendMessageToAll("[NEW_GROUP_TOALL] " + nuevoGrupo.getId() + ":" + creator + "|" + String.join(";", orig, dest,hour));
+
+        bbdd.insertarGrupo(nuevoGrupo.getId(), dest, orig, hour,LocalDate.now().toString());
+
     }
 
     /**

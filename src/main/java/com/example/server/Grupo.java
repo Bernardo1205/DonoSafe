@@ -61,7 +61,7 @@ public class Grupo {
     public void añadirUsuario(ClientHandler cliente) {
         if (!this.getClientes().contains(cliente)) {
             this.clientes.add(cliente);
-            this.sendMessage("SERVER]", cliente.getClientName() + " joined the chat!");
+//            this.sendMessage("SERVER]", cliente.getClientName() + " joined the chat!");
         }
     }
 

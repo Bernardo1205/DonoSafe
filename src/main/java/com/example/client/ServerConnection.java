@@ -83,10 +83,11 @@ public class ServerConnection implements Runnable {
                     showPrivateMessage(serverResponse);
                 } else if (serverResponse.startsWith("GROUP ")) {
                     showGroupMessage(serverResponse);
-                } else if (serverResponse.startsWith("[NEW_GROUP] ")) {
-                    String groupId = serverResponse.substring(12, ind);
+                } else if (serverResponse.startsWith("[NEW_GROUP_TOALL] ")){
+                    String groupId = serverResponse.substring(serverResponse.indexOf("[NEW_GROUP_TOALL]") +"[NEW_GROUP_TOALL]".length() , serverResponse.lastIndexOf(":"));
+                    String groupCreator = serverResponse.substring(serverResponse.indexOf(":") , serverResponse.lastIndexOf("|"));
                     String[] groupInfo = serverResponse.substring(serverResponse.lastIndexOf("|")+1).split(";");
-                    client.addGroup(groupId, groupInfo);
+                    client.addGroup(groupId, groupCreator, groupInfo);
                 } else {
                     System.out.println("[ERROR] Unknown message format: \"" + serverResponse + "\"");
                 }
@@ -107,11 +108,10 @@ public class ServerConnection implements Runnable {
      */
     public String waitForMessage() throws IOException {
         String serverResponse = in.readLine();
-        if (serverResponse == null) {
-            return waitForMessage();
-        } else {
+        if (serverResponse != null) {
             return serverResponse;
         }
+        return waitForMessage();
     }
 
     private void actulizarWaypoints(String serverResponse) {

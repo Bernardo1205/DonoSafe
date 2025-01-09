@@ -79,7 +79,7 @@ public class BaseDatos {
 
             pstmt.setString(3,descripcionReporte);
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             //String hora_formateada = hora_reporte.format(formatter);
 
 
@@ -123,10 +123,10 @@ public class BaseDatos {
         }
     }
     // Insertar grupo
-    public void insertarGrupo(int idGrupo, String usuarios, String destino, String origen, String fecha) {
+    public void insertarGrupo(String idGrupo, String usuarios, String destino, String origen, String fecha) {
         String comandoInsertarGrupo = "INSERT INTO Grupo VALUES (?,?,?,?,?)";
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarGrupo, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setInt(1, idGrupo);
+            pstmt.setString(1, idGrupo);
             pstmt.setString (2, usuarios);
             pstmt.setString(3, destino);
             pstmt.setString(4, origen);
@@ -330,7 +330,7 @@ public class BaseDatos {
         return reportes;
     }
 
-    public void añadirUsuario(int grupoId, int clienteId) {
+    public void añadirUsuario(String grupoId, int clienteId) {
         // Query para verificar si el grupo existe
         String verificarGrupo = "SELECT usuarios FROM Grupo WHERE id_grupo = ?";
         // Query para actualizar la lista de usuarios

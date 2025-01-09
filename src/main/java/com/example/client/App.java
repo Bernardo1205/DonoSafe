@@ -54,7 +54,6 @@ public class App extends JFrame {
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
         this.client = client;
 
 
