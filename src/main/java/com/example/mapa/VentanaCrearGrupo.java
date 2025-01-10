@@ -121,7 +121,7 @@ public class VentanaCrearGrupo extends JPanel {
                 if (localizacionOrigen != null && localizacionDestino != null && horaComboBox.getSelectedItem() != null) {
 
                     String groupInfo = String.join(";", textoOrigen, textoDestino, (String) horaComboBox.getSelectedItem());
-                    client.sendMessageToServer("[NEW_GROUP] " + client.getNombre()+ "|" + groupInfo);
+                    client.sendMessageToServer("[NEW_GROUP] " + client.getUsername() + "|" + groupInfo);
                     origenField.setText("");
                     destinoField.setText("");
                 } else {

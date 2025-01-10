@@ -94,7 +94,7 @@ public class ClientHandler implements Runnable {
                 message = waitForMessage();
                 System.out.println(message);
                 int ind = message.indexOf(":");
-                if (message.startsWith("[NEW_WAYPOINT] ")){
+                if (message.startsWith("[NEW_WAYPOINT] ")){ /* New waypoint message format: [NEW_WAYPOINT] longitud,latitud,peligrosidad,fecha,id,descripción */
                     sendMessageToAll(message);
                     String[] info_waypoints = message.substring(message.indexOf(" ")).split(",");
                     Double latitud = Double.parseDouble(info_waypoints[1]);
@@ -114,17 +114,17 @@ public class ClientHandler implements Runnable {
                     String contenido = message.substring(message.indexOf("]")+2);
                     System.out.println("Sender: " + sender);
                     mapGrupos.get(targerGroup).sendMessage(sender, contenido);
-                } else if (message.startsWith("[NEW_GROUP] ")) { /* New group message format: [NEW_GROUP] groupName:username*/
+                } else if (message.startsWith("[NEW_GROUP] ")) { /* New group message format: [NEW_GROUP] creatorId|origin;destiny;hour*/
 
                     String groupCreator = message.substring(message.indexOf("[NEW_GROUP] ")+"[NEW_GROUP] ".length() , message.lastIndexOf("|"));
 
                     /* groupInfo contiene el origen, el destino y la hora del grupo */
                     String[] groupInfo = message.substring(message.lastIndexOf("|")+1).split(";");
                     createGroup(groupCreator, groupInfo[0], groupInfo[1],groupInfo[2]);
-                } else if (message.startsWith("JOIN_GROUP ")) {
+                } else if (message.startsWith("JOIN_GROUP ")) { /* Join group message format: JOIN_GROUP userId TO groupId */
                     //Guardar en la base de datos
                     String name = message.substring(message.indexOf("JOIN_GROUP ") + "JOIN_GROUP ".length(), message.indexOf(" TO ")).strip();
-//                    int idParseado = Integer.parseInt(id);
+
                     String groupId = message.substring(message.indexOf(" TO ") + 4).strip();
 
                     joinGroup(groupId, clients.get(name));
@@ -183,13 +183,7 @@ public class ClientHandler implements Runnable {
         Grupo nuevoGrupo = new Grupo(clients.get(creator), orig, dest, dateTime);
 
         mapGrupos.put(nuevoGrupo.getId(), nuevoGrupo);
-        System.out.println(nuevoGrupo.getId());
-        System.out.println("Se creo el grupo");
-        System.out.println(mapGrupos.get(nuevoGrupo.getId()).getId());
-        System.out.println("Antes Id grupos del map: ");
-        for (String s : mapGrupos.keySet()) {
-            System.out.println(s);
-        }
+        System.out.println("Se creó el grupo " + nuevoGrupo.getId());
         sendMessageToAll("[NEW_GROUP_TOALL] " + nuevoGrupo.getId() + "|" + String.join(";", orig, dest,hour));
         bbdd.insertarGrupo(nuevoGrupo.getId(), dest, orig, hour,LocalDate.now().toString());
 

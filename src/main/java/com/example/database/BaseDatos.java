@@ -28,7 +28,7 @@ public class BaseDatos {
             return;
         }
 
-        String url = "jdbc:sqlite:DonoSafe\\src\\db\\basedatos.db";
+        String url = "jdbc:sqlite:src\\db\\basedatos.db";
 
         try {
             con = DriverManager.getConnection(url); // Asignar a 'con'

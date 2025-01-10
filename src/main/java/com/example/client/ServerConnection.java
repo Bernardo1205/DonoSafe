@@ -165,7 +165,7 @@ public class ServerConnection implements Runnable {
         } else if (clientGUI.getChat().getChatId().equals(group)) {
             clientGUI.addGroupMessage(sender, msg);
         } else {
-            System.out.println("Mensaje de grupo recibido pero no se muestra");
+            clientGUI.addGroupMessage(sender, msg);
         }
     }
 
