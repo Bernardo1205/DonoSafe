@@ -84,10 +84,11 @@ public class ServerConnection implements Runnable {
                 } else if (serverResponse.startsWith("GROUP ")) {
                     showGroupMessage(serverResponse);
                 } else if (serverResponse.startsWith("[NEW_GROUP_TOALL] ")){
-                    String groupId = serverResponse.substring(serverResponse.indexOf("[NEW_GROUP_TOALL]") +"[NEW_GROUP_TOALL]".length() , serverResponse.lastIndexOf(":"));
-                    String groupCreator = serverResponse.substring(serverResponse.indexOf(":") , serverResponse.lastIndexOf("|"));
+
+                    String groupId = serverResponse.substring(serverResponse.indexOf("[NEW_GROUP_TOALL]") +"[NEW_GROUP_TOALL]".length() , serverResponse.lastIndexOf("|"));
                     String[] groupInfo = serverResponse.substring(serverResponse.lastIndexOf("|")+1).split(";");
-                    client.addGroup(groupId, groupCreator, groupInfo);
+                    System.out.println("Server Response : " + groupId);
+                    client.addGroup(groupId, groupInfo);
                 } else {
                     System.out.println("[ERROR] Unknown message format: \"" + serverResponse + "\"");
                 }
@@ -106,12 +107,16 @@ public class ServerConnection implements Runnable {
      *
      * @throws IOException
      */
-    public String waitForMessage() throws IOException {
+    private String waitForMessage() throws IOException {
         String serverResponse = in.readLine();
-        if (serverResponse != null) {
+        if (serverResponse == null) {
+            throw new IOException("Connection closed by server");
+        }
+        if (serverResponse.isEmpty()) {
+            return waitForMessage(); // Esto puede causar recursión infinita si siempre se recibe una cadena vacía.
+        } else {
             return serverResponse;
         }
-        return waitForMessage();
     }
 
     private void actulizarWaypoints(String serverResponse) {

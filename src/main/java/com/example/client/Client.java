@@ -150,6 +150,7 @@ public class Client {
 
     public void addGroup(String groupId, String[] groupInfo) {
         grupos.put(groupId, groupInfo);
+        System.out.println("Grupo añadido: " + groupId);
         clientGUI.updateGroupsList(grupos);
     }
 

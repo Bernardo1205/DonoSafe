@@ -12,6 +12,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.Date;
 
 public class BaseDatos {
 
@@ -27,7 +28,7 @@ public class BaseDatos {
             return;
         }
 
-        String url = "jdbc:sqlite:src/db/basedatos.db";
+        String url = "jdbc:sqlite:DonoSafe\\src\\db\\basedatos.db";
 
         try {
             con = DriverManager.getConnection(url); // Asignar a 'con'
@@ -71,29 +72,23 @@ public class BaseDatos {
     // Insertar reporte
     public void insertarReporte(double longitud, double latitud, String tipoPeligro, String horaCreacion,
                                 int idUsuario, String descripcionReporte) {
-        String comandoInsertarUsuario = "INSERT INTO Reporte VALUES ('autoincrement',?,?,?,?,?,?)";
-        Statement statement = null;
+        String comandoInsertarUsuario = "INSERT INTO Reporte (id_usuario, descripcion, fecha_creacion, Tipo_peligro, longitud, latitud) VALUES (?,?,?,?,?,?)";
         try (PreparedStatement pstmt = con.prepareStatement(comandoInsertarUsuario, Statement.RETURN_GENERATED_KEYS)) {
 
-            pstmt.setInt(2, idUsuario);
-
-            pstmt.setString(3,descripcionReporte);
-
+            pstmt.setInt(1, idUsuario);
+            pstmt.setString(2, descripcionReporte);
+            // Convertir java.util.Date a java.sql.Date
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            //String hora_formateada = hora_reporte.format(formatter);
+            LocalDateTime fecha_reporte_formated = LocalDateTime.parse(horaCreacion, formatter);
+            Timestamp timestamp = Timestamp.valueOf(fecha_reporte_formated);
+            java.util.Date utilDate = new java.util.Date(timestamp.getTime());
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
-
-            //LocalDateTime fecha_reporte_creacion = horaCreacion;
-            //String fecha_formateada = fecha_reporte_creacion.format(formatter);
-            pstmt.setString(5, horaCreacion);
-
-            LocalDateTime fecha_reporte_creacion = LocalDateTime.parse(horaCreacion, formatter);
-            LocalDateTime fecha_reporte_finalizacion = fecha_reporte_creacion.plusHours(1);
-            String fecha_finalizacion_formateada = fecha_reporte_finalizacion.format(formatter);
-            pstmt.setString(6, fecha_finalizacion_formateada);
-
-            pstmt.setString(7, tipoPeligro);
-
+            // Usar la fecha convertida en el PreparedStatement
+            pstmt.setDate(3, sqlDate);
+            pstmt.setString(4, tipoPeligro);
+            pstmt.setDouble(5, longitud);
+            pstmt.setDouble(6, latitud);
 
             pstmt.executeUpdate();
 
@@ -340,7 +335,7 @@ public class BaseDatos {
              PreparedStatement actualizarStmt = con.prepareStatement(actualizarUsuarios)) {
 
             // Verificar si el grupo existe
-            verificarStmt.setInt(1, grupoId);
+            verificarStmt.setString(1, grupoId);
             ResultSet rs = verificarStmt.executeQuery();
 
             if (!rs.next()) {
@@ -378,7 +373,7 @@ public class BaseDatos {
 
             // Actualizar la base de datos
             actualizarStmt.setString(1, usuariosActualizados.toString());
-            actualizarStmt.setInt(2, grupoId);
+            actualizarStmt.setString(2, grupoId);
             actualizarStmt.executeUpdate();
 
             System.out.println("El usuario con id " + clienteId + " ha sido añadido al grupo con id " + grupoId);

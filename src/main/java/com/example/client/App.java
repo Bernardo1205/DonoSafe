@@ -15,10 +15,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 public class App extends JFrame {
 
@@ -46,7 +43,7 @@ public class App extends JFrame {
     private JTable tablaUsers;
 
     private HashMap<String, Boolean> unreadMessages = new HashMap<>();
-    public HashMap<String, String[]> grupos = new HashMap<>();
+    public HashMap<String, ArrayList<Integer>> grupos = new HashMap<>();
 
     public App(Client client){
         setTitle("Mapa");
@@ -128,6 +125,7 @@ public class App extends JFrame {
             }
         });
     }
+
     /**
      * @param ventanaAgregarWaypoint Ventana que se muestra para agregar un waypoint
      */
@@ -177,9 +175,7 @@ public class App extends JFrame {
         layeredPane.add(bMostrarMenu, Integer.valueOf(2));
         layeredPane.add(menu, Integer.valueOf(1));
 
-
         mapPanel.add(layeredPane);
-
 
         return mapPanel;
     }
@@ -239,7 +235,7 @@ public class App extends JFrame {
                     c.setBackground(Color.WHITE);
                 }
                 if (column == 2) { //&& true
-                    ImageIcon icon = new ImageIcon("src/main/resources/icons/boton.png");
+                    ImageIcon icon = new ImageIcon("src\\main\\resources\\icons\\boton.png");
                     Image scaledImage = icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
                     c.setIcon(new ImageIcon(scaledImage));
                     c.setHorizontalAlignment(SwingConstants.CENTER);
@@ -302,6 +298,7 @@ public class App extends JFrame {
         chatCardLayout.show(chatSection, "Users Section");
         return chatSection;
     }
+    
 
     private int getRowByValue(String value) {
         for (int i = 0; i < modeloUsers.getRowCount(); i++) {
@@ -364,8 +361,17 @@ public class App extends JFrame {
                 int fila = tablaGrupos.rowAtPoint(e.getPoint());
                 if (fila!=-1){
                     String idGrupo = (String) modeloGrupos.getValueAt(fila,0);
-                    client.joinGroupChat(idGrupo);
-                    JOptionPane.showMessageDialog(App.this,String.join(" ","Te has unido al grupo con destino: " , tablaGrupos.getValueAt(fila,2).toString()));
+
+                    if (!grupos.get(idGrupo).contains(client.getId())){
+                        grupos.get(idGrupo).add(Integer.valueOf(client.getId()));
+                        client.joinGroupChat(idGrupo);
+                        JOptionPane.showMessageDialog(App.this,String.join(" ","Te has unido al grupo con destino: " , tablaGrupos.getValueAt(fila,2).toString()));
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(App.this,"Ya estas en este grupo");
+                        openPrivateGroup(idGrupo);
+                    }
+
                 }
             }
         });
@@ -384,8 +390,9 @@ public class App extends JFrame {
         modeloGrupos.setRowCount(0);
 
         for (String groupId : groups.keySet()) {
-            String[] info = groups.get(groupId);
-            modeloGrupos.addRow(new Object[]{groupId, info[0], info[1], info[2]});
+             String[] info = groups.get(groupId);
+             grupos.put(groupId, new ArrayList<Integer>());
+             modeloGrupos.addRow(new Object[]{groupId, info[0], info[1], info[2]});
         }
         groupsListPanel.revalidate();
         groupsListPanel.repaint();
@@ -491,7 +498,4 @@ public class App extends JFrame {
         return groupChatPanel;
     }
 
-    public HashMap<String, String[]> getGrupos() {
-        return grupos;
-    }
 }

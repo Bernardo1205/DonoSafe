@@ -17,11 +17,11 @@ public class ConectarBaseDatos {
         }
         Connection connection = null;
 
-        String url = "jdbc:sqlite:src/db/basedatos.db";
+        String url = "jdbc:sqlite:DonoSafe\\src\\db\\basedatos.db";
 
         try {
             // Crear una conexión de BD
-            connection = DriverManager.getConnection("jdbc:sqlite:src/db/basedatos.db");} catch(SQLException e) {
+            connection = DriverManager.getConnection("jdbc:sqlite:DonoSafe\\src\\db\\basedatos.db");} catch(SQLException e) {
             System.err.println(e.getMessage());
         } finally {
             try {
