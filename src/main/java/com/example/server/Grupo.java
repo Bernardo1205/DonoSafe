@@ -33,7 +33,6 @@ public class Grupo {
      */
     public Grupo(ClientHandler cliente, String origen, String destino, LocalDateTime fecha) {
         this.añadirUsuario(cliente);
-
         this.id = UUID.randomUUID().toString();
         this.origen = origen;
         this.destino = destino;
@@ -47,9 +46,11 @@ public class Grupo {
      * @param message
      */
     public void sendMessage(String sender, String message) {
+        System.out.println("Sender-" + sender + " message " + message);
         for (ClientHandler clientHandler : clientes) {
             if (!clientHandler.getClientName().equals(sender)) {
                 clientHandler.sendMessageToClient("GROUP " + this.id + ":" + sender + "] " + message);
+
             }
         }
     }

@@ -455,14 +455,14 @@ public class App extends JFrame {
      * Abre el panel del chat de grupo indicado
      * @param group
      */
-    public void openPrivateGroup(String group) {
+    public void openPrivateGroup(String groupId) {
         cardLayout.show(panelPrincipal, "ChatSection");
         chatCardLayout.show(chatSection, "Group Section");
         groupChatPanel.removeAll();
 
-        String[] groupInfo = client.getGrupos().get(group);
+        String[] groupInfo = client.getGrupos().get(groupId);
 
-        chat = new Chat(this, group, groupInfo[0] + " - " + groupInfo[1], TipoChat.GRUPO);
+        chat = new Chat(this, groupId, groupInfo[0] + " - " + groupInfo[1], TipoChat.GRUPO);
         groupChatPanel.add(chat);
     }
 

@@ -133,7 +133,6 @@ public class Chat extends JPanel {
 
     private static void enableDragToScroll(JScrollPane scrollPane) {
         JViewport viewport = scrollPane.getViewport();
-
         // Agregar un MouseAdapter al viewport
         MouseAdapter mouseAdapter = new MouseAdapter() {
             private Point lastDragPoint;
